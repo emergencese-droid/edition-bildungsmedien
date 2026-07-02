@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Edition Bildungsmedien – Verlag</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Edition Bildungsmedien – Wissenschaftlicher Verlag aus Bochum. Vibronische Theorie, Technologiegeschichte und Forschung im Rahmen von Emergence Technology.">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Edition Bildungsmedien</h1>
+    <nav>
+        <a href="index.html">Startseite</a>
+        <a href="verlag.html">Verlag</a>
+        <a href="urzelle.html">Die Urzelle</a>
+        <a href="urknall.html">Der Urknall</a>
+        <a href="dynamicum.html">Dynamicum Specimen</a>
+        <a href="lizenzen.html">Softwarelizenzen</a>
+        <a href="kontakt.html">Kontakt</a>
+        <a href="impressum.html">Impressum</a>
+    </nav>
+</header>
+
+<main>
+
+    <section>
+        <h2>Über den Verlag</h2>
+        <p>
+            Edition Bildungsmedien ist ein unabhängiger wissenschaftlicher Verlag mit Sitz in Bochum.
+            Der Verlag publiziert Grundlagenwerke zur vibronischen Theorie, zur frühen Biochemie,
+            zur Technologiegeschichte und zur Entwicklung neuer Rechenarchitekturen.
+        </p>
+        <p>
+            Die Publikationen sind Teil des langfristigen Forschungsprogramms
+            <strong>Emergence Technology</strong>, das physikalische, technologische und
+            gesellschaftliche Fragestellungen miteinander verbindet.
+        </p>
+    </section>
+
+    <section>
+        <h2>Publikationen</h2>
+
+        <article>
+            <h3>Die Urzelle</h3>
+            <p>
+                Ein Grundlagenwerk zur vibronischen Biochemie und zu frühen molekularen Strukturen.
+                Das Buch bildet die Basis für das vibronische Forschungsprogramm.
+                Weitere Informationen finden Sie auf der Seite
+                <a href="urzelle.html">Die Urzelle</a>.
+            </p>
+        </article>
+
+        <article>
+            <h3>Der Urknall</h3>
+            <p>
+                Ein Werk zur kosmologischen Struktur und vibronischen Dynamik des frühen Universums.
+                Es ergänzt die Urzelle und erweitert das Modell auf kosmische Skalen.
+                Details finden Sie auf der Seite <a href="urknall.html">Der Urknall</a>.
+            </p>
+        </article>
+
+        <article>
+            <h3>Dynamicum Specimen</h3>
+            <p>
+                Eine wissenschaftliche Kurzpublikation, die zentrale Elemente des Forschungsprogramms
+                in konzentrierter Form darstellt.
+            </p>
+        </article>
+
+        <article>
+            <h3>Leibnizmeter Whitepaper</h3>
+            <p>
+                Das photonische Messtechnik‑Whitepaper bildet die Grundlage für die Entwicklung
+                hochpräziser Frequenz‑ und Photonenmessgeräte.
+            </p>
+        </article>
+    </section>
+
+    <section>
+        <h2>Forschungsprogramm Emergence Technology</h2>
+        <p>
+            Edition Bildungsmedien ist eng mit dem Forschungsprogramm Emergence Technology verbunden.
+            Dieses Programm umfasst unter anderem:
+        </p>
+        <ul>
+            <li><strong>Energiezellen‑Entwicklung</strong></li>
+            <li><strong>Photonische Messtechnik (Leibnizmeter)</strong></li>
+            <li><strong>Photonenstrahlentherapie</strong></li>
+            <li><strong>Vibronischer Computer</strong> (Konzern‑Version und Monitoring‑Version)</li>
+        </ul>
+        <p>
+            Die Buchprojekte dienen als dokumentarische und konzeptionelle Grundlage für diese
+            langfristige Forschungs‑ und Entwicklungsarbeit.
+        </p>
+    </section>
+
+    <section>
+        <h2>Kontakt & Kooperationen</h2>
+        <p>
+            Für wissenschaftliche Kooperationen, Buchanfragen oder institutionelle Partnerschaften
+            nutzen Sie bitte die <a href="kontakt.html">Kontaktseite</a>.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 Edition Bildungsmedien – Bochum</p>
+</footer>
+
+</body>
+</html>
