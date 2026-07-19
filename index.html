@@ -77,6 +77,27 @@
     <p>Die Urzelle verbindet vibronische Modelle, Photonenlogik und mathematische Spiralstrukturen zu einer neuen Perspektive auf die Entstehung von Materie und Leben.</p>
     <img src="assets/urzelle-cover.png" alt="Buchcover Die Urzelle">
   </section>
+<section id="bestellung">
+    <h2>Buchbestellung</h2>
+    <form class="bestellformular" action="mailto:bestellung@bildungsmedien.de" method="post" enctype="text/plain">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="Name" required>
+
+        <label for="email">E-Mail</label>
+        <input type="email" id="email" name="Email" required>
+
+        <label for="adresse">Adresse</label>
+        <textarea id="adresse" name="Adresse" rows="3" required></textarea>
+
+        <label for="anzahl">Anzahl Exemplare</label>
+        <input type="number" id="anzahl" name="Anzahl" min="1" required>
+
+        <label for="nachricht">Nachricht (optional)</label>
+        <textarea id="nachricht" name="Nachricht" rows="3"></textarea>
+
+        <button type="submit">Bestellung absenden</button>
+    </form>
+</section>
 
   <!-- Verlag -->
   <section id="verlag">
