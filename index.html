@@ -23,6 +23,8 @@
         <a href="impressum.html">Impressum</a>
     </nav>
 </header>
+
+<!-- Hero-Bereich -->
 <section class="hero">
     <h2>Wissenschaftliche Grundlagenwerke für die vibronische Theorie</h2>
     <p>Edition Bildungsmedien – Verlag für Forschung, Technologiegeschichte und vibronische Modelle.</p>
@@ -31,6 +33,7 @@
 
 <main>
 
+    <!-- Willkommen -->
     <section>
         <h2>Willkommen bei Edition Bildungsmedien</h2>
         <p>
@@ -44,152 +47,44 @@
             gesellschaftliche Fragestellungen miteinander verbindet.
         </p>
     </section>
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edition Bildungsmedien – Die Urzelle</title>
-  <link rel="stylesheet" href="style.css">
-</head>
 
-<body>
-
-  <!-- Navigation -->
-  <header>
-    <nav>
-      <ul>
-        <li><a href="#start">Start</a></li>
-        <li><a href="#buch">Das Buch</a></li>
-        <li><a href="#verlag">Edition Bildungsmedien</a></li>
-        <li><a href="#achse">Internationale Achse</a></li>
-        <li><a href="#bestellung">Bestellung</a></li>
-        <li><a href="#kontakt">Kontakt</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <!-- Hero Bereich -->
-  <section id="start" class="hero">
-    <h1>Die Urzelle</h1>
-    <p>Ein wissenschaftliches Projekt zwischen Bochum, Asturien und Tsukuba.</p>
-    <a class="cta" href="#bestellung">Jetzt bestellen</a>
-  </section>
-
-  <!-- Buchabschnitt -->
-  <section id="buch">
-    <h2>Das Buch „Die Urzelle“</h2>
-    <p>Die Urzelle verbindet vibronische Modelle, Photonenlogik und mathematische Spiralstrukturen zu einer neuen Perspektive auf die Entstehung von Materie und Leben.</p>
-    <img src="assets/urzelle-cover.png" alt="Buchcover Die Urzelle">
-  </section>
-<section id="bestellung">
-    <h2>Buchbestellung</h2>
-    <form class="bestellformular" action="mailto:bestellung@bildungsmedien.de" method="post" enctype="text/plain">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="Name" required>
-
-        <label for="email">E-Mail</label>
-        <input type="email" id="email" name="Email" required>
-
-        <label for="adresse">Adresse</label>
-        <textarea id="adresse" name="Adresse" rows="3" required></textarea>
-
-        <label for="anzahl">Anzahl Exemplare</label>
-        <input type="number" id="anzahl" name="Anzahl" min="1" required>
-
-        <label for="nachricht">Nachricht (optional)</label>
-        <textarea id="nachricht" name="Nachricht" rows="3"></textarea>
-
-        <button type="submit">Bestellung absenden</button>
-    </form>
-</section>
-
-  <!-- Verlag -->
-  <section id="verlag">
-    <h2>Edition Bildungsmedien</h2>
-    <p>Der Verlag für wissenschaftliche Werke, Medien und Software aus dem Forschungsprogramm von Emergence Technology.</p>
-  </section>
-
-  <!-- Internationale Achse -->
-  <section id="achse">
-    <h2>Internationale Achse</h2>
-    <p>Das Projekt verbindet drei wissenschaftliche Standorte: Bochum, Asturien und Tsukuba.</p>
-  </section>
-
-  <!-- Bestellung -->
-  <section id="bestellung">
-    <h2>Buchbestellung</h2>
-    <form action="mailto:bestellung@bildungsmedien.de" method="post" enctype="text/plain">
-      <label>Name:</label><input type="text" name="name"><br>
-      <label>E-Mail:</label><input type="email" name="email"><br>
-      <label>Anzahl Exemplare:</label><input type="number" name="anzahl"><br>
-      <input type="submit" value="Bestellen">
-    </form>
-  </section>
-
-  <!-- Kontakt -->
-  <section id="kontakt">
-    <h2>Kontakt</h2>
-    <p>E-Mail: info@bildungsmedien.de</p>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <a href="impressum.html">Impressum</a> |
-    <a href="datenschutz.html">Datenschutz</a>
-  </footer>
-
-</body>
-</html>
-
-    <section>
+    <!-- Buchübersicht -->
+    <section class="buchuebersicht">
         <h2>Aktuelle Buchprojekte</h2>
-        <article>
+
+        <div class="buchkarte">
             <h3>Die Urzelle</h3>
-            <p>
-                Ein Grundlagenwerk zur vibronischen Biochemie und zu frühen molekularen Strukturen.
-                Das Buch bildet den Ausgangspunkt für das vibronische Forschungsprogramm.
-                Weitere Informationen finden Sie auf der Seite
-                <a href="urzelle.html">Die Urzelle</a>.
-            </p>
-        </article>
+            <p>Grundlagenwerk zur vibronischen Biochemie und frühen molekularen Strukturen.</p>
+            <a href="urzelle.html">Mehr erfahren</a>
+        </div>
 
-        <article>
+        <div class="buchkarte">
             <h3>Der Urknall</h3>
-            <p>
-                Ein Werk zur kosmologischen Struktur und vibronischen Dynamik des frühen Universums.
-                Es ergänzt die Urzelle und erweitert das Modell auf kosmische Skalen.
-                Details finden Sie auf der Seite <a href="urknall.html">Der Urknall</a>.
-            </p>
-        </article>
+            <p>Kosmologische Struktur und vibronische Dynamik des frühen Universums.</p>
+            <a href="urknall.html">Mehr erfahren</a>
+        </div>
 
-        <article>
+        <div class="buchkarte">
             <h3>Dynamicum Specimen</h3>
-            <p>
-                Eine wissenschaftliche Kurzpublikation, die zentrale Elemente des Forschungsprogramms
-                in konzentrierter Form darstellt. Weitere Informationen folgen.
-            </p>
-        </article>
+            <p>Kurzpublikation zur Phase vor dem ersten Licht und frühen Energiezuständen.</p>
+            <a href="dynamicum.html">Mehr erfahren</a>
+        </div>
     </section>
 
-    <section>
+    <!-- Forschungsprogramm -->
+    <section class="forschung">
         <h2>Forschungsprogramm Emergence Technology</h2>
-        <p>
-            Die Edition Bildungsmedien ist eng mit dem Forschungsprogramm Emergence Technology verbunden.
-            Dieses Programm umfasst unter anderem:
-        </p>
-        <ul>
-            <li><strong>Energiezellen‑Entwicklung</strong></li>
-            <li><strong>Photonische Messtechnik (Leibnizmeter)</strong></li>
-            <li><strong>Photonenstrahlentherapie</strong></li>
-            <li><strong>Vibronischer Computer</strong> (Konzern‑Version und Monitoring‑Version)</li>
-        </ul>
-        <p>
-            Die Buchprojekte dienen als dokumentarische und konzeptionelle Grundlage für diese
-            langfristige Forschungs‑ und Entwicklungsarbeit.
-        </p>
+        <p>Das langfristige wissenschaftliche Programm umfasst vier technologische Achsen:</p>
+
+        <div class="forschung-grid">
+            <div class="f-item">Energiezellen‑Entwicklung</div>
+            <div class="f-item">Photonische Messtechnik (Leibnizmeter)</div>
+            <div class="f-item">Photonenstrahlentherapie</div>
+            <div class="f-item">Vibronischer Computer</div>
+        </div>
     </section>
 
+    <!-- Verlag & Kontakt -->
     <section>
         <h2>Verlagsprofil und Kontakt</h2>
         <p>
@@ -204,13 +99,12 @@
 
 </main>
 
-<footer> 
-    <footer>
-  <a href="impressum.html">Impressum</a> |
-  <a href="datenschutz.html">Datenschutz</a>
-</footer>
-
+<!-- Footer -->
+<footer>
+    <a href="impressum.html">Impressum</a> |
+    <a href="datenschutz.html">Datenschutz</a>
     <p>© 2026 Edition Bildungsmedien – Bochum</p>
 </footer>
 
 </body>
+</html>
