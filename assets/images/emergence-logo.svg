@@ -1,26 +1,32 @@
-<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+.logo {
+    width: 160px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 0 6px #00aaff);
+}
 
-  <!-- Hintergrund transparent -->
-  <rect width="240" height="240" fill="none"/>
+.main-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    text-align: center;
+}
 
-  <!-- Kreis (Urzelle / vibronische Grundform) -->
-  <circle cx="120" cy="120" r="90" stroke="#00aaff" stroke-width="6" fill="none"/>
+.main-nav ul li {
+    display: inline-block;
+    margin: 0 12px;
+}
 
-  <!-- Winkel / Zirkel-Geometrie -->
-  <line x1="120" y1="120" x2="210" y2="120" stroke="#00aaff" stroke-width="6" stroke-linecap="round"/>
-  <line x1="120" y1="120" x2="160" y2="40" stroke="#00aaff" stroke-width="6" stroke-linecap="round"/>
+.main-nav ul li a {
+    color: #ccc;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
 
-  <!-- Markierung des Winkels -->
-  <path d="M120 120 A40 40 0 0 1 160 120" stroke="#00aaff" stroke-width="4" fill="none"/>
+.main-nav ul li a:hover,
+.main-nav ul li a.active {
+    color: #00aaff;
+}
 
-  <!-- Innerer vibronischer Impuls (Spiralansatz) -->
-  <path d="M120 120 
-           m -20 0 
-           a 20 20 0 1 1 40 0 
-           a 20 20 0 1 1 -40 0"
-        stroke="#00aaff" stroke-width="3" fill="none" opacity="0.6"/>
-
-  <!-- Punkt im Zentrum -->
-  <circle cx="120" cy="120" r="6" fill="#00aaff"/>
-
-</svg>
