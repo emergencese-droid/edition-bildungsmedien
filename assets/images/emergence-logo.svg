@@ -1,0 +1,26 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Hintergrund transparent -->
+  <rect width="240" height="240" fill="none"/>
+
+  <!-- Kreis (Urzelle / vibronische Grundform) -->
+  <circle cx="120" cy="120" r="90" stroke="#00aaff" stroke-width="6" fill="none"/>
+
+  <!-- Winkel / Zirkel-Geometrie -->
+  <line x1="120" y1="120" x2="210" y2="120" stroke="#00aaff" stroke-width="6" stroke-linecap="round"/>
+  <line x1="120" y1="120" x2="160" y2="40" stroke="#00aaff" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Markierung des Winkels -->
+  <path d="M120 120 A40 40 0 0 1 160 120" stroke="#00aaff" stroke-width="4" fill="none"/>
+
+  <!-- Innerer vibronischer Impuls (Spiralansatz) -->
+  <path d="M120 120 
+           m -20 0 
+           a 20 20 0 1 1 40 0 
+           a 20 20 0 1 1 -40 0"
+        stroke="#00aaff" stroke-width="3" fill="none" opacity="0.6"/>
+
+  <!-- Punkt im Zentrum -->
+  <circle cx="120" cy="120" r="6" fill="#00aaff"/>
+
+</svg>
