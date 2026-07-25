@@ -6,6 +6,23 @@
     <title>AuroraView – Behördenlandschaft</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+<script>
+async function loadAuroraView() {
+    const response = await fetch("http://localhost:5000/auroraview");
+    const data = await response.json();
+
+    const container = document.querySelector(".auroraview-placeholder");
+    container.innerHTML = `
+        <h2>Behördenübersicht</h2>
+        <p>Insgesamt: ${data.count} Behörden</p>
+        <ul>
+            ${data.authorities.map(a => `<li>${a.id} – ${a.name}</li>`).join("")}
+        </ul>
+    `;
+}
+
+loadAuroraView();
+</script>
 
 <body>
 
