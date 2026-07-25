@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AuroraView – Behördenlandschaft</title>
     <link rel="stylesheet" href="assets/css/style.css">
+
+    <style>
+        #karte {
+            width: 100%;
+            height: 800px;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+            margin-top: 40px;
+        }
+
+        .punkt {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+        }
+
+        .label {
+            position: absolute;
+            color: white;
+            font-size: 12px;
+            transform: translate(10px, -10px);
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -28,38 +57,68 @@
 <main class="content">
     <h1>AuroraView – Behördenlandschaft</h1>
     <p>
-        AuroraView ist die Makro‑Visualisierung aller 46 Behörden.  
-        Diese Seite dient als Platzhalter und wird später dynamisch aus dem Backend gespeist.
+        AuroraView ist die Makro‑Visualisierung aller 46 Bundesoberbehörden.  
+        Die Karte unten zeigt jede Behörde als Punkt, farbcodiert nach Cluster.
     </p>
 
-    <div class="auroraview-placeholder">
-        <h2>Visualisierung folgt</h2>
-        <p>Die Behördenlandschaft wird hier als interaktive Karte dargestellt.</p>
-        <p>Backend‑Route: <code>/auroraview</code></p>
-    </div>
+    <div id="karte"></div>
 </main>
 
 <footer class="footer">
     <p>© 2026 Emergence Technology – AuroraView System</p>
 </footer>
 
-<!-- ⭐ SCRIPT MUSS HIER HIN — direkt vor </body> -->
 <script>
-async function loadAuroraview() {
+async function loadAuroraView() {
     const response = await fetch("http://localhost:5000/auroraview");
     const data = await response.json();
 
-    const container = document.querySelector(".auroraview-placeholder");
-    container.innerHTML = `
-        <h2>Behördenübersicht</h2>
-        <p>Insgesamt: ${data.count} Behörden</p>
-        <ul>
-            ${data.authorities.map(a => `<li>${a.id} – ${a.name}</li>`).join("")}
-        </ul>
-    `;
+    data.authorities.forEach(b => {
+        zeichneBehoerde(b);
+    });
 }
 
-loadAuroraview();
+function clusterFarbe(cluster) {
+    switch(cluster) {
+        case "EX": return "#ff0000"; // Exekutive – rot
+        case "VA": return "#ff8800"; // Verwaltung – orange
+        case "SI": return "#ffff00"; // Sicherheit – gelb
+        case "LE": return "#00ff00"; // Legislative – grün
+        case "JU": return "#00ffff"; // Justiz – cyan
+        case "ME": return "#0088ff"; // Medien – blau
+        case "DI": return "#aa00ff"; // Digitalisierung – violett
+        case "WI": return "#ffffff"; // Wissenschaft – weiß
+        case "FO": return "#ff00aa"; // Finanzen – pink
+        default: return "#888";
+    }
+}
+
+function zeichneBehoerde(b) {
+    const karte = document.getElementById("karte");
+
+    // Zufallspositionen (später ersetzen wir das durch echte Koordinaten)
+    const x = Math.random() * karte.clientWidth;
+    const y = Math.random() * karte.clientHeight;
+
+    // Punkt
+    const punkt = document.createElement("div");
+    punkt.className = "punkt";
+    punkt.style.left = x + "px";
+    punkt.style.top = y + "px";
+    punkt.style.background = clusterFarbe(b.cluster);
+
+    // Label
+    const label = document.createElement("div");
+    label.className = "label";
+    label.style.left = x + "px";
+    label.style.top = y + "px";
+    label.textContent = b.name;
+
+    karte.appendChild(punkt);
+    karte.appendChild(label);
+}
+
+loadAuroraView();
 </script>
 
 </body>
