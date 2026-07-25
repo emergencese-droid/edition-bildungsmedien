@@ -120,6 +120,42 @@ function zeichneBehoerde(b) {
 
 loadAuroraView();
 </script>
+<script>
+async function loadAuroraViewRepository() {
+    const response = await fetch("http://localhost:5000/repository");
+    const repo = await response.json();
+
+    // Layer-Objekte laden
+    const events = await loadObjects(repo.paths.events, repo.objects.events);
+    const firefronts = await loadObjects(repo.paths.firefronts, repo.objects.firefronts);
+    const actors = await loadObjects(repo.paths.actors, repo.objects.actors);
+    const infrastructure = await loadObjects(repo.paths.infrastructure, repo.objects.infrastructure);
+    const riskSignals = await loadObjects(repo.paths.risk_signals, repo.objects.risk_signals);
+    const relations = await loadObjects(repo.paths.relations, repo.objects.relations);
+
+    // Übergabe an AuroraView Rendering Engine
+    renderAuroraView({
+        events,
+        firefronts,
+        actors,
+        infrastructure,
+        riskSignals,
+        relations,
+        settings: repo.graph.render_settings
+    });
+}
+
+async function loadObjects(path, list) {
+    const results = [];
+    for (const file of list) {
+        const res = await fetch(`http://localhost:5000/data/${path}${file}`);
+        results.push(await res.json());
+    }
+    return results;
+}
+
+loadAuroraViewRepository();
+</script>
 
 </body>
 </html>
