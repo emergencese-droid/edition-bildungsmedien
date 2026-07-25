@@ -6,6 +6,9 @@
     <title>AuroraView – Behördenlandschaft</title>
     <link rel="stylesheet" href="assets/css/style.css">
 
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
     <style>
         #karte {
             width: 100%;
@@ -68,7 +71,14 @@
     <p>© 2026 Emergence Technology – AuroraView System</p>
 </footer>
 
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
+/* -----------------------------------------------------------
+   1) Bisherige Behörden-Visualisierung (dein Originalcode)
+----------------------------------------------------------- */
+
 async function loadAuroraView() {
     const response = await fetch("http://localhost:5000/auroraview");
     const data = await response.json();
@@ -80,15 +90,15 @@ async function loadAuroraView() {
 
 function clusterFarbe(cluster) {
     switch(cluster) {
-        case "EX": return "#ff0000"; // Exekutive – rot
-        case "VA": return "#ff8800"; // Verwaltung – orange
-        case "SI": return "#ffff00"; // Sicherheit – gelb
-        case "LE": return "#00ff00"; // Legislative – grün
-        case "JU": return "#00ffff"; // Justiz – cyan
-        case "ME": return "#0088ff"; // Medien – blau
-        case "DI": return "#aa00ff"; // Digitalisierung – violett
-        case "WI": return "#ffffff"; // Wissenschaft – weiß
-        case "FO": return "#ff00aa"; // Finanzen – pink
+        case "EX": return "#ff0000";
+        case "VA": return "#ff8800";
+        case "SI": return "#ffff00";
+        case "LE": return "#00ff00";
+        case "JU": return "#00ffff";
+        case "ME": return "#0088ff";
+        case "DI": return "#aa00ff";
+        case "WI": return "#ffffff";
+        case "FO": return "#ff00aa";
         default: return "#888";
     }
 }
@@ -96,18 +106,15 @@ function clusterFarbe(cluster) {
 function zeichneBehoerde(b) {
     const karte = document.getElementById("karte");
 
-    // Zufallspositionen (später ersetzen wir das durch echte Koordinaten)
     const x = Math.random() * karte.clientWidth;
     const y = Math.random() * karte.clientHeight;
 
-    // Punkt
     const punkt = document.createElement("div");
     punkt.className = "punkt";
     punkt.style.left = x + "px";
     punkt.style.top = y + "px";
     punkt.style.background = clusterFarbe(b.cluster);
 
-    // Label
     const label = document.createElement("div");
     label.className = "label";
     label.style.left = x + "px";
@@ -119,13 +126,15 @@ function zeichneBehoerde(b) {
 }
 
 loadAuroraView();
-</script>
-<script>
+
+/* -----------------------------------------------------------
+   2) Repository Loader
+----------------------------------------------------------- */
+
 async function loadAuroraViewRepository() {
     const response = await fetch("http://localhost:5000/repository");
     const repo = await response.json();
 
-    // Layer-Objekte laden
     const events = await loadObjects(repo.paths.events, repo.objects.events);
     const firefronts = await loadObjects(repo.paths.firefronts, repo.objects.firefronts);
     const actors = await loadObjects(repo.paths.actors, repo.objects.actors);
@@ -133,7 +142,6 @@ async function loadAuroraViewRepository() {
     const riskSignals = await loadObjects(repo.paths.risk_signals, repo.objects.risk_signals);
     const relations = await loadObjects(repo.paths.relations, repo.objects.relations);
 
-    // Übergabe an AuroraView Rendering Engine
     renderAuroraView({
         events,
         firefronts,
@@ -152,6 +160,59 @@ async function loadObjects(path, list) {
         results.push(await res.json());
     }
     return results;
+}
+
+/* -----------------------------------------------------------
+   3) AuroraView Karten-Layer (Leaflet)
+----------------------------------------------------------- */
+
+function renderAuroraView(data) {
+    const map = L.map('karte').setView([40.45, -4.10], data.settings.default_zoom);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+    }).addTo(map);
+
+    // Events
+    data.events.forEach(evt => {
+        if (evt.coordinates) {
+            L.marker([evt.coordinates.lat, evt.coordinates.lon])
+                .addTo(map)
+                .bindPopup(`<b>Event:</b> ${evt.name}`);
+        }
+    });
+
+    // FireFronts
+    data.firefronts.forEach(ff => {
+        if (ff.polygon) {
+            L.polygon(ff.polygon, { color: 'red', weight: 3 })
+                .addTo(map)
+                .bindPopup(`<b>FireFront:</b> ${ff.name}`);
+        }
+    });
+
+    // Infrastructure
+    data.infrastructure.forEach(infra => {
+        L.circleMarker([infra.coordinates.lat, infra.coordinates.lon], {
+            radius: 6,
+            color: 'orange'
+        })
+        .addTo(map)
+        .bindPopup(`<b>Infrastructure:</b> ${infra.name}`);
+    });
+
+    // RiskSignals
+    data.riskSignals.forEach(rs => {
+        if (rs.map_position) {
+            L.circleMarker([rs.map_position.lat, rs.map_position.lon], {
+                radius: 10,
+                color: 'red',
+                fillOpacity: 0.5
+            })
+            .addTo(map)
+            .bindPopup(`<b>RiskSignal:</b> ${rs.description}`);
+        }
+    });
 }
 
 loadAuroraViewRepository();
