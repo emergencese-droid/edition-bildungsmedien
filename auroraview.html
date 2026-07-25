@@ -2,391 +2,133 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuroraView – Behördenlandschaft</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>AuroraView – Wildfire Monitoring</title>
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <style>
-        #karte {
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #eee;
+        }
+        #map {
             width: 100%;
-            height: 800px;
-            background: #0a0a0a;
-            border: 1px solid #333;
-            position: relative;
-            overflow: hidden;
-            margin-top: 40px;
+            height: 80vh;
         }
-
-        .punkt {
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
+        #timeline-controls {
+            padding: 20px;
+            text-align: center;
+        }
+        #timeline-controls button {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 18px;
             cursor: pointer;
-            transform: translate(-50%, -50%);
-        }
-
-        .label {
-            position: absolute;
-            color: white;
-            font-size: 12px;
-            transform: translate(10px, -10px);
-            pointer-events: none;
         }
     </style>
 </head>
 
 <body>
 
-<header class="topbar">
-    <div class="logo-container">
-        <img src="assets/images/emergence-logo.svg" class="logo">
-    </div>
+<h2 style="text-align:center;">AuroraView – Wildfire Monitoring</h2>
 
-    <nav class="main-nav">
-        <ul>
-            <li><a href="index.html">Startseite</a></li>
-            <li><a href="Verlag.html">Edition Bildungsmedien</a></li>
-            <li><a href="consulting.html">Emergence Consulting</a></li>
-            <li><a href="technology.html">Emergence Technology</a></li>
-            <li><a href="auroraview.html" class="active">AuroraView</a></li>
-        </ul>
-    </nav>
-</header>
+<div id="map"></div>
 
-<main class="content">
-    <h1>AuroraView – Behördenlandschaft</h1>
-    <p>
-        AuroraView ist die Makro‑Visualisierung aller 46 Bundesoberbehörden.  
-        Die Karte unten zeigt jede Behörde als Punkt, farbcodiert nach Cluster.
-    </p>
-
-    <div id="karte"></div>
-
-<div id="timeline-controls" style="margin-top:20px;">
+<div id="timeline-controls">
     <button id="playTimeline">▶ Play</button>
     <button id="pauseTimeline">⏸ Pause</button>
 </div>
 
-</main>
-
-<footer class="footer">
-    <p>© 2026 Emergence Technology – AuroraView System</p>
-</footer>
-
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-<!-- Leaflet Heatmap Plugin -->
-<script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
-
 <script>
-/* -----------------------------------------------------------
-   1) Behörden-Visualisierung
------------------------------------------------------------ */
-
-async function loadAuroraView() {
-    const response = await fetch("http://localhost:5000/auroraview");
-    const data = await response.json();
-
-    data.authorities.forEach(b => {
-        zeichneBehoerde(b);
-    });
-}
-
-function clusterFarbe(cluster) {
-    switch(cluster) {
-        case "EX": return "#ff0000";
-        case "VA": return "#ff8800";
-        case "SI": return "#ffff00";
-        case "LE": return "#00ff00";
-        case "JU": return "#00ffff";
-        case "ME": return "#0088ff";
-        case "DI": return "#aa00ff";
-        case "WI": return "#ffffff";
-        case "FO": return "#ff00aa";
-        default: return "#888";
-    }
-}
-
-function zeichneBehoerde(b) {
-    const karte = document.getElementById("karte");
-
-    const x = Math.random() * karte.clientWidth;
-    const y = Math.random() * karte.clientHeight;
-
-    const punkt = document.createElement("div");
-    punkt.className = "punkt";
-    punkt.style.left = x + "px";
-    punkt.style.top = y + "px";
-    punkt.style.background = clusterFarbe(b.cluster);
-
-    const label = document.createElement("div");
-    label.className = "label";
-    label.style.left = x + "px";
-    label.style.top = y + "px";
-    label.textContent = b.name;
-
-    karte.appendChild(punkt);
-    karte.appendChild(label);
-}
-
-loadAuroraView();
 
 /* -----------------------------------------------------------
-   2) Repository Loader
+   AURORAVIEW – MAP INITIALIZATION
 ----------------------------------------------------------- */
 
-async function loadAuroraViewRepository() {
-    const response = await fetch("http://localhost:5000/repository");
-    const repo = await response.json();
+function renderAuroraView(repo) {
 
-    const events = await loadObjects(repo.paths.events, repo.objects.events);
-    const firefronts = await loadObjects(repo.paths.firefronts, repo.objects.firefronts);
-    const actors = await loadObjects(repo.paths.actors, repo.objects.actors);
-    const infrastructure = await loadObjects(repo.paths.infrastructure, repo.objects.infrastructure);
-    const riskSignals = await loadObjects(repo.paths.risk_signals, repo.objects.risk_signals);
-    const relations = await loadObjects(repo.paths.relations, repo.objects.relations);
+    // Karte erstellen
+    const map = L.map("map").setView([40.4168, -3.7038], 7);
+    window._auroraMap = map;
 
-    renderAuroraView({
-        events,
-        firefronts,
-        actors,
-        infrastructure,
-        riskSignals,
-        relations,
-        settings: repo.graph.render_settings
-    });
-}
-
-async function loadObjects(path, list) {
-    const results = [];
-    for (const file of list) {
-        const res = await fetch(`http://localhost:5000/data/${path}${file}`);
-        results.push(await res.json());
-    }
-    return results;
-}
-
-/* -----------------------------------------------------------
-   3) Leaflet Karte
------------------------------------------------------------ */
-
-function renderAuroraView(data) {
-    const map = L.map('karte').setView([40.45, -4.10], data.settings.default_zoom);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Basiskarte
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19
     }).addTo(map);
 
-    // Events
-    data.events.forEach(evt => {
-        if (evt.coordinates) {
-            L.marker([evt.coordinates.lat, evt.coordinates.lon])
-                .addTo(map)
-                .bindPopup(`<b>Event:</b> ${evt.name}`);
-        }
-    });
-
-    // FireFronts
-    data.firefronts.forEach(ff => {
-        if (ff.polygon) {
-            L.polygon(ff.polygon, { color: 'red', weight: 3 })
-                .addTo(map)
-                .bindPopup(`<b>FireFront:</b> ${ff.name}`);
-        }
-    });
-
-    // Infrastructure
-    data.infrastructure.forEach(infra => {
-        L.circleMarker([infra.coordinates.lat, infra.coordinates.lon], {
-            radius: 6,
-            color: 'orange'
-        })
-        .addTo(map)
-        .bindPopup(`<b>Infrastructure:</b> ${infra.name}`);
-    });
-
-    // RiskSignals
-    data.riskSignals.forEach(rs => {
-        if (rs.map_position) {
-            L.circleMarker([rs.map_position.lat, rs.map_position.lon], {
-                radius: 10,
-                color: 'red',
-                fillOpacity: 0.5
-            })
-            .addTo(map)
-            .bindPopup(`<b>RiskSignal:</b> ${rs.description}`);
-        }
-    });
-
     /* -----------------------------------------------------------
-       HEATMAP – FireFront Intensität
+       EVENTS RENDERING
     ----------------------------------------------------------- */
-
-    const heatPoints = [];
-
-    data.firefronts.forEach(ff => {
-        if (ff.polygon && ff.dynamics) {
-
-            let intensity = 0;
-            switch (ff.dynamics.intensity) {
-                case "high": intensity = 0.4; break;
-                case "very_high": intensity = 0.55; break;
-                case "extreme": intensity = 0.7; break;
-                case "catastrophic": intensity = 0.8; break;
-                case "catastrophic_plus": intensity = 0.85; break;
-                case "hyper_critical": intensity = 0.9; break;
-                case "hyper_critical_max": intensity = 0.95; break;
-                case "hyper_critical_ultra_max": intensity = 1.0; break;
-                case "hyper_critical_absolute_max": intensity = 1.1; break;
-                default: intensity = 0.3;
-            }
-
-            ff.polygon.forEach(coord => {
-                heatPoints.push([coord[0], coord[1], intensity]);
-            });
-        }
-    });
-
-    const heatLayer = L.heatLayer(heatPoints, {
-        radius: 45,
-        blur: 30,
-        maxZoom: 17,
-        max: 1.1,
-        gradient: {
-            0.2: "yellow",
-            0.4: "orange",
-            0.6: "red",
-            0.8: "darkred",
-            1.0: "purple"
-        }
-    });
-
-    heatLayer.addTo(map);
-/* -----------------------------------------------------------
-   RISK SIGNAL AUTO-GENERATOR
------------------------------------------------------------ */
-
-const autoRiskSignals = [];
-
-data.firefronts.forEach(ff => {
-    if (!ff.polygon || !ff.dynamics) return;
-
-    // Risiko-Level bestimmen
-    let severity = "low";
-    let probability = 0.3;
-
-    const intensity = ff.dynamics.intensity;
-
-    if (intensity.includes("very") || intensity.includes("extreme")) {
-        severity = "medium";
-        probability = 0.55;
-    }
-    if (intensity.includes("catastrophic")) {
-        severity = "high";
-        probability = 0.75;
-    }
-    if (intensity.includes("hyper_critical")) {
-        severity = "critical";
-        probability = 0.9;
-    }
-
-    // Mittelpunkt des Polygons berechnen
-    let latSum = 0;
-    let lonSum = 0;
-    ff.polygon.forEach(coord => {
-        latSum += coord[0];
-        lonSum += coord[1];
-    });
-    const centerLat = latSum / ff.polygon.length;
-    const centerLon = lonSum / ff.polygon.length;
-
-    // RiskSignal erzeugen
-    const rs = {
-        id: "AUTO-RS-" + ff.firefront_id,
-        severity,
-        probability,
-        description: `Automatisches Risiko basierend auf FireFront ${ff.firefront_id}`,
-        lat: centerLat,
-        lon: centerLon
-    };
-
-    autoRiskSignals.push(rs);
-});
-
-// RiskSignals auf Karte zeichnen
-autoRiskSignals.forEach(rs => {
-    L.circleMarker([rs.lat, rs.lon], {
-        radius: rs.severity === "critical" ? 14 :
-                rs.severity === "high" ? 10 :
-                rs.severity === "medium" ? 8 : 6,
-        color: rs.severity === "critical" ? "purple" :
-               rs.severity === "high" ? "red" :
-               rs.severity === "medium" ? "orange" : "yellow",
-        fillOpacity: 0.6
-    })
-    .addTo(map)
-    .bindPopup(`
-        <b>Auto-RiskSignal:</b> ${rs.id}<br>
-        <b>Severity:</b> ${rs.severity}<br>
-        <b>Probability:</b> ${(rs.probability * 100).toFixed(0)}%<br>
-        <b>Description:</b> ${rs.description}
-    `);
-});
-
-    /* -----------------------------------------------------------
-       TIMELINE – FireFront Playback
-    ----------------------------------------------------------- */
-
-    // Globale Referenzen für Timeline
-    window._auroraData = data;
-    window._auroraMap = map;
-
-    let timelineIndex = 0;
-    let timelineInterval = null;
-
-    function playTimeline() {
-        if (timelineInterval) return;
-
-        timelineInterval = setInterval(() => {
-            if (timelineIndex >= data.firefronts.length) {
-                clearInterval(timelineInterval);
-                timelineInterval = null;
-                return;
-            }
-
-            const ff = data.firefronts[timelineIndex];
-
-            if (ff.polygon) {
-                L.polygon(ff.polygon, {
-                    color: 'yellow',
-                    weight: 4,
-                    opacity: 0.8
+    if (repo.events && repo.events.length > 0) {
+        repo.events.forEach(ev => {
+            if (ev.location) {
+                L.circleMarker(ev.location, {
+                    radius: 8,
+                    color: "red",
+                    fillColor: "orange",
+                    fillOpacity: 0.8
                 })
                 .addTo(map)
-                .bindPopup(`<b>FireFront Stufe:</b> ${ff.firefront_id}`);
+                .bindPopup(`<b>Event:</b> ${ev.event_id}<br>${ev.description}`);
             }
-
-            timelineIndex++;
-        }, 1200);
+        });
     }
 
-    function pauseTimeline() {
-        clearInterval(timelineInterval);
-        timelineInterval = null;
+    /* -----------------------------------------------------------
+       INFRASTRUCTURE RENDERING
+    ----------------------------------------------------------- */
+    if (repo.infrastructure && repo.infrastructure.length > 0) {
+        repo.infrastructure.forEach(obj => {
+            if (obj.location) {
+                L.marker(obj.location)
+                .addTo(map)
+                .bindPopup(`<b>${obj.type}</b><br>${obj.name}`);
+            }
+        });
     }
 
-    // Buttons verbinden
+    /* -----------------------------------------------------------
+       FIREFRONT STATIC RENDERING (first frame)
+    ----------------------------------------------------------- */
+    if (repo.firefronts && repo.firefronts.length > 0) {
+        const ff = repo.firefronts[0];
+        if (ff.polygon) {
+            L.polygon(ff.polygon, {
+                color: "yellow",
+                weight: 3,
+                opacity: 0.6
+            })
+            .addTo(map)
+            .bindPopup(`<b>FireFront:</b> ${ff.firefront_id}`);
+        }
+    }
+
+    /* -----------------------------------------------------------
+       TIMELINE BUTTONS CONNECT
+    ----------------------------------------------------------- */
     document.getElementById("playTimeline").onclick = playTimeline;
     document.getElementById("pauseTimeline").onclick = pauseTimeline;
+}
 
-}  // <--- Ende renderAuroraView()
 
-loadAuroraViewRepository();
+/* -----------------------------------------------------------
+   LOAD REPOSITORY
+----------------------------------------------------------- */
+
+function loadAuroraViewRepository() {
+    fetch("/repository")
+        .then(r => r.json())
+        .then(repo => {
+            renderAuroraView(repo);
+            initTimeline(repo);   // Timeline aktivieren
+        });
+}
+
+
 /* -----------------------------------------------------------
    TIMELINE ENGINE – AuroraView Playback
 ----------------------------------------------------------- */
@@ -452,8 +194,15 @@ function pauseTimeline() {
 // Buttons verbinden
 document.getElementById("playTimeline").onclick = () => playTimeline();
 document.getElementById("pauseTimeline").onclick = () => pauseTimeline();
+
+
+/* -----------------------------------------------------------
+   START
+----------------------------------------------------------- */
+
+loadAuroraViewRepository();
+
 </script>
 
 </body>
 </html>
-
