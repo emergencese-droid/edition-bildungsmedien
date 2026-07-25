@@ -216,6 +216,51 @@ function renderAuroraView(data) {
             .bindPopup(`<b>RiskSignal:</b> ${rs.description}`);
         }
     });
+
+    /* -----------------------------------------------------------
+       HEATMAP – FireFront Intensität
+    ----------------------------------------------------------- */
+
+    const heatPoints = [];
+
+    data.firefronts.forEach(ff => {
+        if (ff.polygon && ff.dynamics) {
+
+            let intensity = 0;
+            switch (ff.dynamics.intensity) {
+                case "high": intensity = 0.4; break;
+                case "very_high": intensity = 0.55; break;
+                case "extreme": intensity = 0.7; break;
+                case "catastrophic": intensity = 0.8; break;
+                case "catastrophic_plus": intensity = 0.85; break;
+                case "hyper_critical": intensity = 0.9; break;
+                case "hyper_critical_max": intensity = 0.95; break;
+                case "hyper_critical_ultra_max": intensity = 1.0; break;
+                case "hyper_critical_absolute_max": intensity = 1.1; break;
+                default: intensity = 0.3;
+            }
+
+            ff.polygon.forEach(coord => {
+                heatPoints.push([coord[0], coord[1], intensity]);
+            });
+        }
+    });
+
+    const heatLayer = L.heatLayer(heatPoints, {
+        radius: 45,
+        blur: 30,
+        maxZoom: 17,
+        max: 1.1,
+        gradient: {
+            0.2: "yellow",
+            0.4: "orange",
+            0.6: "red",
+            0.8: "darkred",
+            1.0: "purple"
+        }
+    });
+
+    heatLayer.addTo(map);
 }
 
 loadAuroraViewRepository();
