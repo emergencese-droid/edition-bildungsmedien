@@ -261,10 +261,58 @@ function renderAuroraView(data) {
     });
 
     heatLayer.addTo(map);
-}
+
+    /* -----------------------------------------------------------
+       TIMELINE – FireFront Playback
+    ----------------------------------------------------------- */
+
+    // Globale Referenzen für Timeline
+    window._auroraData = data;
+    window._auroraMap = map;
+
+    let timelineIndex = 0;
+    let timelineInterval = null;
+
+    function playTimeline() {
+        if (timelineInterval) return;
+
+        timelineInterval = setInterval(() => {
+            if (timelineIndex >= data.firefronts.length) {
+                clearInterval(timelineInterval);
+                timelineInterval = null;
+                return;
+            }
+
+            const ff = data.firefronts[timelineIndex];
+
+            if (ff.polygon) {
+                L.polygon(ff.polygon, {
+                    color: 'yellow',
+                    weight: 4,
+                    opacity: 0.8
+                })
+                .addTo(map)
+                .bindPopup(`<b>FireFront Stufe:</b> ${ff.firefront_id}`);
+            }
+
+            timelineIndex++;
+        }, 1200);
+    }
+
+    function pauseTimeline() {
+        clearInterval(timelineInterval);
+        timelineInterval = null;
+    }
+
+    // Buttons verbinden
+    document.getElementById("playTimeline").onclick = playTimeline;
+    document.getElementById("pauseTimeline").onclick = pauseTimeline;
+
+}  // <--- Ende renderAuroraView()
 
 loadAuroraViewRepository();
 </script>
 
 </body>
 </html>
+
