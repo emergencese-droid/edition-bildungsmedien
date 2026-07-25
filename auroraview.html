@@ -387,6 +387,71 @@ autoRiskSignals.forEach(rs => {
 }  // <--- Ende renderAuroraView()
 
 loadAuroraViewRepository();
+/* -----------------------------------------------------------
+   TIMELINE ENGINE – AuroraView Playback
+----------------------------------------------------------- */
+
+// Globale Variablen
+let timelineIndex = 0;
+let timelineRunning = false;
+let timelineInterval = null;
+
+// FireFront-Daten zwischenspeichern
+let firefrontData = [];
+
+// Wird nach dem Laden des Repositories aufgerufen
+function initTimeline(data) {
+    firefrontData = data.firefronts || [];
+    console.log("Timeline initialisiert mit", firefrontData.length, "FireFront-Stufen");
+}
+
+
+// Timeline starten
+function playTimeline() {
+    if (timelineRunning) return;
+
+    console.log("Timeline gestartet");
+    timelineRunning = true;
+
+    timelineInterval = setInterval(() => {
+        if (!timelineRunning) return;
+
+        if (timelineIndex >= firefrontData.length) {
+            console.log("Timeline beendet");
+            pauseTimeline();
+            return;
+        }
+
+        const ff = firefrontData[timelineIndex];
+
+        // FireFront zeichnen
+        if (ff.polygon) {
+            L.polygon(ff.polygon, {
+                color: "yellow",
+                weight: 4,
+                opacity: 0.8
+            })
+            .addTo(window._auroraMap)
+            .bindPopup(`<b>FireFront Stufe:</b> ${ff.firefront_id}`);
+        }
+
+        timelineIndex++;
+    }, 1200); // 1.2 Sekunden pro Frame
+}
+
+
+// Timeline pausieren
+function pauseTimeline() {
+    console.log("Timeline pausiert");
+    timelineRunning = false;
+    clearInterval(timelineInterval);
+    timelineInterval = null;
+}
+
+
+// Buttons verbinden
+document.getElementById("playTimeline").onclick = () => playTimeline();
+document.getElementById("pauseTimeline").onclick = () => pauseTimeline();
 </script>
 
 </body>
