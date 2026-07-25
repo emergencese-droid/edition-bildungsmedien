@@ -267,6 +267,76 @@ function renderAuroraView(data) {
     });
 
     heatLayer.addTo(map);
+/* -----------------------------------------------------------
+   RISK SIGNAL AUTO-GENERATOR
+----------------------------------------------------------- */
+
+const autoRiskSignals = [];
+
+data.firefronts.forEach(ff => {
+    if (!ff.polygon || !ff.dynamics) return;
+
+    // Risiko-Level bestimmen
+    let severity = "low";
+    let probability = 0.3;
+
+    const intensity = ff.dynamics.intensity;
+
+    if (intensity.includes("very") || intensity.includes("extreme")) {
+        severity = "medium";
+        probability = 0.55;
+    }
+    if (intensity.includes("catastrophic")) {
+        severity = "high";
+        probability = 0.75;
+    }
+    if (intensity.includes("hyper_critical")) {
+        severity = "critical";
+        probability = 0.9;
+    }
+
+    // Mittelpunkt des Polygons berechnen
+    let latSum = 0;
+    let lonSum = 0;
+    ff.polygon.forEach(coord => {
+        latSum += coord[0];
+        lonSum += coord[1];
+    });
+    const centerLat = latSum / ff.polygon.length;
+    const centerLon = lonSum / ff.polygon.length;
+
+    // RiskSignal erzeugen
+    const rs = {
+        id: "AUTO-RS-" + ff.firefront_id,
+        severity,
+        probability,
+        description: `Automatisches Risiko basierend auf FireFront ${ff.firefront_id}`,
+        lat: centerLat,
+        lon: centerLon
+    };
+
+    autoRiskSignals.push(rs);
+});
+
+// RiskSignals auf Karte zeichnen
+autoRiskSignals.forEach(rs => {
+    L.circleMarker([rs.lat, rs.lon], {
+        radius: rs.severity === "critical" ? 14 :
+                rs.severity === "high" ? 10 :
+                rs.severity === "medium" ? 8 : 6,
+        color: rs.severity === "critical" ? "purple" :
+               rs.severity === "high" ? "red" :
+               rs.severity === "medium" ? "orange" : "yellow",
+        fillOpacity: 0.6
+    })
+    .addTo(map)
+    .bindPopup(`
+        <b>Auto-RiskSignal:</b> ${rs.id}<br>
+        <b>Severity:</b> ${rs.severity}<br>
+        <b>Probability:</b> ${(rs.probability * 100).toFixed(0)}%<br>
+        <b>Description:</b> ${rs.description}
+    `);
+});
 
     /* -----------------------------------------------------------
        TIMELINE – FireFront Playback
