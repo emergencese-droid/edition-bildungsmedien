@@ -1,29 +1,58 @@
-<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+<svg width="480" height="260" viewBox="0 0 480 260" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Glow-Effekt für Kern und Orbits -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="0 0 0 0 0
+                0 0 0 0 1
+                0 0 0 0 1
+                0 0 0 0.8 0"/>
+    </filter>
 
-  <!-- Hintergrund transparent -->
-  <rect width="240" height="240" fill="none"/>
+    <!-- Farbverlauf für EMERGENCE -->
+    <linearGradient id="gradEmergence" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4ffcff"/>
+      <stop offset="100%" stop-color="#1b5cff"/>
+    </linearGradient>
+  </defs>
 
-  <!-- Kreis (Urzelle / vibronische Grundform) -->
-  <circle cx="120" cy="120" r="90" stroke="#00aaff" stroke-width="6" fill="none"/>
+  <!-- Hintergrund (optional, für Web) -->
+  <rect x="0" y="0" width="480" height="260" fill="#050814"/>
 
-  <!-- Winkel / Zirkel-Geometrie -->
-  <line x1="120" y1="120" x2="210" y2="120" stroke="#00aaff" stroke-width="6" stroke-linecap="round"/>
-  <line x1="120" y1="120" x2="160" y2="40" stroke="#00aaff" stroke-width="6" stroke-linecap="round"/>
+  <!-- Vibronischer Kern -->
+  <circle cx="240" cy="90" r="26" fill="#ffffff" filter="url(#glow)"/>
+  <circle cx="240" cy="90" r="18" fill="#4ffcff"/>
 
-  <!-- Markierung des Winkels -->
-  <path d="M120 120 A40 40 0 0 1 160 120" stroke="#00aaff" stroke-width="4" fill="none"/>
+  <!-- Orbits -->
+  <ellipse cx="240" cy="90" rx="60" ry="24"
+           fill="none" stroke="#4ffcff" stroke-width="2" filter="url(#glow)"/>
+  <ellipse cx="240" cy="90" rx="40" ry="70"
+           fill="none" stroke="#4ffcff" stroke-width="1.8" transform="rotate(30 240 90)" filter="url(#glow)"/>
+  <ellipse cx="240" cy="90" rx="40" ry="70"
+           fill="none" stroke="#4ffcff" stroke-width="1.8" transform="rotate(-30 240 90)" filter="url(#glow)"/>
 
-  <!-- Innerer vibronischer Impuls (Spiralansatz) -->
-  <path d="M120 120 
-           m -20 0 
-           a 20 20 0 1 1 40 0 
-           a 20 20 0 1 1 -40 0"
-        stroke="#00aaff" stroke-width="3" fill="none" opacity="0.6"/>
+  <!-- EMERGENCE -->
+  <text x="240" y="175"
+        text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="32"
+        font-weight="700"
+        fill="url(#gradEmergence)">
+    EMERGENCE
+  </text>
 
-  <!-- Punkt im Zentrum -->
-  <circle cx="120" cy="120" r="6" fill="#00aaff"/>
+  <!-- Trennlinie -->
+  <line x1="150" y1="190" x2="330" y2="190"
+        stroke="#4ffcff" stroke-width="1.5" opacity="0.8"/>
 
+  <!-- TECHNOLOGY -->
+  <text x="240" y="210"
+        text-anchor="middle"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="16"
+        letter-spacing="3"
+        fill="#e5f4ff">
+    TECHNOLOGY
+  </text>
 </svg>
-
-
-
