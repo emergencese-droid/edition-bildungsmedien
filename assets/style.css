@@ -226,6 +226,90 @@ footer a:hover {
     padding: 2rem 1.25rem;
   }
 }
+/* --- Emergenz-Fade-In für den gesamten Leitbild-Block --- */
+#leitbild-emergence-technology {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: emergenzFade 1.4s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes emergenzFade {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Vibronische Pulsation für Überschriften --- */
+#leitbild-emergence-technology h2,
+#leitbild-emergence-technology h3 {
+    position: relative;
+    animation: vibronPulse 4s ease-in-out infinite;
+}
+
+@keyframes vibronPulse {
+    0% { text-shadow: 0 0 0px rgba(0,255,255,0.0); }
+    50% { text-shadow: 0 0 12px rgba(0,255,255,0.25); }
+    100% { text-shadow: 0 0 0px rgba(0,255,255,0.0); }
+}
+
+/* --- Phasenverschiebung beim Scrollen für Absätze --- */
+#leitbild-emergence-technology p {
+    opacity: 0;
+    transform: translateX(-15px);
+    animation: phaseShift 1.2s ease-out forwards;
+}
+
+#leitbild-emergence-technology p:nth-child(2) { animation-delay: 0.4s; }
+#leitbild-emergence-technology p:nth-child(3) { animation-delay: 0.6s; }
+#leitbild-emergence-technology p:nth-child(4) { animation-delay: 0.8s; }
+#leitbild-emergence-technology p:nth-child(5) { animation-delay: 1.0s; }
+
+@keyframes phaseShift {
+    from {
+        opacity: 0;
+        transform: translateX(-25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* --- Vibronische Linien unter Überschriften --- */
+#leitbild-emergence-technology h3::after {
+    content: "";
+    display: block;
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg, #00ffff, #0066ff);
+    animation: underlineEmergenz 1.8s ease-out forwards;
+}
+
+@keyframes underlineEmergenz {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+/* --- Optionaler vibronischer Glow-Rahmen --- */
+.vibron-frame {
+    border: 1px solid rgba(0,255,255,0.25);
+    box-shadow: 0 0 20px rgba(0,255,255,0.15);
+    padding: 20px;
+    border-radius: 12px;
+    animation: frameGlow 6s ease-in-out infinite;
+}
+
+@keyframes frameGlow {
+    0% { box-shadow: 0 0 10px rgba(0,255,255,0.15); }
+    50% { box-shadow: 0 0 25px rgba(0,255,255,0.35); }
+    100% { box-shadow: 0 0 10px rgba(0,255,255,0.15); }
+}
 
     font-size: 13px;
 }
