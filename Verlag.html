@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Edition Bildungsmedien – Verlag</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -65,55 +66,6 @@
             margin: 0.4rem 0 0.4rem 1.2rem;
         }
 
-        .bestellformular label {
-            display: block;
-            margin-top: 15px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .bestellformular input,
-        .bestellformular textarea,
-        .bestellformular select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-            background: #fafafa;
-        }
-
-        .bestellformular input:focus,
-        .bestellformular textarea:focus,
-        .bestellformular select:focus {
-            border-color: #111;
-            outline: none;
-            background: #fff;
-        }
-
-        .bestellformular button {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #111;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .bestellformular button:hover {
-            background: #333;
-        }
-
-        footer {
-            text-align: center;
-            padding: 15px 10px;
-            font-size: 0.85rem;
-            color: #666;
-        }
-
         /* Shop Startseite */
         #shop h2 {
             font-size: 1.6rem;
@@ -170,6 +122,71 @@
             background-color: #059669;
         }
 
+        /* Bestellformular */
+        .bestellformular label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .bestellformular input,
+        .bestellformular textarea,
+        .bestellformular select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background: #fafafa;
+        }
+
+        .bestellformular input:focus,
+        .bestellformular textarea:focus,
+        .bestellformular select:focus {
+            border-color: #111;
+            outline: none;
+            background: #fff;
+        }
+
+        .bestellformular button {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #111;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .bestellformular button:hover {
+            background: #333;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px 10px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Zahlungsseite */
+        #zahlung h2 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        #zahlung h3 {
+            margin-top: 1.2rem;
+            font-size: 1.15rem;
+        }
+
+        #zahlung p {
+            margin-bottom: 0.8rem;
+        }
+
     </style>
 </head>
 
@@ -189,7 +206,6 @@
 
         <div class="grid">
 
-            <!-- Produktkarte 1 -->
             <div class="card">
                 <h3>Die vibronische Erde</h3>
                 <p>Ein wissenschaftliches Werk über die vibronische Signatur des Sauerstoff‑16‑Kerns und die Entstehung der Urzelle.</p>
@@ -197,7 +213,6 @@
                 <a class="button" href="#bestellung">Jetzt bestellen</a>
             </div>
 
-            <!-- Produktkarte 2 -->
             <div class="card">
                 <h3>Dynamicum Specimen</h3>
                 <p>Ein vibronisches Whitepaper über die dynamische Ordnung der Materie und die emergente Struktur kosmischer Systeme.</p>
@@ -205,7 +220,6 @@
                 <a class="button" href="#bestellung-dynamicum">Bestellen</a>
             </div>
 
-            <!-- Produktkarte 3 -->
             <div class="card">
                 <h3>Leibnizmeter – Whitepaper</h3>
                 <p>Das offizielle Whitepaper zur vibronischen Messtechnik und den photonischen Grundlagen der ATE‑Engine.</p>
@@ -262,6 +276,41 @@
         </ul>
     </section>
 
+    <!-- Zahlungsseite -->
+    <section id="zahlung">
+        <h2>Zahlungsinformationen</h2>
+        <p>
+            Nach Absenden Ihrer Bestellung erhalten Sie eine Bestätigung per E‑Mail.
+            Anschließend können Sie die Zahlung über eine der folgenden Methoden durchführen.
+        </p>
+
+        <h3>Banküberweisung</h3>
+        <p>
+            <strong>Kontoinhaber:</strong> Sebastian Schreiner<br>
+            <strong>IBAN:</strong> Wird nach Kontoaktivierung aktualisiert<br>
+            <strong>BIC:</strong> Wird nach Kontoaktivierung aktualisiert<br>
+            <strong>Bank:</strong> Übergangskonto (wird ersetzt durch Revolut Business)
+        </p>
+
+        <h3>PayPal</h3>
+        <p>
+            Sie können bequem über PayPal bezahlen:<br>
+            <strong>PayPal.me Link:</strong> Wird nach Aktivierung eingefügt
+        </p>
+
+        <h3>Kauf auf Rechnung</h3>
+        <p>
+            Sie erhalten nach Bestelleingang eine Rechnung per E‑Mail.
+            Diese können Sie innerhalb von 14 Tagen begleichen.
+        </p>
+
+        <h3>Hinweis</h3>
+        <p>
+            Sobald das Geschäftskonto von Edition Bildungsmedien aktiv ist,
+            werden die Zahlungsdaten automatisch aktualisiert.
+        </p>
+    </section>
+
     <!-- Bestellformular -->
     <section id="bestellung">
         <h2>Buchbestellung – Die vibronische Erde</h2>
@@ -285,8 +334,8 @@
             <label for="anzahl">Anzahl Exemplare</label>
             <input type="number" id="anzahl" name="Anzahl" min="1" required>
 
-            <label for="zahlung">Zahlungsmethode</label>
-            <select id="zahlung" name="Zahlungsmethode" required>
+            <label for="zahlungsmethode">Zahlungsmethode</label>
+            <select id="zahlungsmethode" name="Zahlungsmethode" required>
                 <option value="Überweisung">Überweisung</option>
                 <option value="PayPal">PayPal</option>
                 <option value="Rechnung">Rechnung</option>
