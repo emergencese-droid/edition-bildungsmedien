@@ -9,6 +9,7 @@ html, body {
     background-color: #f7f7f9;
     color: #222;
     line-height: 1.6;
+    scroll-behavior: smooth;
 }
 
 /* =========================================================
@@ -17,24 +18,22 @@ html, body {
 
 .vibronic-background {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    inset: 0;
     z-index: -1;
-    background: radial-gradient(circle at 50% 50%, rgba(0,255,255,0.15), rgba(0,0,40,0.9)),
-                repeating-radial-gradient(circle at 50% 50%, 
-                    rgba(0,255,255,0.05) 0px, 
-                    rgba(0,255,255,0.05) 3px,
-                    transparent 4px, 
-                    transparent 8px);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(0,255,255,0.15), rgba(0,0,40,0.9)),
+        repeating-radial-gradient(circle at 50% 50%,
+            rgba(0,255,255,0.05) 0px,
+            rgba(0,255,255,0.05) 3px,
+            transparent 4px,
+            transparent 8px);
     animation: vibronicWaves 12s ease-in-out infinite;
     filter: blur(2px);
 }
 
 @keyframes vibronicWaves {
-    0% { background-position: 50% 50%; transform: scale(1); }
-    50% { background-position: 48% 52%; transform: scale(1.03); }
+    0%   { background-position: 50% 50%; transform: scale(1); }
+    50%  { background-position: 48% 52%; transform: scale(1.03); }
     100% { background-position: 50% 50%; transform: scale(1); }
 }
 
@@ -55,7 +54,7 @@ html, body {
 .main-nav ul {
     list-style: none;
     padding: 0;
-    margin: 1rem 0 0 0;
+    margin: 1rem 0 0;
     display: flex;
     gap: 1rem;
 }
@@ -64,6 +63,7 @@ html, body {
     color: #e5e7eb;
     text-decoration: none;
     font-size: 0.95rem;
+    transition: color 0.2s ease;
 }
 
 .main-nav a:hover {
@@ -90,7 +90,7 @@ html, body {
 }
 
 .hero h1 {
-    margin: 0 0 0.75rem 0;
+    margin: 0 0 0.75rem;
     font-size: 2rem;
 }
 
@@ -106,6 +106,10 @@ main {
 
 section {
     margin-bottom: 2.5rem;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
 }
 
 section h2 {
@@ -147,6 +151,7 @@ section h2 {
     text-decoration: none;
     font-weight: 600;
     font-size: 0.95rem;
+    transition: background-color 0.2s ease;
 }
 
 .button:hover {
@@ -166,8 +171,8 @@ section h2 {
 }
 
 @keyframes frameGlow {
-    0% { box-shadow: 0 0 10px rgba(0,255,255,0.15); }
-    50% { box-shadow: 0 0 25px rgba(0,255,255,0.35); }
+    0%   { box-shadow: 0 0 10px rgba(0,255,255,0.15); }
+    50%  { box-shadow: 0 0 25px rgba(0,255,255,0.35); }
     100% { box-shadow: 0 0 10px rgba(0,255,255,0.15); }
 }
 
@@ -181,7 +186,7 @@ section h2 {
 
 @keyframes emergenzFade {
     from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 /* Pulsation */
@@ -191,8 +196,8 @@ section h2 {
 }
 
 @keyframes vibronPulse {
-    0% { text-shadow: 0 0 0px rgba(0,255,255,0.0); }
-    50% { text-shadow: 0 0 12px rgba(0,255,255,0.25); }
+    0%   { text-shadow: 0 0 0px rgba(0,255,255,0.0); }
+    50%  { text-shadow: 0 0 12px rgba(0,255,255,0.25); }
     100% { text-shadow: 0 0 0px rgba(0,255,255,0.0); }
 }
 
@@ -210,7 +215,7 @@ section h2 {
 
 @keyframes phaseShift {
     from { opacity: 0; transform: translateX(-25px); }
-    to { opacity: 1; transform: translateX(0); }
+    to   { opacity: 1; transform: translateX(0); }
 }
 
 /* Unterstreichung */
@@ -225,7 +230,62 @@ section h2 {
 
 @keyframes underlineEmergenz {
     from { width: 0%; }
-    to { width: 100%; }
+    to   { width: 100%; }
+}
+
+/* =========================================================
+   Bestellformular / Shop
+   ========================================================= */
+
+.bestellformular {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    max-width: 600px;
+}
+
+.bestellformular label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.bestellformular input,
+.bestellformular textarea,
+.bestellformular select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #fafafa;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.bestellformular input:focus,
+.bestellformular textarea:focus,
+.bestellformular select:focus {
+    border-color: #111;
+    background: #fff;
+}
+
+.bestellformular button {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.bestellformular button:hover {
+    background: #333;
 }
 
 /* =========================================================
@@ -234,7 +294,7 @@ section h2 {
 
 footer {
     max-width: 960px;
-    margin: 2rem auto 1rem auto;
+    margin: 2rem auto 1rem;
     padding: 1rem;
     font-size: 0.9rem;
     color: #4b5563;
