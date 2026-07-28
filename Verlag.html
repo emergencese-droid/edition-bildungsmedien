@@ -113,6 +113,63 @@
             font-size: 0.85rem;
             color: #666;
         }
+
+        /* Shop Startseite */
+        #shop h2 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+        }
+
+        #shop p {
+            margin-bottom: 1.5rem;
+        }
+
+        #shop .card h3 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #shop .card p {
+            margin-bottom: 0.75rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 1.25rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 0.75rem;
+            padding: 0.6rem 1.4rem;
+            background-color: #10b981;
+            color: #ffffff;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .button:hover {
+            background-color: #059669;
+        }
+
     </style>
 </head>
 
@@ -124,6 +181,40 @@
 </header>
 
 <main>
+
+    <!-- Shop Startseite -->
+    <section id="shop">
+        <h2>Shop – Edition Bildungsmedien</h2>
+        <p>Hier finden Sie alle verfügbaren wissenschaftlichen Werke, Whitepaper und digitalen Publikationen.</p>
+
+        <div class="grid">
+
+            <!-- Produktkarte 1 -->
+            <div class="card">
+                <h3>Die vibronische Erde</h3>
+                <p>Ein wissenschaftliches Werk über die vibronische Signatur des Sauerstoff‑16‑Kerns und die Entstehung der Urzelle.</p>
+                <p><strong>Preis:</strong> ab 30 €</p>
+                <a class="button" href="#bestellung">Jetzt bestellen</a>
+            </div>
+
+            <!-- Produktkarte 2 -->
+            <div class="card">
+                <h3>Dynamicum Specimen</h3>
+                <p>Ein vibronisches Whitepaper über die dynamische Ordnung der Materie und die emergente Struktur kosmischer Systeme.</p>
+                <p><strong>Preis:</strong> 20 € (PDF)</p>
+                <a class="button" href="#bestellung-dynamicum">Bestellen</a>
+            </div>
+
+            <!-- Produktkarte 3 -->
+            <div class="card">
+                <h3>Leibnizmeter – Whitepaper</h3>
+                <p>Das offizielle Whitepaper zur vibronischen Messtechnik und den photonischen Grundlagen der ATE‑Engine.</p>
+                <p><strong>Preis:</strong> 25 € (PDF)</p>
+                <a class="button" href="#bestellung-leibnizmeter">Bestellen</a>
+            </div>
+
+        </div>
+    </section>
 
     <!-- Verlagsprofil -->
     <section id="verlag">
