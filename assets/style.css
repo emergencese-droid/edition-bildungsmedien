@@ -76,6 +76,36 @@ html, body {
     color: #fff;
 }
 
+/* --- Shop Navigation (NEU) --- */
+#shop-nav {
+    background: #222;
+    padding: 10px 0;
+    margin-bottom: 20px;
+}
+
+#shop-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+#shop-nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 6px 10px;
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+#shop-nav a:hover {
+    background: #444;
+}
+
 /* =========================================================
    Hero-Bereich
    ========================================================= */
@@ -286,6 +316,21 @@ section h2 {
 
 .bestellformular button:hover {
     background: #333;
+}
+
+/* --- Zahlungsseite (NEU) --- */
+#zahlung h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+#zahlung h3 {
+    margin-top: 1.2rem;
+    font-size: 1.15rem;
+}
+
+#zahlung p {
+    margin-bottom: 0.8rem;
 }
 
 /* =========================================================
