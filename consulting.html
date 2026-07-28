@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Emergence Consulting – Strategische Analyse & Gewaltenmonitoring</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="assets/style.css">
 </head>
 
@@ -24,13 +25,14 @@
     </nav>
 </header>
 
-
 <header>
     <h1>Emergence Consulting</h1>
     <p>Strategische Analyse, föderale Landschaftsmodelle und wissenschaftliches Gewaltenmonitoring.</p>
 </header>
 
-<section>
+<main>
+
+<section id="mission">
     <h2>Mission</h2>
     <p>
         Emergence Consulting entwickelt wissenschaftliche Modelle, Visualisierungen und Analysewerkzeuge,
@@ -40,7 +42,7 @@
     </p>
 </section>
 
-<section>
+<section id="gewaltenmonitoring">
     <h2>Gewaltenmonitoring</h2>
     <p>
         Das Gewaltenmonitoring ist ein langfristiges Forschungs- und Analyseprojekt, das die
@@ -61,7 +63,7 @@
     </p>
 </section>
 
-<section>
+<section id="behoerdenlandschaft">
     <h2>Behördenlandschaft</h2>
     <p>
         Die Behördenlandschaft bildet die Struktur der Bundesoberbehörden ab und zeigt
@@ -70,14 +72,16 @@
     </p>
 
     <p>
-        <a href="auroraview.html">Zur Visualisierung</a>
+        <a href="auroraview.html" class="button">Zur Visualisierung</a>
     </p>
 </section>
 
-<section>
+<section id="vz-freiburg">
     <h2>Vorbereitung der VZ Freiburg</h2>
     <p>
-        Die VZ wird später gemeinsam mit Leonor in einem basisdemokratischen Prozess aufgebaut.
+        Die VZ Freiburg wird später gemeinsam mit 
+        <strong>Ihrer Königlichen Hoheit, der Prinzessin von Asturien</strong>,
+        in einem basisdemokratischen Prozess aufgebaut.
         Emergence Consulting liefert dafür die wissenschaftliche und organisatorische Grundlage:
     </p>
 
@@ -93,7 +97,7 @@
     </p>
 </section>
 
-<section>
+<section id="roadmap">
     <h2>Roadmap</h2>
     <ol>
         <li>Ausbau des Gewaltenmonitorings</li>
@@ -104,6 +108,39 @@
         <li>Internationale Partnerstädte (SARA‑Matrix)</li>
     </ol>
 </section>
+
+<section id="kontakt">
+    <h2>Kontakt & Anfragen</h2>
+    <p>
+        Für Beratungsanfragen, Projektideen oder Kooperationsvorschläge können Sie Emergence Consulting direkt kontaktieren.
+        Bitte skizzieren Sie kurz Ihr Anliegen, die beteiligten Institutionen und den gewünschten Zeithorizont.
+    </p>
+
+    <form class="kontaktformular" action="mailto:consulting@emergence-technology.de" method="post" enctype="text/plain">
+        <label for="organisation">Organisation / Behörde</label>
+        <input type="text" id="organisation" name="Organisation" required>
+
+        <label for="kontaktperson">Kontaktperson</label>
+        <input type="text" id="kontaktperson" name="Kontaktperson" required>
+
+        <label for="email">E-Mail</label>
+        <input type="email" id="email" name="Email" required>
+
+        <label for="anliegen">Anliegen / Projektbeschreibung</label>
+        <textarea id="anliegen" name="Anliegen" rows="4" required></textarea>
+
+        <label for="zeitraum">Zeitrahmen</label>
+        <select id="zeitraum" name="Zeitrahmen">
+            <option value="Kurzfristig (1–3 Monate)">Kurzfristig (1–3 Monate)</option>
+            <option value="Mittelfristig (3–12 Monate)">Mittelfristig (3–12 Monate)</option>
+            <option value="Langfristig (12+ Monate)">Langfristig (12+ Monate)</option>
+        </select>
+
+        <button type="submit">Anfrage senden</button>
+    </form>
+</section>
+
+</main>
 
 <footer>
     <p>© 2026 Emergence Technology – Consulting Division</p>
