@@ -29,6 +29,41 @@
             font-size: 18px;
             cursor: pointer;
         }
+
+        /* AuroraView Dashboard Panels */
+        #dashboard {
+            padding: 20px;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        .dashboard-panel {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        #dashboard h2, #dashboard h3 {
+            color: #fff;
+        }
+
+        /* Frühwarnsystem Box */
+        #early-warning-box {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #555;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(255,0,0,0.25);
+        }
+        #early-warning-box.ok { border-color: #0f0; box-shadow: 0 4px 12px rgba(0,255,0,0.25); }
+        #early-warning-box.precritical { border-color: #ff0; box-shadow: 0 4px 12px rgba(255,255,0,0.25); }
+        #early-warning-box.critical { border-color: #f80; box-shadow: 0 4px 12px rgba(255,128,0,0.25); }
+        #early-warning-box.overload { border-color: #f00; box-shadow: 0 4px 12px rgba(255,0,0,0.45); }
+
     </style>
 </head>
 
@@ -51,18 +86,14 @@
 
 function renderAuroraView(repo) {
 
-    // Karte erstellen
     const map = L.map("map").setView([40.4168, -3.7038], 7);
     window._auroraMap = map;
 
-    // Basiskarte
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19
     }).addTo(map);
 
-    /* -----------------------------------------------------------
-       EVENTS RENDERING
-    ----------------------------------------------------------- */
+    /* EVENTS */
     if (repo.events && repo.events.length > 0) {
         repo.events.forEach(ev => {
             if (ev.location) {
@@ -78,9 +109,7 @@ function renderAuroraView(repo) {
         });
     }
 
-    /* -----------------------------------------------------------
-       INFRASTRUCTURE RENDERING
-    ----------------------------------------------------------- */
+    /* INFRASTRUCTURE */
     if (repo.infrastructure && repo.infrastructure.length > 0) {
         repo.infrastructure.forEach(obj => {
             if (obj.location) {
@@ -91,9 +120,7 @@ function renderAuroraView(repo) {
         });
     }
 
-    /* -----------------------------------------------------------
-       FIREFRONT STATIC RENDERING (first frame)
-    ----------------------------------------------------------- */
+    /* FIREFRONT – first frame */
     if (repo.firefronts && repo.firefronts.length > 0) {
         const ff = repo.firefronts[0];
         if (ff.polygon) {
@@ -107,9 +134,6 @@ function renderAuroraView(repo) {
         }
     }
 
-    /* -----------------------------------------------------------
-       TIMELINE BUTTONS CONNECT
-    ----------------------------------------------------------- */
     document.getElementById("playTimeline").onclick = playTimeline;
     document.getElementById("pauseTimeline").onclick = pauseTimeline;
 }
@@ -124,49 +148,40 @@ function loadAuroraViewRepository() {
         .then(r => r.json())
         .then(repo => {
             renderAuroraView(repo);
-            initTimeline(repo);   // Timeline aktivieren
+            initTimeline(repo);
+            initEarlyWarning(repo);
         });
 }
 
 
 /* -----------------------------------------------------------
-   TIMELINE ENGINE – AuroraView Playback
+   TIMELINE ENGINE
 ----------------------------------------------------------- */
 
-// Globale Variablen
 let timelineIndex = 0;
 let timelineRunning = false;
 let timelineInterval = null;
-
-// FireFront-Daten zwischenspeichern
 let firefrontData = [];
 
-// Wird nach dem Laden des Repositories aufgerufen
 function initTimeline(data) {
     firefrontData = data.firefronts || [];
-    console.log("Timeline initialisiert mit", firefrontData.length, "FireFront-Stufen");
 }
 
-
-// Timeline starten
 function playTimeline() {
     if (timelineRunning) return;
-
-    console.log("Timeline gestartet");
     timelineRunning = true;
 
     timelineInterval = setInterval(() => {
+
         if (!timelineRunning) return;
 
         if (timelineIndex >= firefrontData.length) {
-            console.log("Timeline beendet");
             pauseTimeline();
             return;
         }
 
         const ff = firefrontData[timelineIndex];
 
-        // FireFront zeichnen
         if (ff.polygon) {
             L.polygon(ff.polygon, {
                 color: "yellow",
@@ -178,22 +193,87 @@ function playTimeline() {
         }
 
         timelineIndex++;
-    }, 1200); // 1.2 Sekunden pro Frame
+
+    }, 1200);
 }
 
-
-// Timeline pausieren
 function pauseTimeline() {
-    console.log("Timeline pausiert");
     timelineRunning = false;
     clearInterval(timelineInterval);
     timelineInterval = null;
 }
 
 
-// Buttons verbinden
-document.getElementById("playTimeline").onclick = () => playTimeline();
-document.getElementById("pauseTimeline").onclick = () => pauseTimeline();
+/* -----------------------------------------------------------
+   FRÜHWARNSYSTEM
+----------------------------------------------------------- */
+
+function initEarlyWarning(repo) {
+
+    // Beispielwerte – später aus repo
+    const tTransparency = repo.tss?.transparency ?? 50;
+    const tStress = repo.tss?.stress ?? 50;
+    const tStability = repo.tss?.stability ?? 50;
+
+    const wPrimary = repo.wirbel?.primary ?? 50;
+    const wSecondary = repo.wirbel?.secondary ?? 50;
+    const wTertiary = repo.wirbel?.tertiary ?? 50;
+
+    const criticalClusters = repo.critical_clusters ?? [];
+
+    const result = evaluateEarlyWarning(
+        tTransparency, tStress, tStability,
+        wPrimary, wSecondary, wTertiary,
+        criticalClusters
+    );
+
+    updateEarlyWarningBox(result);
+}
+
+function evaluateEarlyWarning(tTransparency, tStress, tStability,
+                              wPrimary, wSecondary, wTertiary,
+                              criticalClusters) {
+
+    let status = "OK";
+    const reasons = [];
+
+    if (tStress > 60 || tTransparency < 40 || tStability < 50) {
+        status = "PRE_CRITICAL";
+        reasons.push("Erhöhte Stress- oder niedrige Transparenz-/Stabilitätswerte.");
+    }
+
+    if ((tStress > 75 && tStability < 45) || wPrimary > 70) {
+        status = "CRITICAL";
+        reasons.push("Hohe Stresswerte, niedrige Stabilität oder hohe Primärwirbelenergie.");
+    }
+
+    if (tStress > 85 && tStability < 40 && criticalClusters.length >= 3) {
+        status = "OVERLOAD";
+        reasons.push("Mehrere kritische Cluster bei sehr hoher Belastung und niedriger Stabilität.");
+    }
+
+    return { status, reasons, criticalClusters };
+}
+
+function updateEarlyWarningBox(result) {
+
+    const box = document.getElementById("early-warning-box");
+
+    box.classList.remove("ok", "precritical", "critical", "overload");
+
+    if (result.status === "OK") box.classList.add("ok");
+    if (result.status === "PRE_CRITICAL") box.classList.add("precritical");
+    if (result.status === "CRITICAL") box.classList.add("critical");
+    if (result.status === "OVERLOAD") box.classList.add("overload");
+
+    box.innerHTML = `
+        <h3>Frühwarnsystem</h3>
+        <p><strong>Status:</strong> ${result.status}</p>
+        <p><strong>Begründung:</strong></p>
+        <ul>${result.reasons.map(r => `<li>${r}</li>`).join("")}</ul>
+        <p><strong>Betroffene Cluster:</strong> ${result.criticalClusters.join(", ")}</p>
+    `;
+}
 
 
 /* -----------------------------------------------------------
@@ -203,11 +283,21 @@ document.getElementById("pauseTimeline").onclick = () => pauseTimeline();
 loadAuroraViewRepository();
 
 </script>
-    <!-- AuroraView Dashboard Erweiterung -->
+
+<!-- ---------------------------------------------------------
+     DASHBOARD + FRÜHWARNSYSTEM
+--------------------------------------------------------- -->
+
 <section id="dashboard">
 
     <h2>AuroraView Dashboard</h2>
     <p>Erweitertes Lagebild der Bundesoberbehörden mit TSS‑Achsen, Wirbelenergie und Frühwarnindikatoren.</p>
+
+    <!-- Frühwarnsystem -->
+    <div id="early-warning-box" class="dashboard-panel">
+        <h3>Frühwarnsystem</h3>
+        <p>Daten werden geladen…</p>
+    </div>
 
     <!-- TSS-Achsen Panel -->
     <div class="dashboard-panel">
@@ -246,16 +336,6 @@ loadAuroraViewRepository();
         </ul>
     </div>
 
-    <!-- Frühwarnindikatoren -->
-    <div class="dashboard-panel">
-        <h3>Frühwarnindikatoren</h3>
-        <ul>
-            <li><strong>Prä‑kritisch:</strong> erhöhte Wirbelenergie, leichte Instabilität</li>
-            <li><strong>Kritisch:</strong> starke Kopplungen, Stressachsen überlastet</li>
-            <li><strong>Überlast:</strong> strukturelle Blockaden, Resonanzkollaps</li>
-        </ul>
-    </div>
-
     <!-- Zeitachse -->
     <div class="dashboard-panel">
         <h3>Zeitachse</h3>
@@ -264,7 +344,6 @@ loadAuroraViewRepository();
     </div>
 
 </section>
-
 
 </body>
 </html>
