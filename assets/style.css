@@ -364,3 +364,23 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+/* AuroraView Dashboard Panels */
+#dashboard {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.dashboard-panel {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#dashboard h2, #dashboard h3 {
+    color: #fff;
+}
+
