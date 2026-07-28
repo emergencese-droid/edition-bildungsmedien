@@ -188,19 +188,18 @@
             <label for="email">E-Mail</label>
             <input type="email" id="email" name="Email" required>
 
-            <label for="adresse">Adresse (nur für Print)</label>
-            <textarea id="adresse" name="Adresse" rows="3"></textarea>
-
-            <label for="format">Format auswählen</label>
-            <select id="format" name="Format" required>
-                <option value="EPUB">EPUB (30 €)</option>
-                <option value="PDF">PDF (30 €)</option>
-                <option value="Softcover">Softcover (35 €)</option>
-                <option value="Hardcover">Hardcover (40 €)</option>
-            </select>
+            <label for="adresse">Adresse</label>
+            <textarea id="adresse" name="Adresse" rows="3" required></textarea>
 
             <label for="anzahl">Anzahl Exemplare</label>
-            <input type="number" id="anzahl" name="Anzahl" min="1" value="1" required>
+            <input type="number" id="anzahl" name="Anzahl" min="1" required>
+
+            <label for="zahlung">Zahlungsmethode</label>
+            <select id="zahlung" name="Zahlungsmethode" required>
+                <option value="Überweisung">Überweisung</option>
+                <option value="PayPal">PayPal</option>
+                <option value="Rechnung">Rechnung</option>
+            </select>
 
             <label for="nachricht">Nachricht (optional)</label>
             <textarea id="nachricht" name="Nachricht" rows="3"></textarea>
