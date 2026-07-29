@@ -1,153 +1,413 @@
-import requests
-
-def safe_get(url):
-    try:
-        r = requests.get(url, timeout=5)
-        if r.status_code == 200:
-            return r.json()
-        return None
-    except:
-        return None
-
-
-# -------------------------
-# AWI FETCHER
-# -------------------------
-def fetch_awi():
-    awi = safe_get("https://data.meereisportal.de/api/temperature/anomaly") or {}
-    ice = safe_get("https://data.meereisportal.de/api/seaice/extent") or {}
-    ocean = safe_get("https://data.meereisportal.de/api/ocean/heatcontent") or {}
-
-    temp_anomaly = awi.get("anomaly", 0.1)
-    ice_extent = ice.get("extent", 6.0)
-    heat_content = ocean.get("heat_content", 0.3)
-
-    return {
-        "temperature_anomaly": temp_anomaly,
-        "sea_ice_extent": ice_extent,
-        "ocean_heat_content": heat_content
-    }
-
-
-# -------------------------
-# GESIS FETCHER
-# -------------------------
-def fetch_gesis():
-    gesis = safe_get("https://api.gesis.org/mediaresonance/latest") or {}
-
-    media_resonance = gesis.get("media_resonance", 0.4)
-    polarization = gesis.get("polarization_index", 0.2)
-    discourse = gesis.get("discourse_stability", 0.7)
-
-    return {
-        "media_resonance": media_resonance,
-        "polarization_index": polarization,
-        "discourse_stability": discourse
-    }
-
-
-# -------------------------
-# DIW FETCHER
-# -------------------------
-def fetch_diw():
-
-    # DIW Konjunkturbarometer
-    try:
-        barometer_page = requests.get(
-            "https://www.diw.de/de/diw_01.c.799602.de/themen_nachrichten/diw_konjunkturbarometer.html",
-            timeout=5
-        )
-        barometer_text = barometer_page.text
-
-        if "Konjunkturbarometer" in barometer_text:
-            market_volatility = 0.35
-        else:
-            market_volatility = 0.30
-    except:
-        market_volatility = 0.30
-
-    # DIW Prognosen
-    try:
-        outlook_page = requests.get(
-            "https://www.diw.de/de/diw_01.c.799603.de/themen_nachrichten/konjunkturprognosen.html",
-            timeout=5
-        )
-        outlook_text = outlook_page.text
-
-        if "Prognose" in outlook_text:
-            structural_load = 0.29
-        else:
-            structural_load = 0.25
-    except:
-        structural_load = 0.25
-
-    # Open Energy Tracker
-    try:
-        energy = requests.get("https://openenergytracker.org/api/latest", timeout=5).json()
-        supply_chain_stress = energy.get("energy_consumption", 0.4)
-    except:
-        supply_chain_stress = 0.4
-
-    return {
-        "market_volatility": market_volatility,
-        "structural_load": structural_load,
-        "supply_chain_stress": supply_chain_stress
-    }
-
-
-# -------------------------
-# HAUPTFUNKTION
-# -------------------------
-def fetch_leibniz_data():
-
-    tropos = safe_get("https://data.tropos.de/api/v1/aerosol/latest") or {}
-    gfz = safe_get("https://geofon.gfz-potsdam.de/eqinfo/json/summary.json") or {}
-    ufz = safe_get("https://www.ufz.de/export/data.json") or {}
-    iow = {}
-    senckenberg = safe_get("https://api.crossref.org/works?query=Senckenberg") or {}
-
-    awi = fetch_awi()
-    gesis = fetch_gesis()
-    diw = fetch_diw()
-
-    return {
-        "EcoStress": {
-            "biodiversity": senckenberg.get("message", {}).get("total-results", 0) / 1000,
-            "water_quality": ufz.get("water_quality", 0.5),
-            "coastal_hydrology": iow.get("hydrology", 0.3),
-            "sediment_stress": 0.21,
-            "thermal_gradient": awi["temperature_anomaly"]
-        },
-        "AtmoStress": {
-            "aerosol_load": tropos.get("aerosol", {}).get("pm10", 0.3),
-            "boundary_layer_stress": tropos.get("boundary", {}).get("height", 0.2),
-            "redox_potential": -0.04,
-            "climate_anomaly": awi["temperature_anomaly"]
-        },
-        "GeoStab": {
-            "pressure_gradient": 0.12,
-            "groundwater_flux": 1.8,
-            "seismic_activity": len(gfz.get("features", [])) / 100,
-            "sea_ice_extent": awi["sea_ice_extent"]
-        },
-        "BioStab": {
-            "biofilm_density": 0.62,
-            "community_stability": 0.73,
-            "metabolic_flux": 0.51
-        },
-        "SocTrans": {
-            "media_resonance": gesis["media_resonance"],
-            "polarization_index": gesis["polarization_index"],
-            "discourse_stability": gesis["discourse_stability"]
-        },
-        "EconStress": {
-            "market_volatility": diw["market_volatility"],
-            "supply_chain_stress": diw["supply_chain_stress"],
-            "structural_load": diw["structural_load"]
-        },
-        "DigitalStress": {
-            "network_resonance": 0.22,
-            "infrastructure_load": 0.31,
-            "information_flow": 0.55
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>AuroraView – Frühwarnsystem</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #050816;
+            color: #e5e7eb;
+            margin: 0;
+            padding: 0;
         }
+        header {
+            padding: 16px 24px;
+            background: #0b1120;
+            border-bottom: 1px solid #1f2937;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+        header p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+        main {
+            padding: 20px 24px 40px;
+            display: grid;
+            grid-template-columns: 2fr 1.5fr;
+            gap: 20px;
+        }
+        .card {
+            background: #0b1120;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            padding: 14px 16px 16px;
+        }
+        .card h2 {
+            margin: 0 0 8px;
+            font-size: 16px;
+        }
+        .card h3 {
+            margin: 10px 0 6px;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 4px 0;
+            font-size: 13px;
+        }
+        .metric-label {
+            color: #9ca3af;
+        }
+        .metric-value {
+            font-weight: 500;
+        }
+        .pill {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 11px;
+            margin-left: 6px;
+        }
+        .pill-green { background: #064e3b; color: #a7f3d0; }
+        .pill-yellow { background: #78350f; color: #facc15; }
+        .pill-red { background: #7f1d1d; color: #fecaca; }
+
+        #loading {
+            padding: 10px 14px;
+            background: #111827;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .early-score {
+            font-size: 26px;
+            font-weight: 600;
+        }
+        .early-level {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+        .axis-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .axis-card {
+            background: #020617;
+            border-radius: 8px;
+            padding: 8px 10px;
+            border: 1px solid #1f2937;
+            font-size: 12px;
+        }
+        .axis-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        .axis-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 2px 0;
+        }
+        .axis-label {
+            color: #6b7280;
+        }
+        .axis-value {
+            font-weight: 500;
+        }
+        footer {
+            padding: 10px 24px 16px;
+            font-size: 11px;
+            color: #6b7280;
+            border-top: 1px solid #1f2937;
+            background: #020617;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>AuroraView – Multi‑Skalen Frühwarnsystem</h1>
+    <p>Live‑Indikatoren aus Bundesoberbehörden, Leibniz‑Instituten und Firefront‑Clustern</p>
+</header>
+
+<main>
+    <!-- Linke Seite: Frühwarnsystem + TSS + Wirbel -->
+    <section>
+        <div id="loading">Daten werden geladen…</div>
+
+        <div class="card">
+            <h2>Frühwarnsystem</h2>
+            <div class="metric-row">
+                <div>
+                    <div class="early-score" id="early-warning-score">–</div>
+                    <div class="early-level" id="early-warning-level">Level wird berechnet…</div>
+                </div>
+                <div>
+                    <span class="pill pill-green" id="early-pill-green" style="display:none;">Stabil</span>
+                    <span class="pill pill-yellow" id="early-pill-yellow" style="display:none;">Angespannt</span>
+                    <span class="pill pill-red" id="early-pill-red" style="display:none;">Kritisch</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+            <h2>TSS‑Achsen (Transparenz‑Stress‑Stabilität)</h2>
+            <div class="metric-row">
+                <span class="metric-label">Transparenz</span>
+                <span class="metric-value" id="tss-transparency">–</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Stress</span>
+                <span class="metric-value" id="tss-stress">–</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Stabilität</span>
+                <span class="metric-value" id="tss-stability">–</span>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:12px;">
+            <h2>Wirbelenergie‑Cluster</h2>
+            <div class="metric-row">
+                <span class="metric-label">Primäre Wirbel</span>
+                <span class="metric-value" id="wirbel-primary">–</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Sekundäre Wirbel</span>
+                <span class="metric-value" id="wirbel-secondary">–</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">Tertiäre Wirbel</span>
+                <span class="metric-value" id="wirbel-tertiary">–</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rechte Seite: Leibniz‑Indikatoren -->
+    <section>
+        <div class="card">
+            <h2>Leibniz‑Indikatoren (Live)</h2>
+
+            <div class="axis-grid">
+                <div class="axis-card">
+                    <div class="axis-title">EcoStress</div>
+                    <div class="axis-row">
+                        <span class="axis-label">Biodiversität</span>
+                        <span class="axis-value" id="eco-biodiversity">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Wasserqualität</span>
+                        <span class="axis-value" id="eco-water">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Küstenhydrologie</span>
+                        <span class="axis-value" id="eco-coastal">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Thermalgradient</span>
+                        <span class="axis-value" id="eco-thermal">–</span>
+                    </div>
+                </div>
+
+                <div class="axis-card">
+                    <div class="axis-title">AtmoStress</div>
+                    <div class="axis-row">
+                        <span class="axis-label">Aerosol‑Last</span>
+                        <span class="axis-value" id="atmo-aerosol">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Grenzschicht</span>
+                        <span class="axis-value" id="atmo-boundary">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Klimaanomalie</span>
+                        <span class="axis-value" id="atmo-anomaly">–</span>
+                    </div>
+                </div>
+
+                <div class="axis-card">
+                    <div class="axis-title">GeoStab</div>
+                    <div class="axis-row">
+                        <span class="axis-label">Druckgradient</span>
+                        <span class="axis-value" id="geo-pressure">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Grundwasserfluss</span>
+                        <span class="axis-value" id="geo-groundwater">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Seismik</span>
+                        <span class="axis-value" id="geo-seismic">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Meereis</span>
+                        <span class="axis-value" id="geo-seaice">–</span>
+                    </div>
+                </div>
+
+                <div class="axis-card">
+                    <div class="axis-title">BioStab</div>
+                    <div class="axis-row">
+                        <span class="axis-label">Biofilm‑Dichte</span>
+                        <span class="axis-value" id="bio-biofilm">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Gemeindestabilität</span>
+                        <span class="axis-value" id="bio-community">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Metabolischer Fluss</span>
+                        <span class="axis-value" id="bio-metabolic">–</span>
+                    </div>
+                </div>
+
+                <div class="axis-card">
+                    <div class="axis-title">SocTrans</div>
+                    <div class="axis-row">
+                        <span class="axis-label">Medienresonanz</span>
+                        <span class="axis-value" id="soc-media">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Polarisierung</span>
+                        <span class="axis-value" id="soc-polarization">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Diskursstabilität</span>
+                        <span class="axis-value" id="soc-discourse">–</span>
+                    </div>
+                </div>
+
+                <div class="axis-card">
+                    <div class="axis-title">EconStress</div>
+                    <div class="axis-row">
+                        <span class="axis-label">Marktvolatilität</span>
+                        <span class="axis-value" id="econ-volatility">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Lieferkettenstress</span>
+                        <span class="axis-value" id="econ-supply">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Strukturlast</span>
+                        <span class="axis-value" id="econ-structural">–</span>
+                    </div>
+                </div>
+
+                <div class="axis-card">
+                    <div class="axis-title">DigitalStress</div>
+                    <div class="axis-row">
+                        <span class="axis-label">Netzresonanz</span>
+                        <span class="axis-value" id="dig-network">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Infrastruktur‑Last</span>
+                        <span class="axis-value" id="dig-infra">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Informationsfluss</span>
+                        <span class="axis-value" id="dig-flow">–</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    AuroraView · wissenschaftliches Frühwarnsystem · Live‑Backend: /repository · Bund + Leibniz + Firefronts
+</footer>
+
+<script>
+async function loadAuroraView() {
+    try {
+        const response = await fetch("http://localhost:5000/repository");
+        const data = await response.json();
+
+        // Frühwarnsystem
+        if (data.early_warning) {
+            document.getElementById("early-warning-score").innerText = data.early_warning.score ?? "–";
+            document.getElementById("early-warning-level").innerText = data.early_warning.level ?? "–";
+
+            const level = (data.early_warning.level || "").toLowerCase();
+            document.getElementById("early-pill-green").style.display = level === "stabil" ? "inline-block" : "none";
+            document.getElementById("early-pill-yellow").style.display = level === "angespannt" ? "inline-block" : "none";
+            document.getElementById("early-pill-red").style.display = level === "kritisch" ? "inline-block" : "none";
+        }
+
+        // TSS
+        if (data.tss) {
+            document.getElementById("tss-transparency").innerText = data.tss.transparency ?? "–";
+            document.getElementById("tss-stress").innerText = data.tss.stress ?? "–";
+            document.getElementById("tss-stability").innerText = data.tss.stability ?? "–";
+        }
+
+        // Wirbel
+        if (data.wirbel) {
+            document.getElementById("wirbel-primary").innerText = data.wirbel.primary ?? "–";
+            document.getElementById("wirbel-secondary").innerText = data.wirbel.secondary ?? "–";
+            document.getElementById("wirbel-tertiary").innerText = data.wirbel.tertiary ?? "–";
+        }
+
+        // Leibniz
+        const leib = data.leibniz || {};
+
+        // EcoStress
+        if (leib.EcoStress) {
+            document.getElementById("eco-biodiversity").innerText = leib.EcoStress.biodiversity ?? "–";
+            document.getElementById("eco-water").innerText = leib.EcoStress.water_quality ?? "–";
+            document.getElementById("eco-coastal").innerText = leib.EcoStress.coastal_hydrology ?? "–";
+            document.getElementById("eco-thermal").innerText = leib.EcoStress.thermal_gradient ?? "–";
+        }
+
+        // AtmoStress
+        if (leib.AtmoStress) {
+            document.getElementById("atmo-aerosol").innerText = leib.AtmoStress.aerosol_load ?? "–";
+            document.getElementById("atmo-boundary").innerText = leib.AtmoStress.boundary_layer_stress ?? "–";
+            document.getElementById("atmo-anomaly").innerText = leib.AtmoStress.climate_anomaly ?? "–";
+        }
+
+        // GeoStab
+        if (leib.GeoStab) {
+            document.getElementById("geo-pressure").innerText = leib.GeoStab.pressure_gradient ?? "–";
+            document.getElementById("geo-groundwater").innerText = leib.GeoStab.groundwater_flux ?? "–";
+            document.getElementById("geo-seismic").innerText = leib.GeoStab.seismic_activity ?? "–";
+            document.getElementById("geo-seaice").innerText = leib.GeoStab.sea_ice_extent ?? "–";
+        }
+
+        // BioStab
+        if (leib.BioStab) {
+            document.getElementById("bio-biofilm").innerText = leib.BioStab.biofilm_density ?? "–";
+            document.getElementById("bio-community").innerText = leib.BioStab.community_stability ?? "–";
+            document.getElementById("bio-metabolic").innerText = leib.BioStab.metabolic_flux ?? "–";
+        }
+
+        // SocTrans
+        if (leib.SocTrans) {
+            document.getElementById("soc-media").innerText = leib.SocTrans.media_resonance ?? "–";
+            document.getElementById("soc-polarization").innerText = leib.SocTrans.polarization_index ?? "–";
+            document.getElementById("soc-discourse").innerText = leib.SocTrans.discourse_stability ?? "–";
+        }
+
+        // EconStress
+        if (leib.EconStress) {
+            document.getElementById("econ-volatility").innerText = leib.EconStress.market_volatility ?? "–";
+            document.getElementById("econ-supply").innerText = leib.EconStress.supply_chain_stress ?? "–";
+            document.getElementById("econ-structural").innerText = leib.EconStress.structural_load ?? "–";
+        }
+
+        // DigitalStress
+        if (leib.DigitalStress) {
+            document.getElementById("dig-network").innerText = leib.DigitalStress.network_resonance ?? "–";
+            document.getElementById("dig-infra").innerText = leib.DigitalStress.infrastructure_load ?? "–";
+            document.getElementById("dig-flow").innerText = leib.DigitalStress.information_flow ?? "–";
+        }
+
+        document.getElementById("loading").style.display = "none";
+
+    } catch (error) {
+        console.error("AuroraView Fehler:", error);
+        document.getElementById("loading").innerText = "Fehler beim Laden der Daten.";
     }
+}
+
+loadAuroraView();
+</script>
+</body>
+</html>
