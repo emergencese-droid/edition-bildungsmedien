@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Graph Engine (D3.js) -->
+    <!-- D3.js für Relation-Graph -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
-    <!-- Timeline Engine -->
+    <!-- vis-timeline für Ereignis-Timeline -->
     <script src="https://cdn.jsdelivr.net/npm/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-timeline@latest/styles/vis-timeline-graph2d.min.css"/>
 
@@ -148,9 +148,10 @@
         /* Map */
         #map {
             width: 100%;
-            height: 400px;
+            height: 380px;
             border-radius: 10px;
             margin-top: 20px;
+            border: 1px solid #1f2937;
         }
 
         /* Timeline */
@@ -162,10 +163,10 @@
             border: 1px solid #1f2937;
         }
 
-        /* Graph */
+        /* Relation Graph */
         #relation-graph {
             width: 100%;
-            height: 300px;
+            height: 280px;
             background: #0b1120;
             border-radius: 10px;
             margin-top: 20px;
@@ -179,9 +180,18 @@
             border-top: 1px solid #1f2937;
             background: #020617;
         }
+
+        /* Layer Controls */
+        #layer-controls {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        #layer-controls label {
+            margin-right: 10px;
+        }
     </style>
 </head>
-
 <body>
 
 <header>
@@ -190,11 +200,10 @@
 </header>
 
 <main>
-    <!-- Linke Seite -->
+    <!-- Linke Seite: Frühwarnsystem + Map + Timeline + Graph -->
     <section>
         <div id="loading">Daten werden geladen…</div>
 
-        <!-- Frühwarnsystem -->
         <div class="card">
             <h2>Frühwarnsystem</h2>
             <div class="metric-row">
@@ -210,9 +219,8 @@
             </div>
         </div>
 
-        <!-- TSS -->
         <div class="card" style="margin-top:12px;">
-            <h2>TSS‑Achsen</h2>
+            <h2>TSS‑Achsen (Transparenz‑Stress‑Stabilität)</h2>
             <div class="metric-row">
                 <span class="metric-label">Transparenz</span>
                 <span class="metric-value" id="tss-transparency">–</span>
@@ -227,7 +235,6 @@
             </div>
         </div>
 
-        <!-- Wirbel -->
         <div class="card" style="margin-top:12px;">
             <h2>Wirbelenergie‑Cluster</h2>
             <div class="metric-row">
@@ -244,81 +251,152 @@
             </div>
         </div>
 
-        <!-- Map -->
-        <div id="map"></div>
+        <div class="card" style="margin-top:12px;">
+            <h2>Firefront‑Karte & Layer</h2>
+            <div id="layer-controls">
+                <label><input type="checkbox" id="layer-firefronts" checked> Firefronts</label>
+                <label><input type="checkbox" id="layer-authorities" checked> Bundesoberbehörden</label>
+                <label><input type="checkbox" id="layer-infra" checked> Infrastruktur</label>
+            </div>
+            <div id="map"></div>
+        </div>
 
-        <!-- Timeline -->
-        <div id="timeline"></div>
+        <div class="card" style="margin-top:12px;">
+            <h2>Ereignis‑Timeline</h2>
+            <div id="timeline"></div>
+        </div>
 
-        <!-- Relation Graph -->
-        <div id="relation-graph"></div>
+        <div class="card" style="margin-top:12px;">
+            <h2>Relations‑Graph (Akteure & Cluster)</h2>
+            <div id="relation-graph"></div>
+        </div>
     </section>
 
-    <!-- Rechte Seite -->
+    <!-- Rechte Seite: Leibniz‑Indikatoren -->
     <section>
         <div class="card">
             <h2>Leibniz‑Indikatoren (Live)</h2>
 
             <div class="axis-grid">
-
-                <!-- EcoStress -->
                 <div class="axis-card">
                     <div class="axis-title">EcoStress</div>
-                    <div class="axis-row"><span class="axis-label">Biodiversität</span><span class="axis-value" id="eco-biodiversity">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Wasserqualität</span><span class="axis-value" id="eco-water">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Küstenhydrologie</span><span class="axis-value" id="eco-coastal">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Thermalgradient</span><span class="axis-value" id="eco-thermal">–</span></div>
+                    <div class="axis-row">
+                        <span class="axis-label">Biodiversität</span>
+                        <span class="axis-value" id="eco-biodiversity">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Wasserqualität</span>
+                        <span class="axis-value" id="eco-water">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Küstenhydrologie</span>
+                        <span class="axis-value" id="eco-coastal">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Thermalgradient</span>
+                        <span class="axis-value" id="eco-thermal">–</span>
+                    </div>
                 </div>
 
-                <!-- AtmoStress -->
                 <div class="axis-card">
                     <div class="axis-title">AtmoStress</div>
-                    <div class="axis-row"><span class="axis-label">Aerosol‑Last</span><span class="axis-value" id="atmo-aerosol">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Grenzschicht</span><span class="axis-value" id="atmo-boundary">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Klimaanomalie</span><span class="axis-value" id="atmo-anomaly">–</span></div>
+                    <div class="axis-row">
+                        <span class="axis-label">Aerosol‑Last</span>
+                        <span class="axis-value" id="atmo-aerosol">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Grenzschicht</span>
+                        <span class="axis-value" id="atmo-boundary">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Klimaanomalie</span>
+                        <span class="axis-value" id="atmo-anomaly">–</span>
+                    </div>
                 </div>
 
-                <!-- GeoStab -->
                 <div class="axis-card">
                     <div class="axis-title">GeoStab</div>
-                    <div class="axis-row"><span class="axis-label">Druckgradient</span><span class="axis-value" id="geo-pressure">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Grundwasserfluss</span><span class="axis-value" id="geo-groundwater">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Seismik</span><span class="axis-value" id="geo-seismic">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Meereis</span><span class="axis-value" id="geo-seaice">–</span></div>
+                    <div class="axis-row">
+                        <span class="axis-label">Druckgradient</span>
+                        <span class="axis-value" id="geo-pressure">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Grundwasserfluss</span>
+                        <span class="axis-value" id="geo-groundwater">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Seismik</span>
+                        <span class="axis-value" id="geo-seismic">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Meereis</span>
+                        <span class="axis-value" id="geo-seaice">–</span>
+                    </div>
                 </div>
 
-                <!-- BioStab -->
                 <div class="axis-card">
                     <div class="axis-title">BioStab</div>
-                    <div class="axis-row"><span class="axis-label">Biofilm‑Dichte</span><span class="axis-value" id="bio-biofilm">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Gemeindestabilität</span><span class="axis-value" id="bio-community">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Metabolischer Fluss</span><span class="axis-value" id="bio-metabolic">–</span></div>
+                    <div class="axis-row">
+                        <span class="axis-label">Biofilm‑Dichte</span>
+                        <span class="axis-value" id="bio-biofilm">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Gemeindestabilität</span>
+                        <span class="axis-value" id="bio-community">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Metabolischer Fluss</span>
+                        <span class="axis-value" id="bio-metabolic">–</span>
+                    </div>
                 </div>
 
-                <!-- SocTrans -->
                 <div class="axis-card">
                     <div class="axis-title">SocTrans</div>
-                    <div class="axis-row"><span class="axis-label">Medienresonanz</span><span class="axis-value" id="soc-media">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Polarisierung</span><span class="axis-value" id="soc-polarization">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Diskursstabilität</span><span class="axis-value" id="soc-discourse">–</span></div>
+                    <div class="axis-row">
+                        <span class="axis-label">Medienresonanz</span>
+                        <span class="axis-value" id="soc-media">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Polarisierung</span>
+                        <span class="axis-value" id="soc-polarization">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Diskursstabilität</span>
+                        <span class="axis-value" id="soc-discourse">–</span>
+                    </div>
                 </div>
 
-                <!-- EconStress -->
                 <div class="axis-card">
                     <div class="axis-title">EconStress</div>
-                    <div class="axis-row"><span class="axis-label">Marktvolatilität</span><span class="axis-value" id="econ-volatility">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Lieferkettenstress</span><span class="axis-value" id="econ-supply">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Strukturlast</span><span class="axis-value" id="econ-structural">–</span></div>
+                    <div class="axis-row">
+                        <span class="axis-label">Marktvolatilität</span>
+                        <span class="axis-value" id="econ-volatility">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Lieferkettenstress</span>
+                        <span class="axis-value" id="econ-supply">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Strukturlast</span>
+                        <span class="axis-value" id="econ-structural">–</span>
+                    </div>
                 </div>
 
-                <!-- DigitalStress -->
                 <div class="axis-card">
                     <div class="axis-title">DigitalStress</div>
-                    <div class="axis-row"><span class="axis-label">Netzresonanz</span><span class="axis-value" id="dig-network">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Infrastruktur‑Last</span><span class="axis-value" id="dig-infra">–</span></div>
-                    <div class="axis-row"><span class="axis-label">Informationsfluss</span><span class="axis-value" id="dig-flow">–</span></div>
+                    <div class="axis-row">
+                        <span class="axis-label">Netzresonanz</span>
+                        <span class="axis-value" id="dig-network">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Infrastruktur‑Last</span>
+                        <span class="axis-value" id="dig-infra">–</span>
+                    </div>
+                    <div class="axis-row">
+                        <span class="axis-label">Informationsfluss</span>
+                        <span class="axis-value" id="dig-flow">–</span>
+                    </div>
                 </div>
-
             </div>
         </div>
     </section>
@@ -328,11 +406,16 @@
     AuroraView · wissenschaftliches Frühwarnsystem · Live‑Backend: /repository · Bund + Leibniz + Firefronts
 </footer>
 
-<!-- SCRIPT BLOCK -->
 <script>
-/* ============================================================
-   1) Repository laden
-   ============================================================ */
+let map;
+let firefrontLayer = null;
+let authorityLayer = null;
+let infraLayer = null;
+let timelineInstance = null;
+
+/* ===========================
+   Hauptladefunktion
+   =========================== */
 async function loadAuroraView() {
     try {
         const response = await fetch("http://localhost:5000/repository");
@@ -345,17 +428,12 @@ async function loadAuroraView() {
 
         document.getElementById("loading").style.display = "none";
 
-        // Live-Daten nachladen
-        loadLeibnizLive();
-
-        // Map laden
         initMap(data);
-
-        // Timeline laden
         initTimeline(data);
-
-        // Relation Graph laden
         initRelationGraph(data);
+
+        // Live-Leibniz nachladen
+        loadLeibnizLive();
 
     } catch (error) {
         console.error("AuroraView Fehler:", error);
@@ -363,9 +441,9 @@ async function loadAuroraView() {
     }
 }
 
-/* ============================================================
-   2) Frühwarnsystem
-   ============================================================ */
+/* ===========================
+   Frühwarnsystem
+   =========================== */
 function updateEarlyWarning(early) {
     if (!early) return;
 
@@ -373,15 +451,14 @@ function updateEarlyWarning(early) {
     document.getElementById("early-warning-level").innerText = early.level ?? "–";
 
     const level = (early.level || "").toLowerCase();
-
     document.getElementById("early-pill-green").style.display = level === "stabil" ? "inline-block" : "none";
     document.getElementById("early-pill-yellow").style.display = level === "angespannt" ? "inline-block" : "none";
     document.getElementById("early-pill-red").style.display = level === "kritisch" ? "inline-block" : "none";
 }
 
-/* ============================================================
-   3) TSS
-   ============================================================ */
+/* ===========================
+   TSS
+   =========================== */
 function updateTSS(tss) {
     if (!tss) return;
     document.getElementById("tss-transparency").innerText = tss.transparency ?? "–";
@@ -389,9 +466,9 @@ function updateTSS(tss) {
     document.getElementById("tss-stability").innerText = tss.stability ?? "–";
 }
 
-/* ============================================================
-   4) Wirbel
-   ============================================================ */
+/* ===========================
+   Wirbel
+   =========================== */
 function updateWirbel(w) {
     if (!w) return;
     document.getElementById("wirbel-primary").innerText = w.primary ?? "–";
@@ -399,9 +476,9 @@ function updateWirbel(w) {
     document.getElementById("wirbel-tertiary").innerText = w.tertiary ?? "–";
 }
 
-/* ============================================================
-   5) Leibniz UI
-   ============================================================ */
+/* ===========================
+   Leibniz UI
+   =========================== */
 function updateLeibnizUI(leib) {
     if (!leib) return;
 
@@ -413,4 +490,261 @@ function updateLeibnizUI(leib) {
 
     const atmo = leib.AtmoStress || {};
     document.getElementById("atmo-aerosol").innerText = atmo.aerosol_load ?? "–";
-    document.getElementById
+    document.getElementById("atmo-boundary").innerText = atmo.boundary_layer_stress ?? "–";
+    document.getElementById("atmo-anomaly").innerText = atmo.climate_anomaly ?? "–";
+
+    const geo = leib.GeoStab || {};
+    document.getElementById("geo-pressure").innerText = geo.pressure_gradient ?? "–";
+    document.getElementById("geo-groundwater").innerText = geo.groundwater_flux ?? "–";
+    document.getElementById("geo-seismic").innerText = geo.seismic_activity ?? "–";
+    document.getElementById("geo-seaice").innerText = geo.sea_ice_extent ?? "–";
+
+    const bio = leib.BioStab || {};
+    document.getElementById("bio-biofilm").innerText = bio.biofilm_density ?? "–";
+    document.getElementById("bio-community").innerText = bio.community_stability ?? "–";
+    document.getElementById("bio-metabolic").innerText = bio.metabolic_flux ?? "–";
+
+    const soc = leib.SocTrans || {};
+    document.getElementById("soc-media").innerText = soc.media_resonance ?? "–";
+    document.getElementById("soc-polarization").innerText = soc.polarization_index ?? "–";
+    document.getElementById("soc-discourse").innerText = soc.discourse_stability ?? "–";
+
+    const econ = leib.EconStress || {};
+    document.getElementById("econ-volatility").innerText = econ.market_volatility ?? "–";
+    document.getElementById("econ-supply").innerText = econ.supply_chain_stress ?? "–";
+    document.getElementById("econ-structural").innerText = econ.structural_load ?? "–";
+
+    const dig = leib.DigitalStress || {};
+    document.getElementById("dig-network").innerText = dig.network_resonance ?? "–";
+    document.getElementById("dig-infra").innerText = dig.infrastructure_load ?? "–";
+    document.getElementById("dig-flow").innerText = dig.information_flow ?? "–";
+}
+
+/* ===========================
+   Live-Leibniz
+   =========================== */
+async function loadLeibnizLive() {
+    try {
+        const res = await fetch("http://localhost:5000/leibniz_live");
+        const live = await res.json();
+        const leib = live.data || {};
+        updateLeibnizUI(leib);
+    } catch (e) {
+        console.warn("Leibniz Live nicht verfügbar:", e);
+    }
+}
+
+/* ===========================
+   Map-Engine
+   =========================== */
+function initMap(data) {
+    if (!map) {
+        map = L.map('map').setView([51.5, 10.0], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+    }
+
+    if (firefrontLayer) map.removeLayer(firefrontLayer);
+    if (authorityLayer) map.removeLayer(authorityLayer);
+    if (infraLayer) map.removeLayer(infraLayer);
+
+    firefrontLayer = L.layerGroup();
+    authorityLayer = L.layerGroup();
+    infraLayer = L.layerGroup();
+
+    const clusters = data.critical_clusters || [];
+    clusters.forEach(c => {
+        if (!c.lat || !c.lon) return;
+        const marker = L.circleMarker([c.lat, c.lon], {
+            radius: 6,
+            color: '#f97316',
+            fillColor: '#f97316',
+            fillOpacity: 0.8
+        }).bindPopup(`Firefront: ${c.name || 'Cluster'}<br>Level: ${c.level || '–'}`);
+        firefrontLayer.addLayer(marker);
+    });
+
+    const authorities = data.authorities || [];
+    authorities.forEach(a => {
+        if (!a.lat || !a.lon) return;
+        const marker = L.circleMarker([a.lat, a.lon], {
+            radius: 5,
+            color: '#3b82f6',
+            fillColor: '#3b82f6',
+            fillOpacity: 0.8
+        }).bindPopup(`Behörde: ${a.name || 'Unbekannt'}`);
+        authorityLayer.addLayer(marker);
+    });
+
+    const infra = data.infrastructure || [];
+    infra.forEach(i => {
+        if (!i.lat || !i.lon) return;
+        const marker = L.circleMarker([i.lat, i.lon], {
+            radius: 4,
+            color: '#10b981',
+            fillColor: '#10b981',
+            fillOpacity: 0.8
+        }).bindPopup(`Infrastruktur: ${i.name || 'Objekt'}`);
+        infraLayer.addLayer(marker);
+    });
+
+    firefrontLayer.addTo(map);
+    authorityLayer.addTo(map);
+    infraLayer.addTo(map);
+
+    document.getElementById("layer-firefronts").addEventListener("change", (e) => {
+        if (e.target.checked) firefrontLayer.addTo(map);
+        else map.removeLayer(firefrontLayer);
+    });
+
+    document.getElementById("layer-authorities").addEventListener("change", (e) => {
+        if (e.target.checked) authorityLayer.addTo(map);
+        else map.removeLayer(authorityLayer);
+    });
+
+    document.getElementById("layer-infra").addEventListener("change", (e) => {
+        if (e.target.checked) infraLayer.addTo(map);
+        else map.removeLayer(infraLayer);
+    });
+}
+
+/* ===========================
+   Timeline-Engine
+   =========================== */
+function initTimeline(data) {
+    const container = document.getElementById('timeline');
+    const items = new vis.DataSet();
+
+    const events = data.events || [];
+    events.forEach((ev, idx) => {
+        items.add({
+            id: idx + 1,
+            content: ev.title || 'Ereignis',
+            start: ev.start || new Date().toISOString(),
+            end: ev.end || null,
+            group: ev.group || null
+        });
+    });
+
+    const options = {
+        width: '100%',
+        height: '180px',
+        stack: true,
+        showMajorLabels: true,
+        showMinorLabels: true,
+        zoomMin: 1000 * 60 * 60,
+        zoomMax: 1000 * 60 * 60 * 24 * 365
+    };
+
+    timelineInstance = new vis.Timeline(container, items, options);
+}
+
+/* ===========================
+   Relation-Graph (D3)
+   =========================== */
+function initRelationGraph(data) {
+    const container = document.getElementById('relation-graph');
+    container.innerHTML = "";
+
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    const svg = d3.select("#relation-graph")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    const nodes = [];
+    const links = [];
+
+    const actors = data.actors || [];
+    actors.forEach((a, idx) => {
+        nodes.push({ id: `actor-${idx}`, label: a.name || "Akteur", type: "actor" });
+    });
+
+    const clusters = data.critical_clusters || [];
+    clusters.forEach((c, idx) => {
+        nodes.push({ id: `cluster-${idx}`, label: c.name || "Cluster", type: "cluster" });
+    });
+
+    actors.forEach((a, ai) => {
+        (a.links || []).forEach(l => {
+            links.push({
+                source: `actor-${ai}`,
+                target: `cluster-${l.cluster_index || 0}`,
+                weight: l.weight || 1
+            });
+        });
+    });
+
+    const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(80))
+        .force("charge", d3.forceManyBody().strength(-80))
+        .force("center", d3.forceCenter(width / 2, height / 2));
+
+    const link = svg.append("g")
+        .attr("stroke", "#4b5563")
+        .attr("stroke-opacity", 0.7)
+        .selectAll("line")
+        .data(links)
+        .enter().append("line")
+        .attr("stroke-width", d => Math.sqrt(d.weight || 1));
+
+    const node = svg.append("g")
+        .selectAll("circle")
+        .data(nodes)
+        .enter().append("circle")
+        .attr("r", 6)
+        .attr("fill", d => d.type === "actor" ? "#3b82f6" : "#f97316")
+        .call(d3.drag()
+            .on("start", (event, d) => {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            })
+            .on("drag", (event, d) => {
+                d.fx = event.x;
+                d.fy = event.y;
+            })
+            .on("end", (event, d) => {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            })
+        );
+
+    const labels = svg.append("g")
+        .selectAll("text")
+        .data(nodes)
+        .enter().append("text")
+        .attr("font-size", 10)
+        .attr("fill", "#e5e7eb")
+        .text(d => d.label);
+
+    simulation.on("tick", () => {
+        link
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y);
+
+        node
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y);
+
+        labels
+            .attr("x", d => d.x + 8)
+            .attr("y", d => d.y + 3);
+    });
+}
+
+/* ===========================
+   Start
+   =========================== */
+loadAuroraView();
+</script>
+</body>
+</html>
