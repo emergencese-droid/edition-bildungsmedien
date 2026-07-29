@@ -2,7 +2,19 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>AuroraView – Frühwarnsystem</title>
+    <title>AuroraView – Multi‑Skalen Frühwarnsystem</title>
+
+    <!-- Leaflet Map Engine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Graph Engine (D3.js) -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Timeline Engine -->
+    <script src="https://cdn.jsdelivr.net/npm/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-timeline@latest/styles/vis-timeline-graph2d.min.css"/>
+
     <style>
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -11,53 +23,64 @@
             margin: 0;
             padding: 0;
         }
+
         header {
             padding: 16px 24px;
             background: #0b1120;
             border-bottom: 1px solid #1f2937;
         }
+
         header h1 {
             margin: 0;
             font-size: 22px;
         }
+
         header p {
             margin: 4px 0 0;
             font-size: 13px;
             color: #9ca3af;
         }
+
         main {
             padding: 20px 24px 40px;
             display: grid;
             grid-template-columns: 2fr 1.5fr;
             gap: 20px;
         }
+
         .card {
             background: #0b1120;
             border: 1px solid #1f2937;
             border-radius: 10px;
             padding: 14px 16px 16px;
         }
+
         .card h2 {
             margin: 0 0 8px;
             font-size: 16px;
         }
+
         .card h3 {
             margin: 10px 0 6px;
             font-size: 14px;
             color: #9ca3af;
         }
+
         .metric-row {
             display: flex;
             justify-content: space-between;
             margin: 4px 0;
             font-size: 13px;
         }
+
         .metric-label {
             color: #9ca3af;
         }
+
         .metric-value {
             font-weight: 500;
         }
+
         .pill {
             display: inline-block;
             padding: 2px 8px;
@@ -65,6 +88,7 @@
             font-size: 11px;
             margin-left: 6px;
         }
+
         .pill-green { background: #064e3b; color: #a7f3d0; }
         .pill-yellow { background: #78350f; color: #facc15; }
         .pill-red { background: #7f1d1d; color: #fecaca; }
@@ -76,20 +100,24 @@
             font-size: 13px;
             margin-bottom: 12px;
         }
+
         .early-score {
             font-size: 26px;
             font-weight: 600;
         }
+
         .early-level {
             font-size: 14px;
             color: #9ca3af;
         }
+
         .axis-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
             margin-top: 8px;
         }
+
         .axis-card {
             background: #020617;
             border-radius: 8px;
@@ -97,21 +125,53 @@
             border: 1px solid #1f2937;
             font-size: 12px;
         }
+
         .axis-title {
             font-weight: 500;
             margin-bottom: 4px;
         }
+
         .axis-row {
             display: flex;
             justify-content: space-between;
             margin: 2px 0;
         }
+
         .axis-label {
             color: #6b7280;
         }
+
         .axis-value {
             font-weight: 500;
         }
+
+        /* Map */
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        /* Timeline */
+        #timeline {
+            height: 200px;
+            background: #0b1120;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #1f2937;
+        }
+
+        /* Graph */
+        #relation-graph {
+            width: 100%;
+            height: 300px;
+            background: #0b1120;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 1px solid #1f2937;
+        }
+
         footer {
             padding: 10px 24px 16px;
             font-size: 11px;
@@ -121,17 +181,20 @@
         }
     </style>
 </head>
+
 <body>
+
 <header>
     <h1>AuroraView – Multi‑Skalen Frühwarnsystem</h1>
     <p>Live‑Indikatoren aus Bundesoberbehörden, Leibniz‑Instituten und Firefront‑Clustern</p>
 </header>
 
 <main>
-    <!-- Linke Seite: Frühwarnsystem + TSS + Wirbel -->
+    <!-- Linke Seite -->
     <section>
         <div id="loading">Daten werden geladen…</div>
 
+        <!-- Frühwarnsystem -->
         <div class="card">
             <h2>Frühwarnsystem</h2>
             <div class="metric-row">
@@ -147,8 +210,9 @@
             </div>
         </div>
 
+        <!-- TSS -->
         <div class="card" style="margin-top:12px;">
-            <h2>TSS‑Achsen (Transparenz‑Stress‑Stabilität)</h2>
+            <h2>TSS‑Achsen</h2>
             <div class="metric-row">
                 <span class="metric-label">Transparenz</span>
                 <span class="metric-value" id="tss-transparency">–</span>
@@ -163,6 +227,7 @@
             </div>
         </div>
 
+        <!-- Wirbel -->
         <div class="card" style="margin-top:12px;">
             <h2>Wirbelenergie‑Cluster</h2>
             <div class="metric-row">
@@ -178,133 +243,82 @@
                 <span class="metric-value" id="wirbel-tertiary">–</span>
             </div>
         </div>
+
+        <!-- Map -->
+        <div id="map"></div>
+
+        <!-- Timeline -->
+        <div id="timeline"></div>
+
+        <!-- Relation Graph -->
+        <div id="relation-graph"></div>
     </section>
 
-    <!-- Rechte Seite: Leibniz‑Indikatoren -->
+    <!-- Rechte Seite -->
     <section>
         <div class="card">
             <h2>Leibniz‑Indikatoren (Live)</h2>
 
             <div class="axis-grid">
+
+                <!-- EcoStress -->
                 <div class="axis-card">
                     <div class="axis-title">EcoStress</div>
-                    <div class="axis-row">
-                        <span class="axis-label">Biodiversität</span>
-                        <span class="axis-value" id="eco-biodiversity">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Wasserqualität</span>
-                        <span class="axis-value" id="eco-water">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Küstenhydrologie</span>
-                        <span class="axis-value" id="eco-coastal">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Thermalgradient</span>
-                        <span class="axis-value" id="eco-thermal">–</span>
-                    </div>
+                    <div class="axis-row"><span class="axis-label">Biodiversität</span><span class="axis-value" id="eco-biodiversity">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Wasserqualität</span><span class="axis-value" id="eco-water">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Küstenhydrologie</span><span class="axis-value" id="eco-coastal">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Thermalgradient</span><span class="axis-value" id="eco-thermal">–</span></div>
                 </div>
 
+                <!-- AtmoStress -->
                 <div class="axis-card">
                     <div class="axis-title">AtmoStress</div>
-                    <div class="axis-row">
-                        <span class="axis-label">Aerosol‑Last</span>
-                        <span class="axis-value" id="atmo-aerosol">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Grenzschicht</span>
-                        <span class="axis-value" id="atmo-boundary">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Klimaanomalie</span>
-                        <span class="axis-value" id="atmo-anomaly">–</span>
-                    </div>
+                    <div class="axis-row"><span class="axis-label">Aerosol‑Last</span><span class="axis-value" id="atmo-aerosol">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Grenzschicht</span><span class="axis-value" id="atmo-boundary">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Klimaanomalie</span><span class="axis-value" id="atmo-anomaly">–</span></div>
                 </div>
 
+                <!-- GeoStab -->
                 <div class="axis-card">
                     <div class="axis-title">GeoStab</div>
-                    <div class="axis-row">
-                        <span class="axis-label">Druckgradient</span>
-                        <span class="axis-value" id="geo-pressure">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Grundwasserfluss</span>
-                        <span class="axis-value" id="geo-groundwater">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Seismik</span>
-                        <span class="axis-value" id="geo-seismic">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Meereis</span>
-                        <span class="axis-value" id="geo-seaice">–</span>
-                    </div>
+                    <div class="axis-row"><span class="axis-label">Druckgradient</span><span class="axis-value" id="geo-pressure">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Grundwasserfluss</span><span class="axis-value" id="geo-groundwater">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Seismik</span><span class="axis-value" id="geo-seismic">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Meereis</span><span class="axis-value" id="geo-seaice">–</span></div>
                 </div>
 
+                <!-- BioStab -->
                 <div class="axis-card">
                     <div class="axis-title">BioStab</div>
-                    <div class="axis-row">
-                        <span class="axis-label">Biofilm‑Dichte</span>
-                        <span class="axis-value" id="bio-biofilm">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Gemeindestabilität</span>
-                        <span class="axis-value" id="bio-community">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Metabolischer Fluss</span>
-                        <span class="axis-value" id="bio-metabolic">–</span>
-                    </div>
+                    <div class="axis-row"><span class="axis-label">Biofilm‑Dichte</span><span class="axis-value" id="bio-biofilm">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Gemeindestabilität</span><span class="axis-value" id="bio-community">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Metabolischer Fluss</span><span class="axis-value" id="bio-metabolic">–</span></div>
                 </div>
 
+                <!-- SocTrans -->
                 <div class="axis-card">
                     <div class="axis-title">SocTrans</div>
-                    <div class="axis-row">
-                        <span class="axis-label">Medienresonanz</span>
-                        <span class="axis-value" id="soc-media">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Polarisierung</span>
-                        <span class="axis-value" id="soc-polarization">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Diskursstabilität</span>
-                        <span class="axis-value" id="soc-discourse">–</span>
-                    </div>
+                    <div class="axis-row"><span class="axis-label">Medienresonanz</span><span class="axis-value" id="soc-media">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Polarisierung</span><span class="axis-value" id="soc-polarization">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Diskursstabilität</span><span class="axis-value" id="soc-discourse">–</span></div>
                 </div>
 
+                <!-- EconStress -->
                 <div class="axis-card">
                     <div class="axis-title">EconStress</div>
-                    <div class="axis-row">
-                        <span class="axis-label">Marktvolatilität</span>
-                        <span class="axis-value" id="econ-volatility">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Lieferkettenstress</span>
-                        <span class="axis-value" id="econ-supply">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Strukturlast</span>
-                        <span class="axis-value" id="econ-structural">–</span>
-                    </div>
+                    <div class="axis-row"><span class="axis-label">Marktvolatilität</span><span class="axis-value" id="econ-volatility">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Lieferkettenstress</span><span class="axis-value" id="econ-supply">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Strukturlast</span><span class="axis-value" id="econ-structural">–</span></div>
                 </div>
 
+                <!-- DigitalStress -->
                 <div class="axis-card">
                     <div class="axis-title">DigitalStress</div>
-                    <div class="axis-row">
-                        <span class="axis-label">Netzresonanz</span>
-                        <span class="axis-value" id="dig-network">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Infrastruktur‑Last</span>
-                        <span class="axis-value" id="dig-infra">–</span>
-                    </div>
-                    <div class="axis-row">
-                        <span class="axis-label">Informationsfluss</span>
-                        <span class="axis-value" id="dig-flow">–</span>
-                    </div>
+                    <div class="axis-row"><span class="axis-label">Netzresonanz</span><span class="axis-value" id="dig-network">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Infrastruktur‑Last</span><span class="axis-value" id="dig-infra">–</span></div>
+                    <div class="axis-row"><span class="axis-label">Informationsfluss</span><span class="axis-value" id="dig-flow">–</span></div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -313,96 +327,35 @@
 <footer>
     AuroraView · wissenschaftliches Frühwarnsystem · Live‑Backend: /repository · Bund + Leibniz + Firefronts
 </footer>
+
+<!-- SCRIPT BLOCK -->
 <script>
+/* ============================================================
+   1) Repository laden
+   ============================================================ */
 async function loadAuroraView() {
     try {
         const response = await fetch("http://localhost:5000/repository");
         const data = await response.json();
 
-        // Frühwarnsystem
-        if (data.early_warning) {
-            document.getElementById("early-warning-score").innerText = data.early_warning.score ?? "–";
-            document.getElementById("early-warning-level").innerText = data.early_warning.level ?? "–";
-
-            const level = (data.early_warning.level || "").toLowerCase();
-            document.getElementById("early-pill-green").style.display = level === "stabil" ? "inline-block" : "none";
-            document.getElementById("early-pill-yellow").style.display = level === "angespannt" ? "inline-block" : "none";
-            document.getElementById("early-pill-red").style.display = level === "kritisch" ? "inline-block" : "none";
-        }
-
-        // TSS
-        if (data.tss) {
-            document.getElementById("tss-transparency").innerText = data.tss.transparency ?? "–";
-            document.getElementById("tss-stress").innerText = data.tss.stress ?? "–";
-            document.getElementById("tss-stability").innerText = data.tss.stability ?? "–";
-        }
-
-        // Wirbel
-        if (data.wirbel) {
-            document.getElementById("wirbel-primary").innerText = data.wirbel.primary ?? "–";
-            document.getElementById("wirbel-secondary").innerText = data.wirbel.secondary ?? "–";
-            document.getElementById("wirbel-tertiary").innerText = data.wirbel.tertiary ?? "–";
-        }
-
-        // Leibniz (Basis aus repository.json)
-        const leib = data.leibniz || {};
-
-        // EcoStress
-        if (leib.EcoStress) {
-            document.getElementById("eco-biodiversity").innerText = leib.EcoStress.biodiversity ?? "–";
-            document.getElementById("eco-water").innerText = leib.EcoStress.water_quality ?? "–";
-            document.getElementById("eco-coastal").innerText = leib.EcoStress.coastal_hydrology ?? "–";
-            document.getElementById("eco-thermal").innerText = leib.EcoStress.thermal_gradient ?? "–";
-        }
-
-        // AtmoStress
-        if (leib.AtmoStress) {
-            document.getElementById("atmo-aerosol").innerText = leib.AtmoStress.aerosol_load ?? "–";
-            document.getElementById("atmo-boundary").innerText = leib.AtmoStress.boundary_layer_stress ?? "–";
-            document.getElementById("atmo-anomaly").innerText = leib.AtmoStress.climate_anomaly ?? "–";
-        }
-
-        // GeoStab
-        if (leib.GeoStab) {
-            document.getElementById("geo-pressure").innerText = leib.GeoStab.pressure_gradient ?? "–";
-            document.getElementById("geo-groundwater").innerText = leib.GeoStab.groundwater_flux ?? "–";
-            document.getElementById("geo-seismic").innerText = leib.GeoStab.seismic_activity ?? "–";
-            // repository.json hat kein sea_ice_extent → bleibt "–"
-            document.getElementById("geo-seaice").innerText = leib.GeoStab.sea_ice_extent ?? "–";
-        }
-
-        // BioStab
-        if (leib.BioStab) {
-            document.getElementById("bio-biofilm").innerText = leib.BioStab.biofilm_density ?? "–";
-            document.getElementById("bio-community").innerText = leib.BioStab.community_stability ?? "–";
-            document.getElementById("bio-metabolic").innerText = leib.BioStab.metabolic_flux ?? "–";
-        }
-
-        // SocTrans
-        if (leib.SocTrans) {
-            document.getElementById("soc-media").innerText = leib.SocTrans.media_resonance ?? "–";
-            document.getElementById("soc-polarization").innerText = leib.SocTrans.polarization_index ?? "–";
-            document.getElementById("soc-discourse").innerText = leib.SocTrans.discourse_stability ?? "–";
-        }
-
-        // EconStress
-        if (leib.EconStress) {
-            document.getElementById("econ-volatility").innerText = leib.EconStress.market_volatility ?? "–";
-            document.getElementById("econ-supply").innerText = leib.EconStress.supply_chain_stress ?? "–";
-            document.getElementById("econ-structural").innerText = leib.EconStress.structural_load ?? "–";
-        }
-
-        // DigitalStress
-        if (leib.DigitalStress) {
-            document.getElementById("dig-network").innerText = leib.DigitalStress.network_resonance ?? "–";
-            document.getElementById("dig-infra").innerText = leib.DigitalStress.infrastructure_load ?? "–";
-            document.getElementById("dig-flow").innerText = leib.DigitalStress.information_flow ?? "–";
-        }
+        updateEarlyWarning(data.early_warning);
+        updateTSS(data.tss);
+        updateWirbel(data.wirbel);
+        updateLeibnizUI(data.leibniz);
 
         document.getElementById("loading").style.display = "none";
 
-        // danach optional Live‑Daten nachladen
+        // Live-Daten nachladen
         loadLeibnizLive();
+
+        // Map laden
+        initMap(data);
+
+        // Timeline laden
+        initTimeline(data);
+
+        // Relation Graph laden
+        initRelationGraph(data);
 
     } catch (error) {
         console.error("AuroraView Fehler:", error);
@@ -410,71 +363,54 @@ async function loadAuroraView() {
     }
 }
 
-async function loadLeibnizLive() {
-    try {
-        const res = await fetch("http://localhost:5000/leibniz_live");
-        const live = await res.json();
-        const leib = live.data || {};
+/* ============================================================
+   2) Frühwarnsystem
+   ============================================================ */
+function updateEarlyWarning(early) {
+    if (!early) return;
 
-        // EcoStress live
-        if (leib.EcoStress) {
-            document.getElementById("eco-biodiversity").innerText = leib.EcoStress.biodiversity ?? "–";
-            document.getElementById("eco-water").innerText = leib.EcoStress.water_quality ?? "–";
-            document.getElementById("eco-coastal").innerText = leib.EcoStress.coastal_hydrology ?? "–";
-            document.getElementById("eco-thermal").innerText = leib.EcoStress.thermal_gradient ?? "–";
-        }
+    document.getElementById("early-warning-score").innerText = early.score ?? "–";
+    document.getElementById("early-warning-level").innerText = early.level ?? "–";
 
-        // AtmoStress live
-        if (leib.AtmoStress) {
-            document.getElementById("atmo-aerosol").innerText = leib.AtmoStress.aerosol_load ?? "–";
-            document.getElementById("atmo-boundary").innerText = leib.AtmoStress.boundary_layer_stress ?? "–";
-            document.getElementById("atmo-anomaly").innerText = leib.AtmoStress.climate_anomaly ?? "–";
-        }
+    const level = (early.level || "").toLowerCase();
 
-        // GeoStab live
-        if (leib.GeoStab) {
-            document.getElementById("geo-pressure").innerText = leib.GeoStab.pressure_gradient ?? "–";
-            document.getElementById("geo-groundwater").innerText = leib.GeoStab.groundwater_flux ?? "–";
-            document.getElementById("geo-seismic").innerText = leib.GeoStab.seismic_activity ?? "–";
-            document.getElementById("geo-seaice").innerText = leib.GeoStab.sea_ice_extent ?? "–";
-        }
-
-        // BioStab live
-        if (leib.BioStab) {
-            document.getElementById("bio-biofilm").innerText = leib.BioStab.biofilm_density ?? "–";
-            document.getElementById("bio-community").innerText = leib.BioStab.community_stability ?? "–";
-            document.getElementById("bio-metabolic").innerText = leib.BioStab.metabolic_flux ?? "–";
-        }
-
-        // SocTrans live
-        if (leib.SocTrans) {
-            document.getElementById("soc-media").innerText = leib.SocTrans.media_resonance ?? "–";
-            document.getElementById("soc-polarization").innerText = leib.SocTrans.polarization_index ?? "–";
-            document.getElementById("soc-discourse").innerText = leib.SocTrans.discourse_stability ?? "–";
-        }
-
-        // EconStress live
-        if (leib.EconStress) {
-            document.getElementById("econ-volatility").innerText = leib.EconStress.market_volatility ?? "–";
-            document.getElementById("econ-supply").innerText = leib.EconStress.supply_chain_stress ?? "–";
-            document.getElementById("econ-structural").innerText = leib.EconStress.structural_load ?? "–";
-        }
-
-        // DigitalStress live
-        if (leib.DigitalStress) {
-            document.getElementById("dig-network").innerText = leib.DigitalStress.network_resonance ?? "–";
-            document.getElementById("dig-infra").innerText = leib.DigitalStress.infrastructure_load ?? "–";
-            document.getElementById("dig-flow").innerText = leib.DigitalStress.information_flow ?? "–";
-        }
-
-    } catch (e) {
-        console.warn("Leibniz Live nicht verfügbar:", e);
-    }
+    document.getElementById("early-pill-green").style.display = level === "stabil" ? "inline-block" : "none";
+    document.getElementById("early-pill-yellow").style.display = level === "angespannt" ? "inline-block" : "none";
+    document.getElementById("early-pill-red").style.display = level === "kritisch" ? "inline-block" : "none";
 }
 
-loadAuroraView();
-</script>
+/* ============================================================
+   3) TSS
+   ============================================================ */
+function updateTSS(tss) {
+    if (!tss) return;
+    document.getElementById("tss-transparency").innerText = tss.transparency ?? "–";
+    document.getElementById("tss-stress").innerText = tss.stress ?? "–";
+    document.getElementById("tss-stability").innerText = tss.stability ?? "–";
+}
 
-</script>
-</body>
-</html>
+/* ============================================================
+   4) Wirbel
+   ============================================================ */
+function updateWirbel(w) {
+    if (!w) return;
+    document.getElementById("wirbel-primary").innerText = w.primary ?? "–";
+    document.getElementById("wirbel-secondary").innerText = w.secondary ?? "–";
+    document.getElementById("wirbel-tertiary").innerText = w.tertiary ?? "–";
+}
+
+/* ============================================================
+   5) Leibniz UI
+   ============================================================ */
+function updateLeibnizUI(leib) {
+    if (!leib) return;
+
+    const eco = leib.EcoStress || {};
+    document.getElementById("eco-biodiversity").innerText = eco.biodiversity ?? "–";
+    document.getElementById("eco-water").innerText = eco.water_quality ?? "–";
+    document.getElementById("eco-coastal").innerText = eco.coastal_hydrology ?? "–";
+    document.getElementById("eco-thermal").innerText = eco.thermal_gradient ?? "–";
+
+    const atmo = leib.AtmoStress || {};
+    document.getElementById("atmo-aerosol").innerText = atmo.aerosol_load ?? "–";
+    document.getElementById
