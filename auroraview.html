@@ -1,349 +1,153 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>AuroraView – Wildfire Monitoring</title>
+import requests
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+def safe_get(url):
+    try:
+        r = requests.get(url, timeout=5)
+        if r.status_code == 200:
+            return r.json()
+        return None
+    except:
+        return None
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #111;
-            color: #eee;
-        }
-        #map {
-            width: 100%;
-            height: 80vh;
-        }
-        #timeline-controls {
-            padding: 20px;
-            text-align: center;
-        }
-        #timeline-controls button {
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 18px;
-            cursor: pointer;
-        }
 
-        /* AuroraView Dashboard Panels */
-        #dashboard {
-            padding: 20px;
-            max-width: 900px;
-            margin: 40px auto;
-        }
+# -------------------------
+# AWI FETCHER
+# -------------------------
+def fetch_awi():
+    awi = safe_get("https://data.meereisportal.de/api/temperature/anomaly") or {}
+    ice = safe_get("https://data.meereisportal.de/api/seaice/extent") or {}
+    ocean = safe_get("https://data.meereisportal.de/api/ocean/heatcontent") or {}
 
-        .dashboard-panel {
-            background: #222;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #444;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
+    temp_anomaly = awi.get("anomaly", 0.1)
+    ice_extent = ice.get("extent", 6.0)
+    heat_content = ocean.get("heat_content", 0.3)
 
-        #dashboard h2, #dashboard h3 {
-            color: #fff;
-        }
-
-        /* Frühwarnsystem Box */
-        #early-warning-box {
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #555;
-            margin-top: 20px;
-            box-shadow: 0 4px 12px rgba(255,0,0,0.25);
-        }
-        #early-warning-box.ok { border-color: #0f0; box-shadow: 0 4px 12px rgba(0,255,0,0.25); }
-        #early-warning-box.precritical { border-color: #ff0; box-shadow: 0 4px 12px rgba(255,255,0,0.25); }
-        #early-warning-box.critical { border-color: #f80; box-shadow: 0 4px 12px rgba(255,128,0,0.25); }
-        #early-warning-box.overload { border-color: #f00; box-shadow: 0 4px 12px rgba(255,0,0,0.45); }
-
-    </style>
-</head>
-
-<body>
-
-<h2 style="text-align:center;">AuroraView – Wildfire Monitoring</h2>
-
-<div id="map"></div>
-
-<div id="timeline-controls">
-    <button id="playTimeline">▶ Play</button>
-    <button id="pauseTimeline">⏸ Pause</button>
-</div>
-
-<script>
-
-/* -----------------------------------------------------------
-   AURORAVIEW – MAP INITIALIZATION
------------------------------------------------------------ */
-
-function renderAuroraView(repo) {
-
-    const map = L.map("map").setView([40.4168, -3.7038], 7);
-    window._auroraMap = map;
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19
-    }).addTo(map);
-
-    /* EVENTS */
-    if (repo.events && repo.events.length > 0) {
-        repo.events.forEach(ev => {
-            if (ev.location) {
-                L.circleMarker(ev.location, {
-                    radius: 8,
-                    color: "red",
-                    fillColor: "orange",
-                    fillOpacity: 0.8
-                })
-                .addTo(map)
-                .bindPopup(`<b>Event:</b> ${ev.event_id}<br>${ev.description}`);
-            }
-        });
+    return {
+        "temperature_anomaly": temp_anomaly,
+        "sea_ice_extent": ice_extent,
+        "ocean_heat_content": heat_content
     }
 
-    /* INFRASTRUCTURE */
-    if (repo.infrastructure && repo.infrastructure.length > 0) {
-        repo.infrastructure.forEach(obj => {
-            if (obj.location) {
-                L.marker(obj.location)
-                .addTo(map)
-                .bindPopup(`<b>${obj.type}</b><br>${obj.name}`);
-            }
-        });
+
+# -------------------------
+# GESIS FETCHER
+# -------------------------
+def fetch_gesis():
+    gesis = safe_get("https://api.gesis.org/mediaresonance/latest") or {}
+
+    media_resonance = gesis.get("media_resonance", 0.4)
+    polarization = gesis.get("polarization_index", 0.2)
+    discourse = gesis.get("discourse_stability", 0.7)
+
+    return {
+        "media_resonance": media_resonance,
+        "polarization_index": polarization,
+        "discourse_stability": discourse
     }
 
-    /* FIREFRONT – first frame */
-    if (repo.firefronts && repo.firefronts.length > 0) {
-        const ff = repo.firefronts[0];
-        if (ff.polygon) {
-            L.polygon(ff.polygon, {
-                color: "yellow",
-                weight: 3,
-                opacity: 0.6
-            })
-            .addTo(map)
-            .bindPopup(`<b>FireFront:</b> ${ff.firefront_id}`);
+
+# -------------------------
+# DIW FETCHER
+# -------------------------
+def fetch_diw():
+
+    # DIW Konjunkturbarometer
+    try:
+        barometer_page = requests.get(
+            "https://www.diw.de/de/diw_01.c.799602.de/themen_nachrichten/diw_konjunkturbarometer.html",
+            timeout=5
+        )
+        barometer_text = barometer_page.text
+
+        if "Konjunkturbarometer" in barometer_text:
+            market_volatility = 0.35
+        else:
+            market_volatility = 0.30
+    except:
+        market_volatility = 0.30
+
+    # DIW Prognosen
+    try:
+        outlook_page = requests.get(
+            "https://www.diw.de/de/diw_01.c.799603.de/themen_nachrichten/konjunkturprognosen.html",
+            timeout=5
+        )
+        outlook_text = outlook_page.text
+
+        if "Prognose" in outlook_text:
+            structural_load = 0.29
+        else:
+            structural_load = 0.25
+    except:
+        structural_load = 0.25
+
+    # Open Energy Tracker
+    try:
+        energy = requests.get("https://openenergytracker.org/api/latest", timeout=5).json()
+        supply_chain_stress = energy.get("energy_consumption", 0.4)
+    except:
+        supply_chain_stress = 0.4
+
+    return {
+        "market_volatility": market_volatility,
+        "structural_load": structural_load,
+        "supply_chain_stress": supply_chain_stress
+    }
+
+
+# -------------------------
+# HAUPTFUNKTION
+# -------------------------
+def fetch_leibniz_data():
+
+    tropos = safe_get("https://data.tropos.de/api/v1/aerosol/latest") or {}
+    gfz = safe_get("https://geofon.gfz-potsdam.de/eqinfo/json/summary.json") or {}
+    ufz = safe_get("https://www.ufz.de/export/data.json") or {}
+    iow = {}
+    senckenberg = safe_get("https://api.crossref.org/works?query=Senckenberg") or {}
+
+    awi = fetch_awi()
+    gesis = fetch_gesis()
+    diw = fetch_diw()
+
+    return {
+        "EcoStress": {
+            "biodiversity": senckenberg.get("message", {}).get("total-results", 0) / 1000,
+            "water_quality": ufz.get("water_quality", 0.5),
+            "coastal_hydrology": iow.get("hydrology", 0.3),
+            "sediment_stress": 0.21,
+            "thermal_gradient": awi["temperature_anomaly"]
+        },
+        "AtmoStress": {
+            "aerosol_load": tropos.get("aerosol", {}).get("pm10", 0.3),
+            "boundary_layer_stress": tropos.get("boundary", {}).get("height", 0.2),
+            "redox_potential": -0.04,
+            "climate_anomaly": awi["temperature_anomaly"]
+        },
+        "GeoStab": {
+            "pressure_gradient": 0.12,
+            "groundwater_flux": 1.8,
+            "seismic_activity": len(gfz.get("features", [])) / 100,
+            "sea_ice_extent": awi["sea_ice_extent"]
+        },
+        "BioStab": {
+            "biofilm_density": 0.62,
+            "community_stability": 0.73,
+            "metabolic_flux": 0.51
+        },
+        "SocTrans": {
+            "media_resonance": gesis["media_resonance"],
+            "polarization_index": gesis["polarization_index"],
+            "discourse_stability": gesis["discourse_stability"]
+        },
+        "EconStress": {
+            "market_volatility": diw["market_volatility"],
+            "supply_chain_stress": diw["supply_chain_stress"],
+            "structural_load": diw["structural_load"]
+        },
+        "DigitalStress": {
+            "network_resonance": 0.22,
+            "infrastructure_load": 0.31,
+            "information_flow": 0.55
         }
     }
-
-    document.getElementById("playTimeline").onclick = playTimeline;
-    document.getElementById("pauseTimeline").onclick = pauseTimeline;
-}
-
-
-/* -----------------------------------------------------------
-   LOAD REPOSITORY
------------------------------------------------------------ */
-
-function loadAuroraViewRepository() {
-    fetch("/repository")
-        .then(r => r.json())
-        .then(repo => {
-            renderAuroraView(repo);
-            initTimeline(repo);
-            initEarlyWarning(repo);
-        });
-}
-
-
-/* -----------------------------------------------------------
-   TIMELINE ENGINE
------------------------------------------------------------ */
-
-let timelineIndex = 0;
-let timelineRunning = false;
-let timelineInterval = null;
-let firefrontData = [];
-
-function initTimeline(data) {
-    firefrontData = data.firefronts || [];
-}
-
-function playTimeline() {
-    if (timelineRunning) return;
-    timelineRunning = true;
-
-    timelineInterval = setInterval(() => {
-
-        if (!timelineRunning) return;
-
-        if (timelineIndex >= firefrontData.length) {
-            pauseTimeline();
-            return;
-        }
-
-        const ff = firefrontData[timelineIndex];
-
-        if (ff.polygon) {
-            L.polygon(ff.polygon, {
-                color: "yellow",
-                weight: 4,
-                opacity: 0.8
-            })
-            .addTo(window._auroraMap)
-            .bindPopup(`<b>FireFront Stufe:</b> ${ff.firefront_id}`);
-        }
-
-        timelineIndex++;
-
-    }, 1200);
-}
-
-function pauseTimeline() {
-    timelineRunning = false;
-    clearInterval(timelineInterval);
-    timelineInterval = null;
-}
-
-
-/* -----------------------------------------------------------
-   FRÜHWARNSYSTEM
------------------------------------------------------------ */
-
-function initEarlyWarning(repo) {
-
-    // Beispielwerte – später aus repo
-    const tTransparency = repo.tss?.transparency ?? 50;
-    const tStress = repo.tss?.stress ?? 50;
-    const tStability = repo.tss?.stability ?? 50;
-
-    const wPrimary = repo.wirbel?.primary ?? 50;
-    const wSecondary = repo.wirbel?.secondary ?? 50;
-    const wTertiary = repo.wirbel?.tertiary ?? 50;
-
-    const criticalClusters = repo.critical_clusters ?? [];
-
-    const result = evaluateEarlyWarning(
-        tTransparency, tStress, tStability,
-        wPrimary, wSecondary, wTertiary,
-        criticalClusters
-    );
-
-    updateEarlyWarningBox(result);
-}
-
-function evaluateEarlyWarning(tTransparency, tStress, tStability,
-                              wPrimary, wSecondary, wTertiary,
-                              criticalClusters) {
-
-    let status = "OK";
-    const reasons = [];
-
-    if (tStress > 60 || tTransparency < 40 || tStability < 50) {
-        status = "PRE_CRITICAL";
-        reasons.push("Erhöhte Stress- oder niedrige Transparenz-/Stabilitätswerte.");
-    }
-
-    if ((tStress > 75 && tStability < 45) || wPrimary > 70) {
-        status = "CRITICAL";
-        reasons.push("Hohe Stresswerte, niedrige Stabilität oder hohe Primärwirbelenergie.");
-    }
-
-    if (tStress > 85 && tStability < 40 && criticalClusters.length >= 3) {
-        status = "OVERLOAD";
-        reasons.push("Mehrere kritische Cluster bei sehr hoher Belastung und niedriger Stabilität.");
-    }
-
-    return { status, reasons, criticalClusters };
-}
-
-function updateEarlyWarningBox(result) {
-
-    const box = document.getElementById("early-warning-box");
-
-    box.classList.remove("ok", "precritical", "critical", "overload");
-
-    if (result.status === "OK") box.classList.add("ok");
-    if (result.status === "PRE_CRITICAL") box.classList.add("precritical");
-    if (result.status === "CRITICAL") box.classList.add("critical");
-    if (result.status === "OVERLOAD") box.classList.add("overload");
-
-    box.innerHTML = `
-        <h3>Frühwarnsystem</h3>
-        <p><strong>Status:</strong> ${result.status}</p>
-        <p><strong>Begründung:</strong></p>
-        <ul>${result.reasons.map(r => `<li>${r}</li>`).join("")}</ul>
-        <p><strong>Betroffene Cluster:</strong> ${result.criticalClusters.join(", ")}</p>
-    `;
-}
-
-
-/* -----------------------------------------------------------
-   START
------------------------------------------------------------ */
-
-loadAuroraViewRepository();
-
-</script>
-
-<!-- ---------------------------------------------------------
-     DASHBOARD + FRÜHWARNSYSTEM
---------------------------------------------------------- -->
-
-<section id="dashboard">
-
-    <h2>AuroraView Dashboard</h2>
-    <p>Erweitertes Lagebild der Bundesoberbehörden mit TSS‑Achsen, Wirbelenergie und Frühwarnindikatoren.</p>
-
-    <!-- Frühwarnsystem -->
-    <div id="early-warning-box" class="dashboard-panel">
-        <h3>Frühwarnsystem</h3>
-        <p>Daten werden geladen…</p>
-    </div>
-
-    <!-- TSS-Achsen Panel -->
-    <div class="dashboard-panel">
-        <h3>TSS‑Achsen</h3>
-        <ul>
-            <li><strong>Transparenz:</strong> Echtzeit‑Indikatoren für Offenheit, Informationsfluss und Medienresonanz.</li>
-            <li><strong>Stress:</strong> Belastungsgrade durch Krisen, politische Konflikte oder operative Überlast.</li>
-            <li><strong>Stabilität:</strong> strukturelle Robustheit, interne Kohärenz und externe Kopplungen.</li>
-        </ul>
-    </div>
-
-    <!-- Wirbelenergie Panel -->
-    <div class="dashboard-panel">
-        <h3>Wirbelenergie</h3>
-        <ul>
-            <li><strong>Primärwirbel:</strong> EX–VA–SI‑Massiv (Machtkern)</li>
-            <li><strong>Sekundärwirbel:</strong> ME–DI–WI–FO (Resonanznetz)</li>
-            <li><strong>Tertiärwirbel:</strong> Turbulenzfelder (VA, JU, DI, FO, WI)</li>
-        </ul>
-    </div>
-
-    <!-- Behördencluster Panel -->
-    <div class="dashboard-panel">
-        <h3>Behördencluster</h3>
-        <p>Cluster‑basierte Darstellung der Kopplungen und Energieflüsse:</p>
-        <ul>
-            <li><strong>EX:</strong> Exekutive</li>
-            <li><strong>VA:</strong> Verwaltung</li>
-            <li><strong>SI:</strong> Sicherheit</li>
-            <li><strong>ME:</strong> Medien</li>
-            <li><strong>DI:</strong> Digitalisierung</li>
-            <li><strong>WI:</strong> Wissenschaft</li>
-            <li><strong>FO:</strong> Forschung</li>
-            <li><strong>LE:</strong> Legislative</li>
-            <li><strong>JU:</strong> Judikative</li>
-        </ul>
-    </div>
-
-    <!-- Zeitachse -->
-    <div class="dashboard-panel">
-        <h3>Zeitachse</h3>
-        <p>Trendlinien der Wirbelenergie, TSS‑Achsen und Behördenkopplungen über Zeit.</p>
-        <p><em>Hinweis:</em> Die Zeitachse wird später mit AuroraView‑Engine verknüpft.</p>
-    </div>
-
-</section>
-
-</body>
-</html>
