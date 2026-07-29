@@ -315,6 +315,7 @@
 </footer>
 
 <script>
+<script>
 async function loadAuroraView() {
     try {
         const response = await fetch("http://localhost:5000/repository");
@@ -345,7 +346,7 @@ async function loadAuroraView() {
             document.getElementById("wirbel-tertiary").innerText = data.wirbel.tertiary ?? "–";
         }
 
-        // Leibniz
+        // Leibniz (Basis aus repository.json)
         const leib = data.leibniz || {};
 
         // EcoStress
@@ -368,6 +369,7 @@ async function loadAuroraView() {
             document.getElementById("geo-pressure").innerText = leib.GeoStab.pressure_gradient ?? "–";
             document.getElementById("geo-groundwater").innerText = leib.GeoStab.groundwater_flux ?? "–";
             document.getElementById("geo-seismic").innerText = leib.GeoStab.seismic_activity ?? "–";
+            // repository.json hat kein sea_ice_extent → bleibt "–"
             document.getElementById("geo-seaice").innerText = leib.GeoStab.sea_ice_extent ?? "–";
         }
 
@@ -401,13 +403,80 @@ async function loadAuroraView() {
 
         document.getElementById("loading").style.display = "none";
 
+        // danach optional Live‑Daten nachladen
+        loadLeibnizLive();
+
     } catch (error) {
         console.error("AuroraView Fehler:", error);
         document.getElementById("loading").innerText = "Fehler beim Laden der Daten.";
     }
 }
 
+async function loadLeibnizLive() {
+    try {
+        const res = await fetch("http://localhost:5000/leibniz_live");
+        const live = await res.json();
+        const leib = live.data || {};
+
+        // EcoStress live
+        if (leib.EcoStress) {
+            document.getElementById("eco-biodiversity").innerText = leib.EcoStress.biodiversity ?? "–";
+            document.getElementById("eco-water").innerText = leib.EcoStress.water_quality ?? "–";
+            document.getElementById("eco-coastal").innerText = leib.EcoStress.coastal_hydrology ?? "–";
+            document.getElementById("eco-thermal").innerText = leib.EcoStress.thermal_gradient ?? "–";
+        }
+
+        // AtmoStress live
+        if (leib.AtmoStress) {
+            document.getElementById("atmo-aerosol").innerText = leib.AtmoStress.aerosol_load ?? "–";
+            document.getElementById("atmo-boundary").innerText = leib.AtmoStress.boundary_layer_stress ?? "–";
+            document.getElementById("atmo-anomaly").innerText = leib.AtmoStress.climate_anomaly ?? "–";
+        }
+
+        // GeoStab live
+        if (leib.GeoStab) {
+            document.getElementById("geo-pressure").innerText = leib.GeoStab.pressure_gradient ?? "–";
+            document.getElementById("geo-groundwater").innerText = leib.GeoStab.groundwater_flux ?? "–";
+            document.getElementById("geo-seismic").innerText = leib.GeoStab.seismic_activity ?? "–";
+            document.getElementById("geo-seaice").innerText = leib.GeoStab.sea_ice_extent ?? "–";
+        }
+
+        // BioStab live
+        if (leib.BioStab) {
+            document.getElementById("bio-biofilm").innerText = leib.BioStab.biofilm_density ?? "–";
+            document.getElementById("bio-community").innerText = leib.BioStab.community_stability ?? "–";
+            document.getElementById("bio-metabolic").innerText = leib.BioStab.metabolic_flux ?? "–";
+        }
+
+        // SocTrans live
+        if (leib.SocTrans) {
+            document.getElementById("soc-media").innerText = leib.SocTrans.media_resonance ?? "–";
+            document.getElementById("soc-polarization").innerText = leib.SocTrans.polarization_index ?? "–";
+            document.getElementById("soc-discourse").innerText = leib.SocTrans.discourse_stability ?? "–";
+        }
+
+        // EconStress live
+        if (leib.EconStress) {
+            document.getElementById("econ-volatility").innerText = leib.EconStress.market_volatility ?? "–";
+            document.getElementById("econ-supply").innerText = leib.EconStress.supply_chain_stress ?? "–";
+            document.getElementById("econ-structural").innerText = leib.EconStress.structural_load ?? "–";
+        }
+
+        // DigitalStress live
+        if (leib.DigitalStress) {
+            document.getElementById("dig-network").innerText = leib.DigitalStress.network_resonance ?? "–";
+            document.getElementById("dig-infra").innerText = leib.DigitalStress.infrastructure_load ?? "–";
+            document.getElementById("dig-flow").innerText = leib.DigitalStress.information_flow ?? "–";
+        }
+
+    } catch (e) {
+        console.warn("Leibniz Live nicht verfügbar:", e);
+    }
+}
+
 loadAuroraView();
+</script>
+
 </script>
 </body>
 </html>
