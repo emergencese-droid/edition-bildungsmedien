@@ -242,32 +242,104 @@
 <main>
 
     <!-- Shop Startseite -->
-    <section id="shop">
-        <h2>Shop – Edition Bildungsmedien</h2>
-        <p>Hier finden Sie alle verfügbaren wissenschaftlichen Werke, Whitepaper und digitalen Publikationen.</p>
+    <!-- Shop Startseite (NEU) -->
+<section id="shop">
+    <h2>Shop – Edition Bildungsmedien</h2>
+    <p>Hier finden Sie unsere aktuellen wissenschaftlichen Hauptwerke.</p>
 
-        <div class="grid">
+    <div class="grid">
 
-            <div class="card">
-                <h3>Die vibronische Erde</h3>
-                <p>Ein wissenschaftliches Werk über die vibronische Signatur des Sauerstoff‑16‑Kerns und die Entstehung der Urzelle.</p>
-                <p><strong>Preis:</strong> ab 30 €</p>
-                <a class="button" href="#bestellung">Jetzt bestellen</a>
-            </div>
+        <!-- Die Urzelle -->
+        <div class="card">
+            <h3>Die Urzelle</h3>
+            <p>Das wissenschaftliche Hauptwerk über die vibronische Materialarchitektur, die Spiralgleichung und die frühe Urzelle.</p>
+            <p><strong>Preis:</strong> 30 € (PDF/EPUB) · 35–40 € (Print)</p>
+            <a class="button" href="#bestellung-urzelle">Jetzt bestellen</a>
+        </div>
 
-            <div class="card">
-                <h3>Dynamicum Specimen</h3>
-                <p>Ein vibronisches Whitepaper über die dynamische Ordnung der Materie und die emergente Struktur kosmischer Systeme.</p>
-                <p><strong>Preis:</strong> 20 € (PDF)</p>
-                <a class="button" href="#bestellung-dynamicum">Bestellen</a>
-            </div>
+        <!-- Der Urknall -->
+        <div class="card">
+            <h3>Der Urknall</h3>
+            <p>Das kosmologische Grundlagenwerk über Energiearchitektur, vibronische Ordnung und die emergente Struktur des frühen Universums.</p>
+            <p><strong>Preis:</strong> 25 € (PDF/EPUB) · 35–40 € (Print)</p>
+            <a class="button" href="#bestellung-urknall">Jetzt bestellen</a>
+        </div>
 
-            <div class="card">
-                <h3>Leibnizmeter – Whitepaper</h3>
-                <p>Das offizielle Whitepaper zur vibronischen Messtechnik und den photonischen Grundlagen der ATE‑Engine.</p>
-                <p><strong>Preis:</strong> 25 € (PDF)</p>
-                <a class="button" href="#bestellung-leibnizmeter">Bestellen</a>
-            </div>
+    </div>
+</section>
+
+
+<!-- Bestellformular: Die Urzelle -->
+<section id="bestellung-urzelle">
+    <h2>Bestellung – Die Urzelle</h2>
+    <p>Bitte füllen Sie das Formular aus. Sie erhalten das Passwort und den Downloadlink nach Zahlung.</p>
+
+    <form class="bestellformular" action="mailto:bestellung@bildungsmedien.de" method="post" enctype="text/plain">
+
+        <label for="name-urzelle">Name</label>
+        <input type="text" id="name-urzelle" name="Name" required>
+
+        <label for="email-urzelle">E-Mail</label>
+        <input type="email" id="email-urzelle" name="Email" required>
+
+        <label for="anzahl-urzelle">Anzahl Exemplare</label>
+        <input type="number" id="anzahl-urzelle" name="Anzahl" min="1" required>
+
+        <label for="format-urzelle">Format</label>
+        <select id="format-urzelle" name="Format" required>
+            <option value="PDF">PDF – 30 €</option>
+            <option value="EPUB">EPUB – 30 €</option>
+            <option value="Print Softcover">Print Softcover – 35 €</option>
+            <option value="Print Hardcover">Print Hardcover – 40 €</option>
+        </select>
+
+        <label for="zahlung-urzelle">Zahlungsmethode</label>
+        <select id="zahlung-urzelle" name="Zahlungsmethode" required>
+            <option value="Überweisung">Überweisung</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Rechnung">Rechnung</option>
+        </select>
+
+        <button type="submit">Bestellung absenden</button>
+    </form>
+</section>
+
+
+<!-- Bestellformular: Der Urknall -->
+<section id="bestellung-urknall">
+    <h2>Bestellung – Der Urknall</h2>
+    <p>Bitte füllen Sie das Formular aus. Sie erhalten das Passwort und den Downloadlink nach Zahlung.</p>
+
+    <form class="bestellformular" action="mailto:bestellung@bildungsmedien.de" method="post" enctype="text/plain">
+
+        <label for="name-urknall">Name</label>
+        <input type="text" id="name-urknall" name="Name" required>
+
+        <label for="email-urknall">E-Mail</label>
+        <input type="email" id="email-urknall" name="Email" required>
+
+        <label for="anzahl-urknall">Anzahl Exemplare</label>
+        <input type="number" id="anzahl-urknall" name="Anzahl" min="1" required>
+
+        <label for="format-urknall">Format</label>
+        <select id="format-urknall" name="Format" required>
+            <option value="PDF">PDF – 25 €</option>
+            <option value="EPUB">EPUB – 25 €</option>
+            <option value="Print Softcover">Print Softcover – 35 €</option>
+            <option value="Print Hardcover">Print Hardcover – 40 €</option>
+        </select>
+
+        <label for="zahlung-urknall">Zahlungsmethode</label>
+        <select id="zahlung-urknall" name="Zahlungsmethode" required>
+            <option value="Überweisung">Überweisung</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Rechnung">Rechnung</option>
+        </select>
+
+        <button type="submit">Bestellung absenden</button>
+    </form>
+</section>
+
 
         </div>
     </section>
