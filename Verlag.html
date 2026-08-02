@@ -34,34 +34,38 @@
         }
 
         /* Shop Navigation */
-        #shop-nav {
-            background: #222;
-            padding: 10px 0;
-            margin-bottom: 20px;
-        }
+       <section id="shop">
+    <h2>Shop – Unsere aktuellen Veröffentlichungen</h2>
+    <p>Digitale wissenschaftliche Medien des Emergence Technology Verlags.</p>
 
-        #shop-nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-        }
+    <div class="grid">
 
-        #shop-nav a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 6px 10px;
-            border-radius: 4px;
-            transition: background 0.2s ease;
-        }
+        <!-- Produkt 1 -->
+        <div class="card">
+            <h3>Dynamicum Specimen (EPUB)</h3>
+            <p>Das vibronische Grundlagenwerk – jetzt als digitale Ausgabe.</p>
+            <p><strong>Preis:</strong> 9,90 €</p>
+            <a class="button" href="/create-checkout-session?product=dynamicum">Jetzt kaufen</a>
+        </div>
 
-        #shop-nav a:hover {
-            background: #444;
-        }
+        <!-- Produkt 2 -->
+        <div class="card">
+            <h3>Die Urzelle (EPUB)</h3>
+            <p>Die mathematische Spiralgleichung und die frühe Materiestruktur.</p>
+            <p><strong>Preis:</strong> 14,90 €</p>
+            <a class="button" href="/create-checkout-session?product=urzelle">Jetzt kaufen</a>
+        </div>
+
+        <!-- Produkt 3 -->
+        <div class="card">
+            <h3>Leibnizmeter Whitepaper (PDF)</h3>
+            <p>Das offizielle Forschungs‑Whitepaper der Emergence Technology.</p>
+            <p><strong>Preis:</strong> 4,90 €</p>
+            <a class="button" href="/create-checkout-session?product=whitepaper">Jetzt kaufen</a>
+        </div>
+
+    </div>
+</section>
 
         main {
             max-width: 900px;
