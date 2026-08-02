@@ -241,7 +241,7 @@
 
 <main>
 
-   <!-- Shop Startseite (NEU) -->
+<!-- Shop Startseite (NEU) -->
 <section id="shop">
     <h2>Shop – Edition Bildungsmedien</h2>
     <p>Hier finden Sie unsere aktuellen wissenschaftlichen Hauptwerke.</p>
@@ -302,6 +302,43 @@
         <button type="submit">Bestellung absenden</button>
     </form>
 </section>
+
+
+<!-- Bestellformular: Der Urknall -->
+<section id="bestellung-urknall">
+    <h2>Bestellung – Der Urknall</h2>
+    <p>Bitte füllen Sie das Formular aus. Sie erhalten das Passwort und den Downloadlink nach Zahlung.</p>
+
+    <form class="bestellformular" action="mailto:bestellung@bildungsmedien.de" method="post" enctype="text/plain">
+
+        <label for="name-urknall">Name</label>
+        <input type="text" id="name-urknall" name="Name" required>
+
+        <label for="email-urknall">E-Mail</label>
+        <input type="email" id="email-urknall" name="Email" required>
+
+        <label for="anzahl-urknall">Anzahl Exemplare</label>
+        <input type="number" id="anzahl-urknall" name="Anzahl" min="1" required>
+
+        <label for="format-urknall">Format</label>
+        <select id="format-urknall" name="Format" required>
+            <option value="PDF">PDF – 25 €</option>
+            <option value="EPUB">EPUB – 25 €</option>
+            <option value="Print Softcover">Print Softcover – 35 €</option>
+            <option value="Print Hardcover">Print Hardcover – 40 €</option>
+        </select>
+
+        <label for="zahlung-urknall">Zahlungsmethode</label>
+        <select id="zahlung-urknall" name="Zahlungsmethode" required>
+            <option value="Überweisung">Überweisung</option>
+            <option value="PayPal">PayPal</option>
+            <option value="Rechnung">Rechnung</option>
+        </select>
+
+        <button type="submit">Bestellung absenden</button>
+    </form>
+</section>
+
 
 
 <!-- Bestellformular: Der Urknall -->
