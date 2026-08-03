@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -34,38 +34,34 @@
         }
 
         /* Shop Navigation */
-       <section id="shop">
-    <h2>Shop – Unsere aktuellen Veröffentlichungen</h2>
-    <p>Digitale wissenschaftliche Medien des Emergence Technology Verlags.</p>
+        #shop-nav {
+            background: #222;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
 
-    <div class="grid">
+        #shop-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
 
-        <!-- Produkt 1 -->
-        <div class="card">
-            <h3>Dynamicum Specimen (EPUB)</h3>
-            <p>Das vibronische Grundlagenwerk – jetzt als digitale Ausgabe.</p>
-            <p><strong>Preis:</strong> 9,90 €</p>
-            <a class="button" href="/create-checkout-session?product=dynamicum">Jetzt kaufen</a>
-        </div>
+        #shop-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 6px 10px;
+            border-radius: 4px;
+            transition: background 0.2s ease;
+        }
 
-        <!-- Produkt 2 -->
-        <div class="card">
-            <h3>Die Urzelle (EPUB)</h3>
-            <p>Die mathematische Spiralgleichung und die frühe Materiestruktur.</p>
-            <p><strong>Preis:</strong> 14,90 €</p>
-            <a class="button" href="/create-checkout-session?product=urzelle">Jetzt kaufen</a>
-        </div>
-
-        <!-- Produkt 3 -->
-        <div class="card">
-            <h3>Leibnizmeter Whitepaper (PDF)</h3>
-            <p>Das offizielle Forschungs‑Whitepaper der Emergence Technology.</p>
-            <p><strong>Preis:</strong> 4,90 €</p>
-            <a class="button" href="/create-checkout-session?product=whitepaper">Jetzt kaufen</a>
-        </div>
-
-    </div>
-</section>
+        #shop-nav a:hover {
+            background: #444;
+        }
 
         main {
             max-width: 900px;
@@ -94,10 +90,6 @@
         p {
             line-height: 1.5;
             margin: 0.4rem 0;
-        }
-
-        ul {
-            margin: 0.4rem 0 0.4rem 1.2rem;
         }
 
         /* Shop Startseite */
@@ -156,71 +148,12 @@
             background-color: #059669;
         }
 
-        /* Bestellformular */
-        .bestellformular label {
-            display: block;
-            margin-top: 15px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .bestellformular input,
-        .bestellformular textarea,
-        .bestellformular select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 15px;
-            background: #fafafa;
-        }
-
-        .bestellformular input:focus,
-        .bestellformular textarea:focus,
-        .bestellformular select:focus {
-            border-color: #111;
-            outline: none;
-            background: #fff;
-        }
-
-        .bestellformular button {
-            margin-top: 20px;
-            padding: 12px 20px;
-            background: #111;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .bestellformular button:hover {
-            background: #333;
-        }
-
-        /* Downloads */
-        #downloads h2 {
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-        }
-
-        #downloads h3 {
-            margin-top: 1.2rem;
-            font-size: 1.15rem;
-        }
-
-        #downloads p {
-            margin-bottom: 0.8rem;
-        }
-
         footer {
             text-align: center;
             padding: 15px 10px;
             font-size: 0.85rem;
             color: #666;
         }
-
     </style>
 </head>
 
@@ -231,7 +164,6 @@
     <p>Wissenschaftliche Bücher, vibronische Forschung & emergente Materiestrukturen.</p>
 </header>
 
-<!-- Shop Navigation -->
 <nav id="shop-nav">
     <ul>
         <li><a href="#shop">Shop</a></li>
@@ -242,3 +174,37 @@
         <li><a href="#kontakt">Kontakt</a></li>
     </ul>
 </nav>
+
+<main>
+
+<section id="shop">
+    <h2>Shop – Unsere aktuellen Veröffentlichungen</h2>
+    <p>Digitale wissenschaftliche Medien des Emergence Technology Verlags.</p>
+
+    <div class="grid">
+
+        <div class="card">
+            <h3>Dynamicum Specimen (EPUB)</h3>
+            <p>Das vibronische Grundlagenwerk – jetzt als digitale Ausgabe.</p>
+            <p><strong>Preis:</strong> 9,90 €</p>
+            <a class="button" href="/create-checkout-session?product=dynamicum">Jetzt kaufen</a>
+        </div>
+
+        <div class="card">
+            <h3>Die Urzelle (EPUB)</h3>
+            <p>Die mathematische Spiralgleichung und die frühe Materiestruktur.</p>
+            <p><strong>Preis:</strong> 14,90 €</p>
+            <a class="button" href="/create-checkout-session?product=urzelle">Jetzt kaufen</a>
+        </div>
+
+        <div class="card">
+            <h3>Leibnizmeter Whitepaper (PDF)</h3>
+            <p>Das offizielle Forschungs‑Whitepaper der Emergence Technology.</p>
+            <p><strong>Preis:</strong> 4,90 €</p>
+            <a class="button" href="/create-checkout-session?product=whitepaper">Jetzt kaufen</a>
+        </div>
+
+    </div>
+</section>
+
+<!-- Deine weiteren Bereiche bleiben unverändert -->
