@@ -746,5 +746,43 @@ function initRelationGraph(data) {
    =========================== */
 loadAuroraView();
 </script>
+
+<main>
+
+    <!-- ===========================
+         PhoenixCore Panel
+         =========================== -->
+    <div class="card" id="phoenixcore-panel">
+      <h2>PhoenixCore – Integrationsstatus</h2>
+
+      <div class="metric-row">
+        <span class="metric-label">Dichte (ρ):</span>
+        <span class="metric-value" id="density_value">0.42</span>
+      </div>
+
+      <div class="metric-row">
+        <span class="metric-label">Potenzial (V):</span>
+        <span class="metric-value" id="potential_value">1.20</span>
+      </div>
+
+      <div class="metric-row">
+        <span class="metric-label">Emission (ε):</span>
+        <span class="metric-value" id="emission_state">directed</span>
+      </div>
+
+      <h3>Integrationszustand</h3>
+      <div class="metric-row">
+        <span class="metric-label">Status:</span>
+        <span class="metric-value pill pill-green" id="integration_state">INTEGRATED</span>
+      </div>
+
+      <div class="metric-row">
+        <span class="metric-label">Kernel‑Reaktion:</span>
+        <span class="metric-value" id="policy_reaction">PHX_OK</span>
+      </div>
+    </div>
+
+</main>
+
 </body>
 </html>
