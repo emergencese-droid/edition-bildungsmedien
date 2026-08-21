@@ -745,6 +745,49 @@ function initRelationGraph(data) {
    Start
    =========================== */
 loadAuroraView();
+    /* ===========================
+   PhoenixCore – Live Update
+   =========================== */
+
+function updatePhoenixCorePanel() {
+    fetch("/phoenixcore/status")
+        .then(res => res.json())
+        .then(data => {
+
+            // Grundwerte
+            document.getElementById("density_value").textContent = data.rho.toFixed(2);
+            document.getElementById("potential_value").textContent = data.V.toFixed(2);
+            document.getElementById("emission_state").textContent = data.emission;
+
+            // Integrationszustand
+            const stateEl = document.getElementById("integration_state");
+            stateEl.textContent = data.state;
+
+            // Pill‑Farbe setzen
+            stateEl.classList.remove("pill-green", "pill-yellow", "pill-red");
+
+            if (data.state === "INTEGRATED") {
+                stateEl.classList.add("pill-green");
+            } else if (data.state === "FRAGMENTED") {
+                stateEl.classList.add("pill-yellow");
+            } else {
+                stateEl.classList.add("pill-red");
+            }
+
+            // Kernel‑Reaktion
+            document.getElementById("policy_reaction").textContent = data.reaction;
+        })
+        .catch(err => {
+            console.error("PhoenixCore Update Error:", err);
+        });
+}
+
+/* alle 3 Sekunden aktualisieren */
+setInterval(updatePhoenixCorePanel, 3000);
+
+/* einmal beim Start */
+updatePhoenixCorePanel();
+
 </script>
 
 <main>
