@@ -364,6 +364,68 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* =========================================================
+   Königliche Widmungsseite – Goldrahmen
+   ========================================================= */
+
+.royal-frame {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 50px;
+    background: #fffdf7;
+    border: 5px solid #d4af37;
+    box-shadow: 0 0 35px rgba(212, 175, 55, 0.55);
+    border-radius: 20px;
+    position: relative;
+}
+
+.royal-frame::before {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    border: 3px solid rgba(212, 175, 55, 0.7);
+    border-radius: 14px;
+    pointer-events: none;
+}
+
+.royal-header h1 {
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7a5a1a;
+    margin: 0;
+    text-align: center;
+}
+
+.royal-subtitle {
+    font-size: 1rem;
+    color: #a07b35;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.royal-body h2 {
+    font-size: 1.5rem;
+    color: #7a5a1a;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.royal-body p {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    margin-bottom: 18px;
+    text-align: justify;
+}
+
+.signature {
+    margin-top: 40px;
+    text-align: right;
+    font-style: italic;
+    color: #7a5a1a;
+}
+
 /* AuroraView Dashboard Panels */
 #dashboard {
     padding: 20px;
@@ -383,4 +445,3 @@ footer {
 #dashboard h2, #dashboard h3 {
     color: #fff;
 }
-
