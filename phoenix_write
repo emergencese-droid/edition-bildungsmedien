@@ -127,18 +127,49 @@
 
 <aside id="sidebar">
     <div class="book-title">Der Urknall</div>
+
     <ul class="chapter-list">
+
+        <!-- Haupttext -->
+        <li><strong>Haupttext</strong></li>
         <li><button class="chapter-button" onclick="loadSection('prolog')">Prolog</button></li>
         <li><button class="chapter-button" onclick="loadSection('widmung')">Widmung</button></li>
         <li><button class="chapter-button" onclick="loadSection('vorwort')">Vorwort</button></li>
+
         <li><button class="chapter-button" onclick="loadSection('kapitel_1')">Kapitel 1 – Einleitung</button></li>
         <li><button class="chapter-button" onclick="loadSection('kapitel_2')">Kapitel 2 – Higgs‑Feld</button></li>
-        <!-- weitere Kapitel -->
+        <li><button class="chapter-button" onclick="loadSection('kapitel_3')">Kapitel 3 – Schwarze Energie</button></li>
+        <li><button class="chapter-button" onclick="loadSection('kapitel_4')">Kapitel 4 – Substratphysik</button></li>
+        <li><button class="chapter-button" onclick="loadSection('kapitel_5')">Kapitel 5 – Spiralgeometrie</button></li>
+
         <li><button class="chapter-button" onclick="loadSection('epilog')">Epilog – Der Urknall</button></li>
-<li><button class="chapter-button" onclick="loadSection('anhang_a9')">A9 – Raumzeit-Diskretisierung</button></li>
-<li><button class="chapter-button" onclick="loadSection('anhang_a10')">A10 – Semantische Dichte</button></li>
-<li><button class="chapter-button" onclick="loadSection('anhang_a11')">A11 – Einstein-Kompatibilität</button></li>
-<li><button class="chapter-button" onclick="loadSection('anhang_a12')">A12 – Leibnizmeter-Schlussfolgerung</button></li>
+
+        <br>
+
+        <!-- Wissenschaftlicher Anhang -->
+        <li><strong>Wissenschaftlicher Anhang</strong></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_einleitung')">A0 – Einleitung</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a1')">A1 – Vibronische Energie</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a2')">A2 – Stufenarithmetik</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a3')">A3 – Ur‑Takt‑Gleichung</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a4')">A4 – Geometrische Welle</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a5')">A5 – Dichtegradient</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a6')">A6 – Beispielrechnungen</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a7')">A7 – Quellenangaben</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a8')">A8 – Schlussbemerkung</button></li>
+
+        <li><button class="chapter-button" onclick="loadSection('anhang_a9')">A9 – Raumzeit‑Diskretisierung</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a10')">A10 – Semantische Dichte</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a11')">A11 – Einstein‑Kompatibilität</button></li>
+        <li><button class="chapter-button" onclick="loadSection('anhang_a12')">A12 – Leibnizmeter‑Schlussfolgerung</button></li>
+
+        <br>
+
+        <!-- Meta-Kapitel -->
+        <li><strong>Meta / Dokumentation</strong></li>
+        <li><button class="chapter-button" onclick="loadSection('meta_mathematik_ontologie')">Mathematik als Sprache des Sinns</button></li>
+        <li><button class="chapter-button" onclick="loadSection('meta_ephrata')">Ephrata – Wirkungsfeld</button></li>
+        <li><button class="chapter-button" onclick="loadSection('meta_nachwort')">Nachwort</button></li>
 
     </ul>
 </aside>
@@ -164,11 +195,7 @@
         document.getElementById("current-section-label").textContent = sectionId;
 
         const stored = localStorage.getItem(STORAGE_KEY_PREFIX + sectionId);
-        if (stored) {
-            document.getElementById("editor-text").value = stored;
-        } else {
-            document.getElementById("editor-text").value = "";
-        }
+        document.getElementById("editor-text").value = stored ? stored : "";
     }
 
     function saveCurrent() {
@@ -180,11 +207,9 @@
 
     function renderPreview() {
         const text = document.getElementById("editor-text").value;
-        // einfache Vorschau: direkt anzeigen
         document.getElementById("preview-content").textContent = text;
     }
 
-    // Optional: beim Laden automatisch Prolog öffnen
     window.onload = () => loadSection("prolog");
 </script>
 
