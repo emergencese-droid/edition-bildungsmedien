@@ -2,32 +2,35 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>PhoenixWrite – Bucheditor</title>
+    <title>PhoenixWrite – Manuskripteditor</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
+        /* Grundlayout: dreigeteilte Arbeitsfläche */
         body {
             margin: 0;
             font-family: system-ui, sans-serif;
+            height: 100vh;
             display: grid;
             grid-template-columns: 260px 1fr 320px;
             grid-template-rows: auto 1fr;
             grid-template-areas:
                 "header header header"
                 "sidebar editor preview";
-            height: 100vh;
         }
 
+        /* Kopfzeile */
         header {
             grid-area: header;
             background: #111;
             color: #fff;
             padding: 10px 16px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
         }
 
+        /* Kapitelübersicht */
         #sidebar {
             grid-area: sidebar;
             background: #1f2933;
@@ -36,12 +39,14 @@
             overflow-y: auto;
         }
 
+        /* Schreibbereich */
         #editor {
             grid-area: editor;
             padding: 12px;
             border-right: 1px solid #ddd;
         }
 
+        /* Vorschau */
         #preview {
             grid-area: preview;
             padding: 12px;
@@ -66,10 +71,10 @@
 
         .chapter-button {
             width: 100%;
-            text-align: left;
             padding: 6px 8px;
-            border-radius: 4px;
+            text-align: left;
             border: none;
+            border-radius: 4px;
             background: #374151;
             color: #e5e7eb;
             cursor: pointer;
@@ -115,28 +120,26 @@
         }
     </style>
 
-<!-- MathJax: Formel-Rendering -->
-<script>
-window.MathJax = {
-    tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\\
+    <!-- MathJax-Konfiguration (GitHub-sichere Escape-Sequenzen) -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\\
 
 \[', '\\\\]
 
 ']]
-    },
-    svg: {
-        fontCache: 'global'
-    }
-};
-</script>
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
 
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-
-
-
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
+
 <body>
 
 <header>
@@ -151,24 +154,19 @@ window.MathJax = {
     <div class="book-title">Der Urknall</div>
 
     <ul class="chapter-list">
-
-        <!-- Haupttext -->
         <li><strong>Haupttext</strong></li>
         <li><button class="chapter-button" onclick="loadSection('prolog')">Prolog</button></li>
         <li><button class="chapter-button" onclick="loadSection('widmung')">Widmung</button></li>
         <li><button class="chapter-button" onclick="loadSection('vorwort')">Vorwort</button></li>
-
         <li><button class="chapter-button" onclick="loadSection('kapitel_1')">Kapitel 1 – Einleitung</button></li>
         <li><button class="chapter-button" onclick="loadSection('kapitel_2')">Kapitel 2 – Higgs‑Feld</button></li>
         <li><button class="chapter-button" onclick="loadSection('kapitel_3')">Kapitel 3 – Schwarze Energie</button></li>
         <li><button class="chapter-button" onclick="loadSection('kapitel_4')">Kapitel 4 – Substratphysik</button></li>
         <li><button class="chapter-button" onclick="loadSection('kapitel_5')">Kapitel 5 – Spiralgeometrie</button></li>
-
         <li><button class="chapter-button" onclick="loadSection('epilog')">Epilog – Der Urknall</button></li>
 
         <br>
 
-        <!-- Wissenschaftlicher Anhang -->
         <li><strong>Wissenschaftlicher Anhang</strong></li>
         <li><button class="chapter-button" onclick="loadSection('anhang_einleitung')">A0 – Einleitung</button></li>
         <li><button class="chapter-button" onclick="loadSection('anhang_a1')">A1 – Vibronische Energie</button></li>
@@ -179,7 +177,6 @@ window.MathJax = {
         <li><button class="chapter-button" onclick="loadSection('anhang_a6')">A6 – Beispielrechnungen</button></li>
         <li><button class="chapter-button" onclick="loadSection('anhang_a7')">A7 – Quellenangaben</button></li>
         <li><button class="chapter-button" onclick="loadSection('anhang_a8')">A8 – Schlussbemerkung</button></li>
-
         <li><button class="chapter-button" onclick="loadSection('anhang_a9')">A9 – Raumzeit‑Diskretisierung</button></li>
         <li><button class="chapter-button" onclick="loadSection('anhang_a10')">A10 – Semantische Dichte</button></li>
         <li><button class="chapter-button" onclick="loadSection('anhang_a11')">A11 – Einstein‑Kompatibilität</button></li>
@@ -187,12 +184,10 @@ window.MathJax = {
 
         <br>
 
-        <!-- Meta-Kapitel -->
-        <li><strong>Meta / Dokumentation</strong></li>
+        <li><strong>Meta</strong></li>
         <li><button class="chapter-button" onclick="loadSection('meta_mathematik_ontologie')">Mathematik als Sprache des Sinns</button></li>
         <li><button class="chapter-button" onclick="loadSection('meta_ephrata')">Ephrata – Wirkungsfeld</button></li>
         <li><button class="chapter-button" onclick="loadSection('meta_nachwort')">Nachwort</button></li>
-
     </ul>
 </aside>
 
@@ -216,8 +211,8 @@ window.MathJax = {
         currentSection = sectionId;
         document.getElementById("current-section-label").textContent = sectionId;
 
-        const stored = localStorage.getItem(STORAGE_KEY_PREFIX + sectionId);
-        document.getElementById("editor-text").value = stored ? stored : "";
+        const saved = localStorage.getItem(STORAGE_KEY_PREFIX + sectionId);
+        document.getElementById("editor-text").value = saved ? saved : "";
     }
 
     function saveCurrent() {
@@ -232,7 +227,6 @@ window.MathJax = {
         const preview = document.getElementById("preview-content");
 
         preview.textContent = text;
-
         MathJax.typesetPromise([preview]);
     }
 
