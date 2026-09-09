@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>PhoenixWrite – Bucheditor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: system-ui, sans-serif;
+            display: grid;
+            grid-template-columns: 260px 1fr 320px;
+            grid-template-rows: auto 1fr;
+            grid-template-areas:
+                "header header header"
+                "sidebar editor preview";
+            height: 100vh;
+        }
+
+        header {
+            grid-area: header;
+            background: #111;
+            color: #fff;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        #sidebar {
+            grid-area: sidebar;
+            background: #1f2933;
+            color: #e5e7eb;
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        #editor {
+            grid-area: editor;
+            padding: 12px;
+            border-right: 1px solid #ddd;
+        }
+
+        #preview {
+            grid-area: preview;
+            padding: 12px;
+            background: #f9fafb;
+            overflow-y: auto;
+        }
+
+        .book-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .chapter-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .chapter-list li {
+            margin-bottom: 4px;
+        }
+
+        .chapter-button {
+            width: 100%;
+            text-align: left;
+            padding: 6px 8px;
+            border-radius: 4px;
+            border: none;
+            background: #374151;
+            color: #e5e7eb;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .chapter-button:hover {
+            background: #4b5563;
+        }
+
+        #editor textarea {
+            width: 100%;
+            height: calc(100vh - 80px);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .toolbar {
+            margin-bottom: 8px;
+        }
+
+        .toolbar button {
+            margin-right: 6px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            border-radius: 999px;
+            border: 1px solid #ccc;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .toolbar button:hover {
+            background: #f3f4f6;
+        }
+
+        #preview-content {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>PhoenixWrite – Der Urknall</div>
+    <div>
+        <button onclick="saveCurrent()">Speichern</button>
+        <button onclick="renderPreview()">Vorschau</button>
+    </div>
+</header>
+
+<aside id="sidebar">
+    <div class="book-title">Der Urknall</div>
+    <ul class="chapter-list">
+        <li><button class="chapter-button" onclick="loadSection('prolog')">Prolog</button></li>
+        <li><button class="chapter-button" onclick="loadSection('widmung')">Widmung</button></li>
+        <li><button class="chapter-button" onclick="loadSection('vorwort')">Vorwort</button></li>
+        <li><button class="chapter-button" onclick="loadSection('kapitel_1')">Kapitel 1 – Einleitung</button></li>
+        <li><button class="chapter-button" onclick="loadSection('kapitel_2')">Kapitel 2 – Higgs‑Feld</button></li>
+        <!-- weitere Kapitel -->
+        <li><button class="chapter-button" onclick="loadSection('epilog')">Epilog – Der Urknall</button></li>
+    </ul>
+</aside>
+
+<main id="editor">
+    <div class="toolbar">
+        Aktueller Abschnitt: <span id="current-section-label">–</span>
+    </div>
+    <textarea id="editor-text"></textarea>
+</main>
+
+<section id="preview">
+    <h3>Vorschau</h3>
+    <div id="preview-content"></div>
+</section>
+
+<script>
+    const STORAGE_KEY_PREFIX = "phoenixwrite_der_urknall_";
+    let currentSection = null;
+
+    function loadSection(sectionId) {
+        currentSection = sectionId;
+        document.getElementById("current-section-label").textContent = sectionId;
+
+        const stored = localStorage.getItem(STORAGE_KEY_PREFIX + sectionId);
+        if (stored) {
+            document.getElementById("editor-text").value = stored;
+        } else {
+            document.getElementById("editor-text").value = "";
+        }
+    }
+
+    function saveCurrent() {
+        if (!currentSection) return;
+        const text = document.getElementById("editor-text").value;
+        localStorage.setItem(STORAGE_KEY_PREFIX + currentSection, text);
+        alert("Gespeichert: " + currentSection);
+    }
+
+    function renderPreview() {
+        const text = document.getElementById("editor-text").value;
+        // einfache Vorschau: direkt anzeigen
+        document.getElementById("preview-content").textContent = text;
+    }
+
+    // Optional: beim Laden automatisch Prolog öffnen
+    window.onload = () => loadSection("prolog");
+</script>
+
+</body>
+</html>
