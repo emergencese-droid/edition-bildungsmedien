@@ -114,6 +114,26 @@
             white-space: pre-wrap;
         }
     </style>
+
+    <!-- MathJax: Formel-Rendering -->
+    <script>
+    window.MathJax = {
+        tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\
+
+\[', '\\]
+
+']]
+        },
+        svg: {
+            fontCache: 'global'
+        }
+    };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
 </head>
 <body>
 
@@ -207,7 +227,11 @@
 
     function renderPreview() {
         const text = document.getElementById("editor-text").value;
-        document.getElementById("preview-content").textContent = text;
+        const preview = document.getElementById("preview-content");
+
+        preview.textContent = text;
+
+        MathJax.typesetPromise([preview]);
     }
 
     window.onload = () => loadSection("prolog");
