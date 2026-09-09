@@ -135,6 +135,11 @@
         <li><button class="chapter-button" onclick="loadSection('kapitel_2')">Kapitel 2 – Higgs‑Feld</button></li>
         <!-- weitere Kapitel -->
         <li><button class="chapter-button" onclick="loadSection('epilog')">Epilog – Der Urknall</button></li>
+<li><button class="chapter-button" onclick="loadSection('anhang_a9')">A9 – Raumzeit-Diskretisierung</button></li>
+<li><button class="chapter-button" onclick="loadSection('anhang_a10')">A10 – Semantische Dichte</button></li>
+<li><button class="chapter-button" onclick="loadSection('anhang_a11')">A11 – Einstein-Kompatibilität</button></li>
+<li><button class="chapter-button" onclick="loadSection('anhang_a12')">A12 – Leibnizmeter-Schlussfolgerung</button></li>
+
     </ul>
 </aside>
 
