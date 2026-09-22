@@ -2,235 +2,57 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>PhoenixWrite – Manuskripteditor</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <style>
-        /* Grundlayout: dreigeteilte Arbeitsfläche */
-        body {
-            margin: 0;
-            font-family: system-ui, sans-serif;
-            height: 100vh;
-            display: grid;
-            grid-template-columns: 260px 1fr 320px;
-            grid-template-rows: auto 1fr;
-            grid-template-areas:
-                "header header header"
-                "sidebar editor preview";
-        }
-
-        /* Kopfzeile */
-        header {
-            grid-area: header;
-            background: #111;
-            color: #fff;
-            padding: 10px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Kapitelübersicht */
-        #sidebar {
-            grid-area: sidebar;
-            background: #1f2933;
-            color: #e5e7eb;
-            padding: 12px;
-            overflow-y: auto;
-        }
-
-        /* Schreibbereich */
-        #editor {
-            grid-area: editor;
-            padding: 12px;
-            border-right: 1px solid #ddd;
-        }
-
-        /* Vorschau */
-        #preview {
-            grid-area: preview;
-            padding: 12px;
-            background: #f9fafb;
-            overflow-y: auto;
-        }
-
-        .book-title {
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .chapter-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .chapter-list li {
-            margin-bottom: 4px;
-        }
-
-        .chapter-button {
-            width: 100%;
-            padding: 6px 8px;
-            text-align: left;
-            border: none;
-            border-radius: 4px;
-            background: #374151;
-            color: #e5e7eb;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .chapter-button:hover {
-            background: #4b5563;
-        }
-
-        #editor textarea {
-            width: 100%;
-            height: calc(100vh - 80px);
-            font-family: "JetBrains Mono", monospace;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            padding: 8px;
-            box-sizing: border-box;
-        }
-
-        .toolbar {
-            margin-bottom: 8px;
-        }
-
-        .toolbar button {
-            margin-right: 6px;
-            padding: 4px 10px;
-            font-size: 0.85rem;
-            border-radius: 999px;
-            border: 1px solid #ccc;
-            background: #fff;
-            cursor: pointer;
-        }
-
-        .toolbar button:hover {
-            background: #f3f4f6;
-        }
-
-        #preview-content {
-            font-size: 0.9rem;
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
-    </style>
-
-    <!-- MathJax-Konfiguration (GitHub-sichere Escape-Sequenzen) -->
-    <script>
-    window.MathJax = {
-        tex: {
-            inlineMath: [['$', '$'], ['\\(', '\\)']],
-            displayMath: [['$$', '$$'], ['\\\
-
-\[', '\\\\]
-
-']]
-        },
-        svg: {
-            fontCache: 'global'
-        }
-    };
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <title>PhoenixOffice</title>
+    <link rel="stylesheet" href="assets/styles.css">
 </head>
 
 <body>
 
-<header>
-    <div>PhoenixWrite – Der Urknall</div>
-    <div>
-        <button onclick="saveCurrent()">Speichern</button>
-        <button onclick="renderPreview()">Vorschau</button>
-    </div>
-</header>
+<div id="phoenix-office">
 
-<aside id="sidebar">
-    <div class="book-title">Der Urknall</div>
+    <header>
+        <h1>PhoenixOffice – Suite</h1>
+    </header>
 
-    <ul class="chapter-list">
-        <li><strong>Haupttext</strong></li>
-        <li><button class="chapter-button" onclick="loadSection('prolog')">Prolog</button></li>
-        <li><button class="chapter-button" onclick="loadSection('widmung')">Widmung</button></li>
-        <li><button class="chapter-button" onclick="loadSection('vorwort')">Vorwort</button></li>
-        <li><button class="chapter-button" onclick="loadSection('kapitel_1')">Kapitel 1 – Einleitung</button></li>
-        <li><button class="chapter-button" onclick="loadSection('kapitel_2')">Kapitel 2 – Higgs‑Feld</button></li>
-        <li><button class="chapter-button" onclick="loadSection('kapitel_3')">Kapitel 3 – Schwarze Energie</button></li>
-        <li><button class="chapter-button" onclick="loadSection('kapitel_4')">Kapitel 4 – Substratphysik</button></li>
-        <li><button class="chapter-button" onclick="loadSection('kapitel_5')">Kapitel 5 – Spiralgeometrie</button></li>
-        <li><button class="chapter-button" onclick="loadSection('epilog')">Epilog – Der Urknall</button></li>
+    <!-- Navigation -->
+    <nav id="phoenix-nav">
+        <button data-target="dashboard">Dashboard</button>
+        <button data-target="write">Write</button>
+        <button data-target="mail">Mail</button>
+        <button data-target="docs">Docs</button>
+        <button data-target="ai">AI</button>
+        <button data-target="guard">Guard</button>
+        <button data-target="matrix">Matrix</button>
+    </nav>
 
-        <br>
+    <!-- Hauptbereich -->
+    <main id="phoenix-main">
+        <iframe id="phoenix-frame" src="phoenix_dashboard.html"></iframe>
+    </main>
 
-        <li><strong>Wissenschaftlicher Anhang</strong></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_einleitung')">A0 – Einleitung</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a1')">A1 – Vibronische Energie</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a2')">A2 – Stufenarithmetik</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a3')">A3 – Ur‑Takt‑Gleichung</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a4')">A4 – Geometrische Welle</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a5')">A5 – Dichtegradient</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a6')">A6 – Beispielrechnungen</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a7')">A7 – Quellenangaben</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a8')">A8 – Schlussbemerkung</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a9')">A9 – Raumzeit‑Diskretisierung</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a10')">A10 – Semantische Dichte</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a11')">A11 – Einstein‑Kompatibilität</button></li>
-        <li><button class="chapter-button" onclick="loadSection('anhang_a12')">A12 – Leibnizmeter‑Schlussfolgerung</button></li>
+</div>
 
-        <br>
+<script type="module">
 
-        <li><strong>Meta</strong></li>
-        <li><button class="chapter-button" onclick="loadSection('meta_mathematik_ontologie')">Mathematik als Sprache des Sinns</button></li>
-        <li><button class="chapter-button" onclick="loadSection('meta_ephrata')">Ephrata – Wirkungsfeld</button></li>
-        <li><button class="chapter-button" onclick="loadSection('meta_nachwort')">Nachwort</button></li>
-    </ul>
-</aside>
+    const frame = document.getElementById("phoenix-frame");
 
-<main id="editor">
-    <div class="toolbar">
-        Aktueller Abschnitt: <span id="current-section-label">–</span>
-    </div>
-    <textarea id="editor-text"></textarea>
-</main>
+    const routes = {
+        "dashboard": "phoenix_dashboard.html",
+        "write": "phoenix_write.html",
+        "mail": "phoenix_mail.html",
+        "docs": "phoenix_docs.html",
+        "ai": "phoenix_ai.html",
+        "guard": "phoenix_guard.html",
+        "matrix": "phoenix_matrix.html"
+    };
 
-<section id="preview">
-    <h3>Vorschau</h3>
-    <div id="preview-content"></div>
-</section>
+    document.querySelectorAll("#phoenix-nav button").forEach(btn => {
+        btn.onclick = () => {
+            const target = btn.dataset.target;
+            frame.src = routes[target];
+        };
+    });
 
-<script>
-    const STORAGE_KEY_PREFIX = "phoenixwrite_der_urknall_";
-    let currentSection = null;
-
-    function loadSection(sectionId) {
-        currentSection = sectionId;
-        document.getElementById("current-section-label").textContent = sectionId;
-
-        const saved = localStorage.getItem(STORAGE_KEY_PREFIX + sectionId);
-        document.getElementById("editor-text").value = saved ? saved : "";
-    }
-
-    function saveCurrent() {
-        if (!currentSection) return;
-        const text = document.getElementById("editor-text").value;
-        localStorage.setItem(STORAGE_KEY_PREFIX + currentSection, text);
-        alert("Gespeichert: " + currentSection);
-    }
-
-    function renderPreview() {
-        const text = document.getElementById("editor-text").value;
-        const preview = document.getElementById("preview-content");
-
-        preview.textContent = text;
-        MathJax.typesetPromise([preview]);
-    }
-
-    window.onload = () => loadSection("prolog");
 </script>
 
 </body>
