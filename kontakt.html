@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Kontaktformular und Lead-Generierung der Edition Bildungsmedien.">
-    <meta property="og:title" content="Kontakt | Edition Bildungsmedien">
+    <meta name="description" content="Erweiterte Kontaktseite der Edition Bildungsmedien mit allgemeinen Anfragen, Presse, Autoren und Kooperationsanfragen.">
+    <meta property="og:title" content="Kontakt & Anfragen | Edition Bildungsmedien">
     <meta property="og:type" content="website">
     <meta property="og:image" content="assets/images/og-default.svg">
     <link rel="canonical" href="https://example.org/kontakt.html">
-    <title>Kontakt | Edition Bildungsmedien</title>
+    <title>Kontakt & Anfragen | Edition Bildungsmedien</title>
     <link rel="stylesheet" href="assets/css/main.css">
   </head>
   <body>
@@ -19,6 +19,7 @@
           <a href="index.html">Startseite</a>
           <a href="ueber-uns.html">Über uns</a>
           <a href="shop/index.html">Shop</a>
+          <a href="publikationen/index.html">Publikationen</a>
           <a href="kontakt.html" aria-current="page">Kontakt</a>
         </nav>
       </div>
@@ -27,30 +28,42 @@
     <main class="page-content">
       <div class="container narrow">
         <p class="eyebrow">Kontakt</p>
-        <h1>Kontakt und Lead-Generierung.</h1>
-        <p>Für Buchanfragen, Kooperationen, Manuskripte und Bildungsprojekte nutzen Sie bitte das vorbereitete Formular.</p>
+        <h1>Kontakt & Anfragen.</h1>
+        <p>Edition Bildungsmedien nimmt allgemeine Anfragen, Presseanfragen, Autoren- und Kooperationsgespräche sowie Manuskripteinreichungen entgegen.</p>
+
+        <div class="info-stack">
+          <article class="info-card">
+            <h2>Allgemeine Anfragen</h2>
+            <p>Für Anliegen rund um Bestellungen, Inhalte, Veröffentlichungen und allgemeine Kommunikation.</p>
+          </article>
+          <article class="info-card">
+            <h2>Presseanfragen</h2>
+            <p>Für Medienkontakte, Beiträge, Interviews und Veröffentlichungen zum Verlag und Publikationsprogramm.</p>
+          </article>
+          <article class="info-card">
+            <h2>Autorenanfragen</h2>
+            <p>Für Gespräche über Themenfelder, Veröffentlichungen und mögliche neue Autor:innenbeiträge.</p>
+          </article>
+          <article class="info-card">
+            <h2>Kooperationsanfragen</h2>
+            <p>Für Bildungskooperationen, Forschungszusammenarbeit und strategische Partnerschaften.</p>
+          </article>
+          <article class="info-card">
+            <h2>Manuskripteinreichung</h2>
+            <p>Für neue wissenschaftliche, publizistische oder bildungsbezogene Einreichungen.</p>
+          </article>
+        </div>
 
         <form class="contact-form" action="#" method="post">
           <div class="form-grid">
             <label>Vorname<input type="text" name="vorname" placeholder="Vorname"></label>
             <label>Nachname<input type="text" name="nachname" placeholder="Nachname"></label>
             <label>E-Mail<input type="email" name="email" placeholder="name@beispiel.de"></label>
-            <label>Art der Anfrage<select name="anfrage"><option>Publikation</option><option>Kooperation</option><option>Manuskript</option><option>Newsletter</option><option>Beratung</option></select></label>
+            <label>Art der Anfrage<select name="anfrage"><option>Allgemeine Anfrage</option><option>Presseanfrage</option><option>Autorenanfrage</option><option>Kooperationsanfrage</option><option>Manuskripteinreichung</option></select></label>
           </div>
           <label>Nachricht<textarea rows="6" name="nachricht" placeholder="Ihre Nachricht"></textarea></label>
           <button class="button button-primary" type="submit">Anfrage senden</button>
         </form>
-
-        <div class="info-stack small-gap">
-          <article class="info-card">
-            <h2>Newsletter</h2>
-            <p>Verfolgen Sie Neuerscheinungen, Forschungsimpulse und neue Bildungsformate.</p>
-          </article>
-          <article class="info-card">
-            <h2>Manuskript einreichen</h2>
-            <p>Für Autorinnen und Autoren besteht ein vorbereiteter Formularpfad für spätere Einreichungen.</p>
-          </article>
-        </div>
       </div>
     </main>
 

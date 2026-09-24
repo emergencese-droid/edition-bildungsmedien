@@ -1,7 +1,9 @@
 {
   "partners": [
-    {"name": "Emergence Technology", "type": "Dachmarke"},
-    {"name": "Bildungsinnovation", "type": "Zukunftsbereich"},
-    {"name": "Wissenschaftliche Praxis", "type": "Netzwerk"}
+    {"name": "Forschungspartner", "type": "im Aufbau"},
+    {"name": "Bildungsinstitutionen", "type": "im Aufbau"},
+    {"name": "Verlage", "type": "im Aufbau"},
+    {"name": "Technologiepartner", "type": "im Aufbau"},
+    {"name": "Wissenschaftliche Netzwerke", "type": "im Aufbau"}
   ]
 }

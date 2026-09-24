@@ -1,56 +1,42 @@
 # Edition Bildungsmedien
 
-Phase 1.6 – Veröffentlichungsreife und Plattform-Vorbereitung.
+Phase 1.7 – Veröffentlichungs- und Vertrauensaufbau.
 
-## Inhaltlicher Fokus
+## Ziel
 
-Diese Erweiterung bereitet die Website auf einen professionellen Verlagsbetrieb vor. Geändert wurden:
+Die Website soll sich von einem Werkzeug- und Shop-Prototypen zu einem professionellen Verlagsauftritt mit klarer Mission, Veröffentlichungsprogramm und verlässlicher Markenkommunikation entwickeln.
 
-- Verlagsphilosophie und Über-uns-Bereich
-- Autorenseite für Sebastian Schreiner
-- Bildungs-, Beratungs- und Forschungslandingpages
-- etablierte GitHub-Pages- und 404-Umgebung
-- vorbereitete Social-Preview und OpenGraph-Struktur
-- Kontakt- und Lead-Generierungsfelder
-- neue Datenlagen für zukünftige Plattformbereiche
+## Neuer Inhalt
 
-## Neue Datenstrukturen
+- neue Publikationsseite: `publikationen/index.html`
+- Verlagsphilosophie: `verlag/philosophie.html`
+- Autorenseite mit erweitertem Profil: `autoren/sebastian-schreiner.html`
+- Partnerseite: `partner/index.html`
+- erweiterte Kontaktseite mit Anfragekategorien: `kontakt.html`
+- Navigation und Verlinkungen in der bestehenden Website angepasst
 
-Im Ordner `data/` ergänzte Dateien:
+## Neue Datenstruktur
 
-- `research.json`
-- `publications.json`
-- `topics.json`
-- `partners.json`
+`data/publications.json` wurde erweitert und beschreibt nun ein klareres Publikationsprogramm mit Statusangaben.
 
-Diese dienen als Grundlage für spätere Wissensbibliothek, Forschungsbereich, Bildungsplattform und Dialogangebote, ohne die bestehende Shoparchitektur zu unterbrechen.
+`data/partners.json` wurde auf strategische Netzwerkbereiche reduziert, die später als Grundlage für echte Kooperationen dienen.
 
-## Neue Bereiche
+## Marken- und Vertrauenseffekt
 
-- `ueber-uns.html`
-- `autoren/index.html`
-- `bildung/index.html`
-- `beratung/index.html`
-- `forschung/index.html`
-- `404.html`
+Die neue Struktur vermittelt:
 
-## Sozial- und Medienvorbereitung
+- wissenschaftliche Verlässlichkeit
+- klare Publikationslogik
+- klare Themenfelder und Mission
+- professionelle Anfrage- und Kontaktmechanik
+- Übergang von „Autor mit Shop“ zu „junger wissenschaftlicher Verlag“
 
-- `assets/images/og-default.svg`
-- `assets/images/author-placeholder.svg`
+## Weiterer strategischer Fokus
 
-Diese Dateien dienen als statische Platzhalter für OpenGraph-Bilder und Autorengrafiken.
+Die nächsten Stufen sollten künftig nicht mehr rein technische Funktionen erweitern, sondern die Verlagsidentität weiter festigen:
 
-## GitHub Pages / statische Bereitstellung
-
-Die Website ist auf statische Hosting-Umgebungen vorbereitet. Alle Dateipfade wurden bewusst auf relative Pfade und lokal verständliche Strukturen gesetzt. Die 404-Seite sorgt für ein professionelleres Verhalten bei fehlenden Seiten.
-
-## Offene Punkte vor dem produktiven Start
-
-- echte Coverbilder und Verkaufsgrafiken
-- echte Autorin-/Autorenbilder
-- finale rechtliche Texte
-- E-Mail-Versand und Anforderungslogik
-- Stripe-Integration und Payment-Backend
-- Domain- und Hosting-Konfiguration
-- rechtlich geprüfte Datenschutzhinweise und AGB
+- mehr redaktionelle Tiefe
+- stärkeres Autor- und Themenprofil
+- klarere Publikationsreihen
+- abgestimmte Gesprächs- und Anfragestrukturen
+- Vorbereitung auf internationale Bildungs- und Innovationsplattformen

@@ -3,14 +3,23 @@
     {
       "id": "der-urknall",
       "title": "Der Urknall",
+      "status": "Aktuell erschienen",
       "category": "Physik",
       "format": "PDF · EPUB · Hardcover"
     },
     {
       "id": "dynamicum-specimen",
       "title": "Dynamicum Specimen",
+      "status": "Aktuell erschienen",
       "category": "Systemtheorie",
       "format": "PDF · Print"
+    },
+    {
+      "id": "systemische-perspektiven",
+      "title": "Systemische Perspektiven",
+      "status": "In Vorbereitung",
+      "category": "Forschung",
+      "format": "PDF"
     }
   ]
 }
