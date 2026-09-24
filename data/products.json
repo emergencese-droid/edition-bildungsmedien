@@ -5,21 +5,40 @@
   "products": [
     {
       "id": "der-urknall",
+      "slug": "urknall",
       "title": "Der Urknall",
       "author": "Sebastian Schreiner",
       "categories": ["Physik", "Kosmologie", "Bildung"],
-      "formats": ["PDF", "EPUB", "Hardcover"],
-      "description": "Eine wissenschaftliche Annäherung an Ursprung, Entwicklung und Struktur des Universums.",
-      "status": "In Vorbereitung"
+      "formats": [
+        {"name": "PDF", "price": 9.90, "digital": true},
+        {"name": "EPUB", "price": 9.90, "digital": true},
+        {"name": "Hardcover", "price": 29.90, "digital": false}
+      ],
+      "shortDescription": "Eine wissenschaftliche Annäherung an Ursprung, Entwicklung und Struktur des Universums.",
+      "description": "Der Urknall lädt dazu ein, die Entstehung und Entwicklung des Universums aus einer wissenschaftlichen und systemischen Perspektive zu betrachten. Die Publikation verbindet kosmologische Grundlagen mit verständlichen Erklärungen und weiterführenden Fragen.",
+      "coverImage": "",
+      "sampleUrl": "../leseproben/urknall.html",
+      "productUrl": "../buecher/urknall.html",
+      "available": true,
+      "featured": true
     },
     {
       "id": "dynamicum-specimen",
+      "slug": "dynamicum-specimen",
       "title": "Dynamicum Specimen",
       "author": "Sebastian Schreiner",
       "categories": ["Systemtheorie", "Innovation", "Robotik"],
-      "formats": ["PDF", "Print"],
-      "description": "Ein Denkmodell für dynamische Systeme, Veränderung und neue Architekturen.",
-      "status": "In Vorbereitung"
+      "formats": [
+        {"name": "PDF", "price": 12.90, "digital": true},
+        {"name": "Print", "price": 24.90, "digital": false}
+      ],
+      "shortDescription": "Ein Denkmodell für dynamische Systeme, Veränderung und neue Architekturen.",
+      "description": "Dynamicum Specimen untersucht, wie dynamische Systeme entstehen, sich verändern und miteinander verbunden werden können. Das Buch versteht sich als Impuls für systemisches Denken, Innovation und die Gestaltung zukunftsfähiger Strukturen.",
+      "coverImage": "",
+      "sampleUrl": "../leseproben/dynamicum.html",
+      "productUrl": "../buecher/dynamicum-specimen.html",
+      "available": true,
+      "featured": true
     }
   ]
 }
