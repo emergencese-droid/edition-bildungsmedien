@@ -1,42 +1,33 @@
 # Edition Bildungsmedien
 
-Phase 1.7 – Veröffentlichungs- und Vertrauensaufbau.
+## Organisationsbereich
 
-## Ziel
+Der neue Bereich `organisation/` stellt die konzeptionelle Organisations- und Zukunftsarchitektur von Emergence Technology als klickbare Reiterstruktur dar.
 
-Die Website soll sich von einem Werkzeug- und Shop-Prototypen zu einem professionellen Verlagsauftritt mit klarer Mission, Veröffentlichungsprogramm und verlässlicher Markenkommunikation entwickeln.
+### Bereiche
 
-## Neuer Inhalt
+- `organisation/index.html` – Übersicht
+- `organisation/leitbild.html` – Aufklärung durch Emergenz und Grundwerte
+- `organisation/wirkmodell.html` – Wirkmodell von Wissenschaft bis Gemeinwohl
+- `organisation/vz-konzept.html` – Konzept der Verfassungsorganisation der Zivilgesellschaft
+- `organisation/organisationsstruktur.html` – konzeptionelles Strukturmodell
+- `organisation/konzernstruktur.html` – Dachmarke und Unternehmensbereiche
+- `organisation/fruehwarnsysteme.html` – konzeptionelle Analyse- und Wissenssysteme
 
-- neue Publikationsseite: `publikationen/index.html`
-- Verlagsphilosophie: `verlag/philosophie.html`
-- Autorenseite mit erweitertem Profil: `autoren/sebastian-schreiner.html`
-- Partnerseite: `partner/index.html`
-- erweiterte Kontaktseite mit Anfragekategorien: `kontakt.html`
-- Navigation und Verlinkungen in der bestehenden Website angepasst
+## Wichtiger redaktioneller Rahmen
 
-## Neue Datenstruktur
+Die Organisationsgrafiken und Zukunftsmodelle sind als Konzepte gekennzeichnet. Sie stellen keine bestehende staatliche Institution, Behörde, politische Vertretung oder offizielle Partnerschaft dar. Konkrete Partner, Mandate, Funktionen und rechtliche Strukturen dürfen erst nach Prüfung und tatsächlicher Vereinbarung veröffentlicht werden.
 
-`data/publications.json` wurde erweitert und beschreibt nun ein klareres Publikationsprogramm mit Statusangaben.
+## Leitbild
 
-`data/partners.json` wurde auf strategische Netzwerkbereiche reduziert, die später als Grundlage für echte Kooperationen dienen.
+**Wissen schafft Orientierung. Dialog schafft Vertrauen. Innovation schafft Zukunft.**
 
-## Marken- und Vertrauenseffekt
+Die Website verwendet eine sachliche Sprache mit den Leitbegriffen Wissenschaft, Bildung, Dialog, Integration, Innovation und Gemeinwohl.
 
-Die neue Struktur vermittelt:
+## Bestehende Bereiche
 
-- wissenschaftliche Verlässlichkeit
-- klare Publikationslogik
-- klare Themenfelder und Mission
-- professionelle Anfrage- und Kontaktmechanik
-- Übergang von „Autor mit Shop“ zu „junger wissenschaftlicher Verlag“
-
-## Weiterer strategischer Fokus
-
-Die nächsten Stufen sollten künftig nicht mehr rein technische Funktionen erweitern, sondern die Verlagsidentität weiter festigen:
-
-- mehr redaktionelle Tiefe
-- stärkeres Autor- und Themenprofil
-- klarere Publikationsreihen
-- abgestimmte Gesprächs- und Anfragestrukturen
-- Vorbereitung auf internationale Bildungs- und Innovationsplattformen
+- Verlag und Publikationen: `publikationen/`, `verlag/`, `autoren/`
+- Shop: `shop/`
+- Forschung: `forschung/`
+- Bildung: `bildung/`
+- Beratung: `beratung/`
