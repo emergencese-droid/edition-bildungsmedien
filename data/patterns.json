@@ -1,0 +1,10 @@
+{
+  "topics": [
+    {"id": "innovation", "name": "Innovation", "description": "Neue Ideen, Methoden und Zukunftsperspektiven."},
+    {"id": "bildung", "name": "Bildung", "description": "Wissen zugänglich, verständlich und wirksam machen."},
+    {"id": "forschung", "name": "Forschung", "description": "Fragen stellen, Zusammenhänge untersuchen und Erkenntnis teilen."},
+    {"id": "medizin", "name": "Medizin", "description": "Wissenschaftliche Perspektiven auf Gesundheit und Systeme."},
+    {"id": "systemarchitektur", "name": "Systemarchitektur", "description": "Strukturen, Schnittstellen und dynamische Ordnungen."},
+    {"id": "robotik", "name": "Robotik", "description": "Technologie, Interaktion und intelligente Systeme."}
+  ]
+}

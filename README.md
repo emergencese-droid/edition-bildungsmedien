@@ -1,49 +1,59 @@
 # Edition Bildungsmedien
 
-Edition Bildungsmedien ist ein unabhängiger wissenschaftlicher Verlag mit Sitz in Bochum.  
-Der Verlag publiziert Grundlagenwerke zur vibronischen Theorie, zur frühen Biochemie, zur Technologiegeschichte und zur Entwicklung neuer Rechenarchitekturen.  
-Er ist Teil des langfristigen Forschungsprogramms **Emergence Technology**.
+Grundgerüst für den wissenschaftlichen Verlag Edition Bildungsmedien unter der Dachmarke Emergence Technology.
 
-## Profil des Verlags
-Edition Bildungsmedien verbindet klassische Buchproduktion mit digitalen Publikationsformen und wissenschaftlicher Dokumentation.  
-Die Themen umfassen:
+## Inhalt
 
-- Vibronische Modelle und die ATE‑Engine  
-- Die Urzelle und frühe molekulare Strukturen  
-- Der Urknall und kosmologische Grundlagen  
-- Technologiegeschichte und neue Computerarchitekturen  
-- Gesellschaftliche Stabilität und Gewaltenmonitoring
+Dieses Repository enthält ein statisches, lokal lauffähiges Basisprojekt mit:
 
-## Publikationen
-- **Die Urzelle** – Grundlagenwerk zur vibronischen Biochemie  
-- **Der Urknall** – Kosmologische Strukturen und vibronische Dynamik  
-- **Dynamicum Specimen** – Wissenschaftliche Kurzpublikation  
-- **Leibnizmeter Whitepaper** – Photonische Messtechnik und Frequenzanalyse
+- Startseite und Verlagsvorstellung
+- Kontaktseite
+- Impressum
+- Datenschutz
+- AGB
+- Responsive CSS-Grundlage
+- JavaScript-Grundgerüst
+- Strukturierte JSON-Dateien
+- Vorbereitete Bereiche für Bücher, Leseproben, Downloads und Shop
 
-## Forschungsprogramm
-Edition Bildungsmedien ist Teil des 10‑Jahres‑F&E‑Programms von Emergence Technology.  
-Zentrale Achsen:
+## Starten
 
-1. Energiezellen‑Entwicklung  
-2. Photonische Messtechnik (Leibnizmeter)  
-3. Photonenstrahlentherapie  
-4. Vibronischer Computer (Konzern‑Version & Monitoring‑Version)
+```bash
+python3 -m http.server 8000
+```
 
-## Webseitenstruktur
-Dieses Repository enthält die HTML‑Seiten des Verlags:
+Danach öffnen Sie im Browser:
 
-- `index.html` – Startseite  
-- `verlag.html` – Verlagsprofil  
-- `urzelle.html` – Buchprojekt *Die Urzelle*  
-- `urknall.html` – Buchprojekt *Der Urknall*  
-- `kontakt.html` – Kontaktseite  
-- `impressum.html` – Rechtliches  
-- `assets/` – CSS, Bilder, Logos
+```text
+http://localhost:8000/
+```
 
-## Lizenz
-Die Inhalte dieses Repositories sind urheberrechtlich geschützt.  
-Die wissenschaftlichen Texte und Buchinhalte gehören Edition Bildungsmedien.
+## Ordnerstruktur
 
-## Kontakt
-Edition Bildungsmedien  
-Bochum, Deutschland  
+- `index.html`
+- `kontakt.html`
+- `impressum.html`
+- `datenschutz.html`
+- `agb.html`
+- `assets/css/`
+- `assets/js/`
+- `data/`
+- `backend/`
+- `shop/`
+- `buecher/`
+- `leseproben/`
+- `downloads/`
+
+## Hinweise
+
+- Die Kontaktdaten und rechtlichen Seiten sind bewusst als Platzhalter gesetzt.
+- Es ist noch keine Shoplogik, kein Checkout und keine Zahlungsschnittstelle eingebaut.
+- Vor einem produktiven Launch müssen Datenschutz, Impressum und AGB rechtlich geprüft werden.
+
+## Nächste Schritte
+
+1. Produktdetailseiten und Leseproben ergänzen
+2. Preise und Verfügbarkeit einbauen
+3. Bestell- und Warenkorb-Logik erstellen
+4. Rechtliche Inhalte durch offizielle Texte ersetzen
+5. Backend-Schnittstellen für Produktdaten und Checkout planen

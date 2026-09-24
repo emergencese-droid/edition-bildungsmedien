@@ -1,0 +1,25 @@
+{
+  "publisher": "Edition Bildungsmedien",
+  "brand": "Emergence Technology",
+  "currency": "EUR",
+  "products": [
+    {
+      "id": "der-urknall",
+      "title": "Der Urknall",
+      "author": "Sebastian Schreiner",
+      "categories": ["Physik", "Kosmologie", "Bildung"],
+      "formats": ["PDF", "EPUB", "Hardcover"],
+      "description": "Eine wissenschaftliche Annäherung an Ursprung, Entwicklung und Struktur des Universums.",
+      "status": "In Vorbereitung"
+    },
+    {
+      "id": "dynamicum-specimen",
+      "title": "Dynamicum Specimen",
+      "author": "Sebastian Schreiner",
+      "categories": ["Systemtheorie", "Innovation", "Robotik"],
+      "formats": ["PDF", "Print"],
+      "description": "Ein Denkmodell für dynamische Systeme, Veränderung und neue Architekturen.",
+      "status": "In Vorbereitung"
+    }
+  ]
+}

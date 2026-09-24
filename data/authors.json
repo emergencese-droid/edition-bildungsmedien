@@ -1,0 +1,12 @@
+{
+  "authors": [
+    {
+      "id": "sebastian-schreiner",
+      "name": "Sebastian Schreiner",
+      "role": "Autor und Forscher",
+      "bio": "Sebastian Schreiner arbeitet an den Übergängen von Wissenschaft, Bildung und systemischem Denken.",
+      "focus": ["Physik", "Systemtheorie", "Bildung", "Innovation"],
+      "image": "assets/images/author-placeholder.svg"
+    }
+  ]
+}
