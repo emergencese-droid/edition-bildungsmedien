@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400" role="img" aria-label="Autor Platzhalter">
+  <rect width="400" height="400" fill="#e7f9f1"/>
+  <circle cx="200" cy="150" r="76" fill="#10b981" opacity="0.8"/>
+  <rect x="96" y="230" width="208" height="118" rx="18" fill="#12302a" opacity="0.9"/>
+  <text x="200" y="313" text-anchor="middle" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="26">Sebastian</text>
+</svg>

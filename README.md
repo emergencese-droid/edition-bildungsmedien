@@ -1,60 +1,56 @@
 # Edition Bildungsmedien
 
-Phase-1.5-Stabilisierungsstand für den wissenschaftlichen Verlag Edition Bildungsmedien unter der Dachmarke Emergence Technology.
+Phase 1.6 – Veröffentlichungsreife und Plattform-Vorbereitung.
 
-## Produktdatenstruktur
+## Inhaltlicher Fokus
 
-Die zentralen Daten liegen in `data/products.json`, `data/authors.json` und `data/patterns.json`. Produkte enthalten unter anderem `id`, `slug`, `title`, `author`, `categories`, `formats`, `available`, `featured`, `productUrl` und `sampleUrl`. Preise werden pro Format als numerischer EUR-Wert gespeichert.
+Diese Erweiterung bereitet die Website auf einen professionellen Verlagsbetrieb vor. Geändert wurden:
 
-## Warenkorb-System
+- Verlagsphilosophie und Über-uns-Bereich
+- Autorenseite für Sebastian Schreiner
+- Bildungs-, Beratungs- und Forschungslandingpages
+- etablierte GitHub-Pages- und 404-Umgebung
+- vorbereitete Social-Preview und OpenGraph-Struktur
+- Kontakt- und Lead-Generierungsfelder
+- neue Datenlagen für zukünftige Plattformbereiche
 
-Der Warenkorb wird clientseitig über `assets/js/cart.js` verwaltet und unter dem Schlüssel `edition-bildungsmedien-cart` im Local Storage gespeichert. Produkte können nach Format zusammengeführt, entfernt und in ihrer Menge geändert werden. Beschädigte oder ungültige gespeicherte Daten werden verworfen, ohne dass die Seite abstürzt.
+## Neue Datenstrukturen
 
-## Checkout-Demo
+Im Ordner `data/` ergänzte Dateien:
 
-`shop/checkout.html` zeigt eine Bestellübersicht und validiert die notwendigen Kundendaten. Es werden keine Zahlungsdaten verarbeitet, keine Bestellung an einen Server gesendet und keine echten Zahlungen ausgelöst. Der erfolgreiche Demo-Ablauf führt zu `shop/success.html`; ein Abbruch führt zu `shop/cancelled.html`.
+- `research.json`
+- `publications.json`
+- `topics.json`
+- `partners.json`
 
-## Lokale Entwicklung
+Diese dienen als Grundlage für spätere Wissensbibliothek, Forschungsbereich, Bildungsplattform und Dialogangebote, ohne die bestehende Shoparchitektur zu unterbrechen.
 
-Aus dem Repository-Hauptverzeichnis starten:
+## Neue Bereiche
 
-```bash
-python3 -m http.server 8000
-```
+- `ueber-uns.html`
+- `autoren/index.html`
+- `bildung/index.html`
+- `beratung/index.html`
+- `forschung/index.html`
+- `404.html`
 
-Danach `http://localhost:8000/` öffnen. Ein Webserver ist erforderlich, damit `fetch()` die JSON-Dateien laden kann.
+## Sozial- und Medienvorbereitung
 
-## Erweiterungsarchitektur
+- `assets/images/og-default.svg`
+- `assets/images/author-placeholder.svg`
 
-- `assets/js/` enthält getrennte Module für Navigation, Produktdarstellung, Warenkorb und Checkout.
-- `data/` ist die zentrale redaktionelle Datenquelle.
-- `backend/` enthält vorbereitete Platzhalter für Produkt-API, Checkout und Webhook.
-- `shop/`, `buecher/` und `leseproben/` sind unabhängig erweiterbare Inhaltsbereiche.
+Diese Dateien dienen als statische Platzhalter für OpenGraph-Bilder und Autorengrafiken.
 
-## Zukünftige Stripe-Integration
+## GitHub Pages / statische Bereitstellung
 
-Eine spätere Stripe-Integration darf nur über ein sicheres Backend erfolgen. Secret Keys gehören ausschließlich in Umgebungsvariablen. Vor dem produktiven Einsatz müssen Webhook-Signaturen geprüft, Bestellungen serverseitig validiert und Zahlungsstatus sicher gespeichert werden.
-
-## Qualitätsprüfung Phase 1.5
-
-Geprüft beziehungsweise stabilisiert wurden:
-
-- zentrale Produktdaten und JSON-Fehlermeldungen
-- interne Shop-, Buch-, Leseproben- und Rechtsverweise
-- Success- und Cancel-Seiten
-- Suche nach Titel, Autor und Kategorie
-- Kategorie-Tags, Formate, Verfügbarkeit und Empfehlungen
-- Local-Storage-Validierung und leerer Warenkorb
-- Fokuszustände, Tastaturbedienung und reduzierte Bewegung
-- responsive Shop-Komponenten
+Die Website ist auf statische Hosting-Umgebungen vorbereitet. Alle Dateipfade wurden bewusst auf relative Pfade und lokal verständliche Strukturen gesetzt. Die 404-Seite sorgt für ein professionelleres Verhalten bei fehlenden Seiten.
 
 ## Offene Punkte vor dem produktiven Start
 
-- echte Cover- und Autorenbilder
-- E-Mail-Versand
-- sichere Stripe-Anbindung
-- finale Domain und Hosting-Konfiguration
-- rechtlich geprüfte Datenschutztexte
-- vollständiges Impressum
-- finale AGB und weitere Rechtstexte
-- serverseitige Bestell- und Inventarverwaltung
+- echte Coverbilder und Verkaufsgrafiken
+- echte Autorin-/Autorenbilder
+- finale rechtliche Texte
+- E-Mail-Versand und Anforderungslogik
+- Stripe-Integration und Payment-Backend
+- Domain- und Hosting-Konfiguration
+- rechtlich geprüfte Datenschutzhinweise und AGB

@@ -1,0 +1,16 @@
+{
+  "program": [
+    {
+      "id": "der-urknall",
+      "title": "Der Urknall",
+      "category": "Physik",
+      "format": "PDF · EPUB · Hardcover"
+    },
+    {
+      "id": "dynamicum-specimen",
+      "title": "Dynamicum Specimen",
+      "category": "Systemtheorie",
+      "format": "PDF · Print"
+    }
+  ]
+}

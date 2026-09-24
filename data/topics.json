@@ -1,0 +1,10 @@
+{
+  "topics": [
+    {"id": "bildung", "name": "Bildung"},
+    {"id": "systemarchitektur", "name": "Systemarchitektur"},
+    {"id": "forschung", "name": "Forschung"},
+    {"id": "innovation", "name": "Innovation"},
+    {"id": "medizin", "name": "Medizin"},
+    {"id": "robotik", "name": "Robotik"}
+  ]
+}

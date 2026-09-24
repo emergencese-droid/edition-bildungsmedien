@@ -3,57 +3,59 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Kontakt zur Edition Bildungsmedien.">
+    <meta name="description" content="Kontaktformular und Lead-Generierung der Edition Bildungsmedien.">
+    <meta property="og:title" content="Kontakt | Edition Bildungsmedien">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/images/og-default.svg">
+    <link rel="canonical" href="https://example.org/kontakt.html">
     <title>Kontakt | Edition Bildungsmedien</title>
     <link rel="stylesheet" href="assets/css/main.css">
   </head>
   <body>
-    <header class="simple-header">
-      <div class="container">
-        <a class="brand" href="index.html">
-          <span class="brand-mark">E</span>
-          <span>
-            Edition Bildungsmedien
-            <small>Emergence Technology</small>
-          </span>
-        </a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html"><span class="brand-mark">E</span><span>Edition Bildungsmedien<small>Emergence Technology</small></span></a>
+        <nav class="site-nav" aria-label="Hauptnavigation">
+          <a href="index.html">Startseite</a>
+          <a href="ueber-uns.html">Über uns</a>
+          <a href="shop/index.html">Shop</a>
+          <a href="kontakt.html" aria-current="page">Kontakt</a>
+        </nav>
       </div>
     </header>
 
     <main class="page-content">
       <div class="container narrow">
         <p class="eyebrow">Kontakt</p>
-        <h1>Wir freuen uns auf Ihre Nachricht.</h1>
-        <p>
-          Für Fragen zu unseren Publikationen, Kooperationen und zukünftigen Bildungsangeboten
-          erreichen Sie uns über die folgenden Platzhalter-Kontaktdaten.
-        </p>
+        <h1>Kontakt und Lead-Generierung.</h1>
+        <p>Für Buchanfragen, Kooperationen, Manuskripte und Bildungsprojekte nutzen Sie bitte das vorbereitete Formular.</p>
 
-        <dl class="contact-list">
-          <dt>E-Mail</dt>
-          <dd><a href="mailto:kontakt@example.org">kontakt@example.org</a></dd>
+        <form class="contact-form" action="#" method="post">
+          <div class="form-grid">
+            <label>Vorname<input type="text" name="vorname" placeholder="Vorname"></label>
+            <label>Nachname<input type="text" name="nachname" placeholder="Nachname"></label>
+            <label>E-Mail<input type="email" name="email" placeholder="name@beispiel.de"></label>
+            <label>Art der Anfrage<select name="anfrage"><option>Publikation</option><option>Kooperation</option><option>Manuskript</option><option>Newsletter</option><option>Beratung</option></select></label>
+          </div>
+          <label>Nachricht<textarea rows="6" name="nachricht" placeholder="Ihre Nachricht"></textarea></label>
+          <button class="button button-primary" type="submit">Anfrage senden</button>
+        </form>
 
-          <dt>Adresse</dt>
-          <dd>
-            Edition Bildungsmedien<br>
-            Emergence Technology<br>
-            Adresse wird ergänzt
-          </dd>
-        </dl>
-
-        <p class="notice">Die Kontaktdaten sind vor dem produktiven Einsatz zu ergänzen.</p>
+        <div class="info-stack small-gap">
+          <article class="info-card">
+            <h2>Newsletter</h2>
+            <p>Verfolgen Sie Neuerscheinungen, Forschungsimpulse und neue Bildungsformate.</p>
+          </article>
+          <article class="info-card">
+            <h2>Manuskript einreichen</h2>
+            <p>Für Autorinnen und Autoren besteht ein vorbereiteter Formularpfad für spätere Einreichungen.</p>
+          </article>
+        </div>
       </div>
     </main>
 
     <footer class="site-footer">
-      <div class="container footer-inner">
-        <a href="index.html">← Zur Startseite</a>
-        <a href="impressum.html">Impressum</a>
-        <a href="datenschutz.html">Datenschutz</a>
-        <a href="agb.html">AGB</a>
-      </div>
+      <div class="container footer-inner"><a href="index.html">Zur Startseite</a><a href="impressum.html">Impressum</a></div>
     </footer>
-
-    <script src="assets/js/main.js" defer></script>
   </body>
 </html>

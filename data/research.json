@@ -1,0 +1,14 @@
+{
+  "research": [
+    {
+      "id": "systemarchitektur",
+      "title": "Systemarchitektur und Lernen",
+      "summary": "Perspektiven auf Ordnung, Dynamik und Lernsysteme."
+    },
+    {
+      "id": "forschungslogik",
+      "title": "Forschungslogik",
+      "summary": "Methodische Grundlagen für wissenschaftliche Kommunikation."
+    }
+  ]
+}
