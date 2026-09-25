@@ -1,30 +1,22 @@
 # ETOS 2.0 database layer
 
-This directory contains a PostgreSQL reference schema for a **civilian research and innovation network**. It is designed as a technical foundation for a future dashboard, not as evidence of real partnerships or institutional mandates.
+PostgreSQL-Referenzschema für ein ziviles Forschungs- und Innovationsnetzwerk.
 
-## Files
+## Dateien
 
-- `etos_schema.sql` – schema, tables, constraints, indexes and dashboard view
-- `etos_seed.sql` – public reference records and clearly labelled scenario data
-- `etos_dashboard_queries.sql` – KPI and reporting queries
+- `etos_schema.sql` – Schema, Tabellen, Constraints, Indizes und Dashboard-View
+- `etos_seed.sql` – Referenzknoten und Szenariodaten
+- `etos_dashboard_queries.sql` – KPI- und Reporting-Abfragen
 
-## Scope
+## Umfang
 
-The model covers:
+Das Modell enthält zehn Länder-/Verbandsknoten, Forschungsachsen, Projekte, Beteiligungen, Publikationen, Vorträge, Finanzierungsszenarien und KPI-Messungen.
 
-- 10 country/federation reference nodes
-- research axes
-- projects and project participation
-- publications and lectures
-- funding scenarios
-- KPI measurements
-- dashboard aggregation
+Die genannten Organisationen sind öffentliche Referenzknoten. Die Daten bestätigen keine Partnerschaft, Mitgliedschaft, Beauftragung, Unterstützung oder Datenzugriff.
 
-It deliberately excludes operational military, intelligence, security-force or special-unit data. The system is intended for civilian research, education, technology and innovation planning.
+Operative militärische, geheimdienstliche oder sicherheitsbezogene Strukturen sind ausdrücklich nicht Bestandteil des Schemas.
 
-## Local PostgreSQL example
-
-Create a database, then run:
+## Lokaler Start
 
 ```bash
 psql "$DATABASE_URL" -f database/etos_schema.sql
@@ -32,16 +24,4 @@ psql "$DATABASE_URL" -f database/etos_seed.sql
 psql "$DATABASE_URL" -f database/etos_dashboard_queries.sql
 ```
 
-The seed records use public organisation names as reference nodes. Before any public or operational use, verify every organisation, website, relationship, metric source and legal basis independently.
-
-## Production requirements
-
-Before connecting real data, add:
-
-- authenticated roles and least-privilege permissions
-- source provenance and verification timestamps
-- audit logging
-- data retention rules
-- privacy and security review
-- migration tooling and automated tests
-- an explicit distinction between verified partners and reference organisations
+Vor einem produktiven Einsatz müssen Quellen, Beziehungen, Kennzahlen und rechtliche Grundlagen unabhängig geprüft werden. Zusätzlich erforderlich sind Authentifizierung, Rollen mit Minimalrechten, Audit-Logging, Aufbewahrungsregeln, Datenschutzprüfung, Migrationen und automatisierte Tests.

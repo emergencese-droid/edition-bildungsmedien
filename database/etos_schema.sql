@@ -1,26 +1,22 @@
 -- ETOS 2.0 civilian research and innovation network
 -- PostgreSQL schema, reference model only.
--- The organisations represented by seed data are public reference nodes,
--- not evidence of partnership, mandate, endorsement, or data access.
-
+-- Seed records are public reference nodes, not evidence of partnership.
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE SCHEMA IF NOT EXISTS etos;
 
 CREATE TABLE etos.federation (
   federation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  country_code CHAR(2) NOT NULL,
+  country_code CHAR(2) NOT NULL UNIQUE,
   country_name VARCHAR(100) NOT NULL,
-  organisation_name VARCHAR(255) NOT NULL,
+  organisation_name VARCHAR(255) NOT NULL UNIQUE,
   headquarters_city VARCHAR(120),
   organisation_type VARCHAR(100) NOT NULL,
   website TEXT,
   founded_year INTEGER,
   active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT uq_federation_country UNIQUE (country_code),
-  CONSTRAINT uq_federation_name UNIQUE (organisation_name),
-  CONSTRAINT chk_federation_country_code CHECK (country_code ~ '^[A-Z]{2}$'),
-  CONSTRAINT chk_federation_founded_year CHECK (founded_year IS NULL OR founded_year BETWEEN 1800 AND EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER)
+  CONSTRAINT chk_country_code CHECK (country_code ~ '^[A-Z]{2}$'),
+  CONSTRAINT chk_founded_year CHECK (founded_year IS NULL OR founded_year BETWEEN 1800 AND EXTRACT(YEAR FROM CURRENT_DATE)::INTEGER)
 );
 
 CREATE TABLE etos.research_axis (
@@ -74,10 +70,9 @@ CREATE TABLE etos.lecture (
   lecture_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(255) NOT NULL,
   city VARCHAR(120),
-  country_code CHAR(2),
+  country_code CHAR(2) REFERENCES etos.federation(country_code) ON UPDATE CASCADE,
   event_date DATE,
-  project_id UUID REFERENCES etos.project(project_id) ON DELETE SET NULL,
-  CONSTRAINT fk_lecture_country FOREIGN KEY (country_code) REFERENCES etos.federation(country_code) ON UPDATE CASCADE
+  project_id UUID REFERENCES etos.project(project_id) ON DELETE SET NULL
 );
 
 CREATE TABLE etos.funding_program (
