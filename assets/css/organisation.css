@@ -1,11 +1,44 @@
-.tab-nav { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 2.5rem; padding: .5rem; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
-.tab-nav a { padding: .55rem .8rem; border-radius: 9px; color: var(--ink); font-size: .9rem; text-decoration: none; }
-.tab-nav a:hover, .tab-nav a.is-active { color: var(--white); background: var(--green-dark); }
-.concept-note { margin: 1.5rem 0; padding: 1rem 1.25rem; border-left: 4px solid var(--green); color: var(--muted); background: #ecfdf5; }
-.flow-diagram { display: flex; flex-direction: column; align-items: center; gap: .5rem; margin: 2rem 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); text-align: center; }
-.flow-diagram span { width: min(100%, 320px); padding: .75rem 1rem; border: 1px solid var(--green); border-radius: 9px; color: var(--green-dark); background: var(--white); font-weight: 750; text-transform: uppercase; letter-spacing: .04em; }
-.flow-diagram b { color: var(--green-dark); font-size: 1.25rem; }
-.diagram { overflow-x: auto; margin: 2rem 0; padding: 1.25rem; border-radius: var(--radius); color: #d7f7e9; background: #12302a; }
-.diagram pre { margin: 0; font: .95rem/1.55 ui-monospace, SFMono-Regular, Consolas, monospace; white-space: pre; }
-blockquote { margin: 2rem 0; padding: 1.5rem; border-left: 4px solid var(--green); color: var(--green-dark); background: var(--surface); font-size: 1.25rem; font-weight: 700; }
-@media (max-width: 720px) { .tab-nav { align-items: stretch; flex-direction: column; }.tab-nav a { text-align: center; } }
+@import url("design-system.css");
+
+/* Organisation pages opt into the Emergence Technology dark theme.
+ * Edition Bildungsmedien pages continue to use the existing light theme.
+ */
+body.emergence-theme { background: var(--bg); color: var(--text); }
+body.emergence-theme .site-header,
+body.emergence-theme .simple-header { border-color: var(--border-subtle); background: var(--surface-2); }
+body.emergence-theme .brand,
+body.emergence-theme .site-nav a,
+body.emergence-theme .site-footer a { color: var(--text); }
+body.emergence-theme .brand small { color: var(--text-muted); }
+body.emergence-theme .brand-mark { color: var(--deep-blue); background: var(--gold); }
+body.emergence-theme .tab-nav { border-color: var(--border-subtle); background: var(--surface-2); }
+body.emergence-theme .tab-nav a { color: var(--text-muted); }
+body.emergence-theme .tab-nav a:hover,
+body.emergence-theme .tab-nav a.is-active { color: var(--deep-blue); background: var(--gold); }
+body.emergence-theme .info-card { border-color: var(--border-subtle); background: var(--surface); box-shadow: var(--shadow-soft); }
+body.emergence-theme .info-card h2,
+body.emergence-theme .info-card h3 { color: var(--text); }
+body.emergence-theme .flow-diagram { border-color: var(--border-subtle); background: var(--surface-2); }
+body.emergence-theme .flow-diagram span { border-color: var(--accent-blue); color: var(--accent-blue); background: var(--surface); }
+body.emergence-theme .flow-diagram b { color: var(--gold); }
+body.emergence-theme .concept-note { border-color: var(--gold); color: var(--text-muted); background: rgba(212, 168, 87, .1); }
+body.emergence-theme blockquote { border-color: var(--gold); color: var(--gold); background: var(--surface); }
+body.emergence-theme .site-footer { border-color: var(--border-subtle); }
+
+.feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+.feature-grid.single-col { grid-template-columns: 1fr; }
+.info-card { padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
+.info-card h2, .info-card h3 { margin-bottom: .75rem; }
+.info-stack { display: grid; gap: 1.5rem; margin-top: 2rem; }
+.small-gap { gap: 1rem; }
+.bullet-list { margin: 0; padding-left: 1.2rem; color: var(--muted); }
+body.emergence-theme .bullet-list { color: var(--text-muted); }
+.author-portrait { margin: 1.5rem 0; }
+.author-portrait img { width: 220px; height: 220px; border-radius: 20px; object-fit: cover; background: var(--surface); }
+.center-text { text-align: center; }
+.justify-center { justify-content: center; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.contact-form { display: grid; gap: 1rem; margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.contact-form label { display: flex; flex-direction: column; gap: .45rem; font-weight: 700; color: var(--muted); }
+.contact-form input, .contact-form textarea, .contact-form select { padding: .8rem .9rem; border: 1px solid var(--line); border-radius: 10px; font: inherit; color: var(--ink); background: var(--white); }
+@media (max-width: 720px) { .feature-grid, .form-grid { grid-template-columns: 1fr; } }
