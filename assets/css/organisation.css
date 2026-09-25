@@ -1,8 +1,8 @@
-@import url("design-system.css");
+@import url("design-tokens.css");
+@import url("components.css");
 
-/* Organisation pages opt into the Emergence Technology dark theme.
- * Edition Bildungsmedien pages continue to use the existing light theme.
- */
+/* Compatibility layer for the existing organisation pages. The class is
+ * opt-in; Edition Bildungsmedien and the shop remain light by default. */
 body.emergence-theme { background: var(--bg); color: var(--text); }
 body.emergence-theme .site-header,
 body.emergence-theme .simple-header { border-color: var(--border-subtle); background: var(--surface-2); }
@@ -25,6 +25,7 @@ body.emergence-theme .concept-note { border-color: var(--gold); color: var(--tex
 body.emergence-theme blockquote { border-color: var(--gold); color: var(--gold); background: var(--surface); }
 body.emergence-theme .site-footer { border-color: var(--border-subtle); }
 
+/* Existing light helper components remain available to the publisher pages. */
 .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
 .feature-grid.single-col { grid-template-columns: 1fr; }
 .info-card { padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); box-shadow: var(--shadow); }
