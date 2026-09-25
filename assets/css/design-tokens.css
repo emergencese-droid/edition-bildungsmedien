@@ -1,5 +1,5 @@
-/* ETDS 1.0 — tokens only. Keep these scoped and additive so the existing
- * Edition Bildungsmedien light theme remains unchanged. */
+/* ETDS 1.0 foundation tokens. Additive only: existing publisher and shop
+ * styles remain unchanged unless a page opts into an ETDS theme. */
 :root {
   --deep-blue: #001a33;
   --gold: #d4a857;
@@ -20,6 +20,7 @@
   --info: #8fc7ff;
   --warning: #d4a857;
   --danger: #ed6b6b;
+
   --font-ui: Inter, system-ui, -apple-system, sans-serif;
   --font-publication: "IBM Plex Serif", Georgia, serif;
   --font-size-xs: 12px;
@@ -39,15 +40,9 @@
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
+
   --content-width: 1280px;
   --reading-width: 760px;
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 16px;
-  --space-4: 24px;
-  --space-5: 32px;
-  --space-6: 48px;
-  --space-7: 64px;
   --space-3xs: .125rem;
   --space-2xs: .25rem;
   --space-xs: .5rem;
@@ -57,6 +52,7 @@
   --space-xl: 2rem;
   --space-2xl: 4rem;
   --space-3xl: 6rem;
+
   --radius-xs: 4px;
   --radius-sm: 6px;
   --radius-md: 10px;
@@ -66,18 +62,20 @@
   --border-color: #29323c;
   --border-light: #1c232b;
   --border-width: 1px;
-  --z-dropdown: 100;
-  --z-sticky: 200;
-  --z-modal: 1000;
-  --z-toast: 1100;
   --focus-ring: 0 0 0 3px rgba(143, 199, 255, .35);
   --transition-fast: .15s ease;
   --transition-base: .25s ease;
   --transition-slow: .4s ease;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 1000;
+  --z-toast: 1100;
+
   --shadow-soft: 0 4px 12px rgba(0, 0, 0, .15);
   --shadow-panel: 0 8px 24px rgba(0, 0, 0, .2);
   --shadow-gold: 0 0 0 1px rgba(212, 168, 87, .15), 0 4px 16px rgba(212, 168, 87, .1);
   --shadow-blue: 0 0 0 1px rgba(143, 199, 255, .15), 0 4px 16px rgba(143, 199, 255, .1);
+
   --phoenixoffice-primary: var(--accent-blue);
   --phoenixoffice-success: var(--light-green);
   --nanocam-primary: var(--deep-blue);
@@ -88,7 +86,17 @@
   --edition-accent: var(--light-cyan);
   --consulting-primary: var(--graphite);
   --consulting-accent: var(--gold);
+
+  --color-primary: var(--deep-blue);
+  --color-accent: var(--gold);
+  --color-gray-100: var(--surface-2);
+  --color-gray-500: var(--text-muted);
+  --color-gray-700: #52606d;
+  --color-dark: var(--bg);
 }
 
-.edition-theme { --page-bg: #fafbfc; --page-text: #17211f; }
-.consulting-theme, .research-theme, .leibniz-theme, .phoenix-theme { --page-bg: var(--bg); --page-text: var(--text); }
+.edition-theme { --page-bg: #fafafa; --page-text: #222; }
+.consulting-theme,
+.research-theme,
+.leibniz-theme,
+.phoenix-theme { --page-bg: var(--bg); --page-text: var(--text); }
