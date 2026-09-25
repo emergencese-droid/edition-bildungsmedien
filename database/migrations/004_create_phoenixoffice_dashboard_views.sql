@@ -55,22 +55,15 @@ SELECT
   (SELECT ROUND(AVG(score), 4) FROM etos.routing_event WHERE score IS NOT NULL) AS avg_routing_score;
 
 CREATE OR REPLACE VIEW etos.phoenixoffice_heatmap AS
-SELECT
-  s.module_name AS source_module,
-  t.module_name AS target_module,
-  COUNT(*) AS event_count,
-  ROUND(AVG(re.score), 4) AS avg_score,
-  MAX(re.occurred_at) AS last_event_at
+SELECT s.module_name AS source_module, t.module_name AS target_module, COUNT(*) AS event_count,
+  ROUND(AVG(re.score), 4) AS avg_score, MAX(re.occurred_at) AS last_event_at
 FROM etos.routing_event re
 JOIN etos.module s ON s.module_id = re.source_module_id
 JOIN etos.module t ON t.module_id = re.target_module_id
 GROUP BY s.module_id, s.module_name, t.module_id, t.module_name;
 
 CREATE OR REPLACE VIEW etos.phoenixoffice_module_matrix AS
-SELECT
-  s.module_name AS source_module,
-  t.module_name AS target_module,
-  COUNT(*) AS event_count,
+SELECT s.module_name AS source_module, t.module_name AS target_module, COUNT(*) AS event_count,
   ROUND(AVG(re.score), 4) AS average_score,
   COUNT(*) FILTER (WHERE re.event_status = 'ERFASST') AS events_erfasst,
   COUNT(*) FILTER (WHERE re.event_status = 'AUSGEWERTET') AS events_ausgewertet,
@@ -82,8 +75,7 @@ JOIN etos.module t ON t.module_id = re.target_module_id
 GROUP BY s.module_id, s.module_name, t.module_id, t.module_name;
 
 CREATE OR REPLACE VIEW etos.phoenixoffice_document_pipeline AS
-SELECT
-  d.document_id, d.document_code, d.title, d.document_type, d.document_status,
+SELECT d.document_id, d.document_code, d.title, d.document_type, d.document_status,
   d.created_at, MAX(dv.version_number) AS latest_version_number,
   MAX(dv.created_at) AS latest_version_created_at, COUNT(dv.version_id) AS total_versions,
   p.title AS related_project_title
@@ -100,22 +92,27 @@ GROUP BY document_status, document_type;
 
 CREATE OR REPLACE VIEW etos.phoenixoffice_research_overview AS
 WITH axis_projects AS (
-  SELECT a.axis_id, a.axis_name, COUNT(DISTINCT p.project_id) AS project_count,
-    COUNT(DISTINCT pub.publication_id) AS publication_count
-  FROM etos.research_axis a
-  LEFT JOIN etos.federation_axis fa ON fa.axis_id = a.axis_id
-  LEFT JOIN etos.project_federation pf ON pf.federation_id = fa.federation_id
-  LEFT JOIN etos.project p ON p.project_id = pf.project_id
-  LEFT JOIN etos.publication pub ON pub.project_id = p.project_id
-  GROUP BY a.axis_id, a.axis_name
-), axis_funding AS (
-  SELECT a.axis_id, COALESCE(SUM(DISTINCT f.amount_eur), 0) AS funding_total_eur
-  FROM etos.research_axis a
-  LEFT JOIN etos.federation_axis fa ON fa.axis_id = a.axis_id
-  LEFT JOIN etos.project_federation pf ON pf.federation_id = fa.federation_id
-  LEFT JOIN etos.funding_program f ON f.project_id = pf.project_id
-  GROUP BY a.axis_id
+  SELECT DISTINCT ra.axis_id, ra.axis_name, p.project_id
+  FROM etos.research_axis ra
+  JOIN etos.federation_axis fa ON fa.axis_id = ra.axis_id
+  JOIN etos.project_federation pfa ON pfa.federation_id = fa.federation_id
+  JOIN etos.project p ON p.project_id = pfa.project_id
+),
+publication_stats AS (
+  SELECT project_id, COUNT(*) AS publication_count
+  FROM etos.publication
+  GROUP BY project_id
+),
+funding_stats AS (
+  SELECT project_id, SUM(amount_eur) AS funding_total_eur
+  FROM etos.funding_program
+  WHERE funding_status IN ('BEWILLIGT', 'AUSGEZAHLT')
+  GROUP BY project_id
 )
-SELECT ap.axis_name, ap.project_count, ap.publication_count, af.funding_total_eur
+SELECT ap.axis_name, COUNT(*) AS project_count,
+  COALESCE(SUM(ps.publication_count), 0) AS publication_count,
+  COALESCE(SUM(fs.funding_total_eur), 0) AS funding_total_eur
 FROM axis_projects ap
-JOIN axis_funding af ON af.axis_id = ap.axis_id;
+LEFT JOIN publication_stats ps ON ps.project_id = ap.project_id
+LEFT JOIN funding_stats fs ON fs.project_id = ap.project_id
+GROUP BY ap.axis_id, ap.axis_name;
