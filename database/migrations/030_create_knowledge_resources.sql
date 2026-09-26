@@ -27,11 +27,9 @@ CREATE TABLE IF NOT EXISTS etos.knowledge_resource (
 
 CREATE INDEX IF NOT EXISTS
 idx_knowledge_resource_source
-
 ON etos.knowledge_resource(source_name);
 
 CREATE INDEX IF NOT EXISTS
 idx_knowledge_resource_type
-
 ON etos.knowledge_resource(source_type);
 ``
