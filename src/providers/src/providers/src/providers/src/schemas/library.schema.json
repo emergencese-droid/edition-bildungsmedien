@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Library",
+  "type": "object",
+  "required": [
+    "nodekey",
+    "name",
+    "provider",
+    "repositoryUrl"
+  ],
+  "properties": {
+    "nodekey": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "repositoryUrl": {
+      "type": "string"
+    }
+  }
+}
