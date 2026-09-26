@@ -1,0 +1,20 @@
+import { ResourceProvider, Resource } from "./ResourceProvider";
+
+export class FilesystemProvider implements ResourceProvider {
+
+  providerName = "filesystem";
+
+  async search(query: string): Promise<Resource[]> {
+    return [];
+  }
+
+  async get(id: string): Promise<Resource | null> {
+    return null;
+  }
+
+  async save(resource: Resource): Promise<void> {
+  }
+
+  async delete(id: string): Promise<void> {
+  }
+}
