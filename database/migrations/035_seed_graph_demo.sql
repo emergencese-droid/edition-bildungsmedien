@@ -2,6 +2,7 @@
 -- ETOS 2.0
 -- Migration 035
 -- Demo-Daten für Wissensgraph
+-- Mit Duplikatschutz
 -- =====================================================
 
 BEGIN;
@@ -16,11 +17,14 @@ INSERT INTO etos.graph_node
     title,
     external_source
 )
-VALUES
-(
+SELECT
     'project',
     'PhoenixOffice',
     'ETOS'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM etos.graph_node
+    WHERE title = 'PhoenixOffice'
 );
 
 -- -----------------------------------------------------
@@ -34,12 +38,17 @@ INSERT INTO etos.graph_node
     external_source,
     external_id
 )
-VALUES
-(
+SELECT
     'repository',
     'edition-bildungsmedien',
     'GitHub',
     'emergencese-droid/edition-bildungsmedien'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM etos.graph_node
+    WHERE external_source = 'GitHub'
+      AND external_id =
+          'emergencese-droid/edition-bildungsmedien'
 );
 
 -- -----------------------------------------------------
@@ -53,12 +62,16 @@ INSERT INTO etos.graph_node
     external_source,
     external_id
 )
-VALUES
-(
+SELECT
     'concept',
     'Knowledge Graph',
     'ORKG',
     'R123456'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM etos.graph_node
+    WHERE external_source = 'ORKG'
+      AND external_id = 'R123456'
 );
 
 -- -----------------------------------------------------
@@ -72,8 +85,7 @@ INSERT INTO etos.graph_node
     external_source,
     metadata
 )
-VALUES
-(
+SELECT
     'university',
     'Leibniz Universität Hannover',
     'LUH',
@@ -81,6 +93,11 @@ VALUES
         'website',
         'https://www.uni-hannover.de'
     )
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM etos.graph_node
+    WHERE title =
+          'Leibniz Universität Hannover'
 );
 
 COMMIT;
