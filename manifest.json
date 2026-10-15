@@ -1,0 +1,94 @@
+{
+  "project": "ETOS-Nexus Knowledge Engine",
+  "version": "1.0.0",
+  "description": "Deterministisches Wissens-Manifest für Edition Bildungsmedien & ETOS Nexus",
+  "base_frequency_hz": 50.0,
+  "corpora": [
+    {
+      "id": "book_urknall",
+      "title": "Der Urknall",
+      "domain": "cosmology_and_photons",
+      "author": "Sebastian",
+      "chapters": [
+        {
+          "chapter_id": "UK_01",
+          "title": "Die ersten 4000 Jahre: Strahlungsdominanz und Photonenplasma",
+          "file_path": "content/der-urknall/kapitel_01_strahlungsdominanz.md",
+          "phase_angle": 45.0,
+          "frequency_hz": 125000.0,
+          "torsion_factor": 0.850,
+          "binary_code": "001001",
+          "target_stage": "P1"
+        },
+        {
+          "chapter_id": "UK_02",
+          "title": "Photon-Baryon-Kopplung und Jeans-Instabilität",
+          "file_path": "content/der-urknall/kapitel_02_jeans_instabilitaet.md",
+          "phase_angle": 72.0,
+          "frequency_hz": 200000.0,
+          "torsion_factor": 0.720,
+          "binary_code": "010010",
+          "target_stage": "P2"
+        },
+        {
+          "chapter_id": "UK_03",
+          "title": "Rekombination und das erste Molekül (HeH+ / H2)",
+          "file_path": "content/der-urknall/kapitel_03_rekombination.md",
+          "phase_angle": 90.0,
+          "frequency_hz": 250000.0,
+          "torsion_factor": 0.500,
+          "binary_code": "011000",
+          "target_stage": "P0"
+        }
+      ]
+    },
+    {
+      "id": "book_urzelle",
+      "title": "Die Urzelle",
+      "domain": "biophysics_and_resonance",
+      "author": "Sebastian",
+      "chapters": [
+        {
+          "chapter_id": "UZ_01",
+          "title": "Die vibronische Spirale: Von der Pentose zum Codon",
+          "file_path": "content/die-urzelle/kapitel_01_vibronische_spirale.md",
+          "phase_angle": 45.0,
+          "frequency_hz": 125000.0,
+          "torsion_factor": 0.600,
+          "binary_code": "100001",
+          "target_stage": "P2"
+        },
+        {
+          "chapter_id": "UZ_02",
+          "title": "Der 90-Grad-Histidin-Schalter im Reaktionszentrum",
+          "file_path": "content/die-urzelle/kapitel_02_histidin_schalter.md",
+          "phase_angle": 90.0,
+          "frequency_hz": 250000.0,
+          "torsion_factor": 0.850,
+          "binary_code": "101010",
+          "target_stage": "P0"
+        },
+        {
+          "chapter_id": "UZ_03",
+          "title": "150-Grad-Tyrosin-Resonanz und aromatische Membrankopplung",
+          "file_path": "content/die-urzelle/kapitel_03_tyrosin_resonanz.md",
+          "phase_angle": 150.0,
+          "frequency_hz": 416666.67,
+          "torsion_factor": 0.920,
+          "binary_code": "111000",
+          "target_stage": "P1"
+        },
+        {
+          "chapter_id": "UZ_04",
+          "title": "Der 180-Grad-Endpunkt: Geschlossene metabolische Homöostase",
+          "file_path": "content/die-urzelle/kapitel_04_homoeostase_endpunkt.md",
+          "phase_angle": 180.0,
+          "frequency_hz": 500000.0,
+          "torsion_factor": 0.300,
+          "binary_code": "111111",
+          "target_stage": "P3"
+        }
+      ]
+    }
+  ]
+}
