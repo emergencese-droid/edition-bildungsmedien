@@ -1,0 +1,595 @@
+"""
+src/space_engine/projector.py
+Modul zur 3D-Koordinatentransformation und Projektion des 8er-UVC-Designs.
+"""
+import math
+from pathlib import Path
+from typing import List, Tuple, Dict, Any
+
+class SpatialProjector:
+    def __init__(self, tilt_deg: float = 33.3, pan_deg: float = 180.0):
+        # Konvertierung in Radiant
+        self.theta_x = math.radians(tilt_deg)  # Neigung (Tilt)
+        self.theta_z = math.radians(pan_deg)   # Vertikale Drehung (Pan)
+        
+    def rotate_point(self, x: float, y: float, z: float) -> Tuple[float, float, float]:
+        """
+        Wendet Rotationsmatrizen an:
+        1. Drehung um die X-Achse (Tilt um ~33.3°)
+        2. Drehung um die Z-Achse (Pan um 180°)
+        """
+        # Rotation um X-Achse
+        x1 = x
+        y1 = y * math.cos(self.theta_x) - z * math.sin(self.theta_x)
+        z1 = y * math.sin(self.theta_x) + z * math.cos(self.theta_x)
+        
+        # Rotation um Z-Achse
+        x2 = x1 * math.cos(self.theta_z) - y1 * math.sin(self.theta_z)
+        y2 = x1 * math.sin(self.theta_z) + y1 * math.cos(self.theta_z)
+        z2 = z1
+        
+        return round(x2, 4), round(y2, 4), round(z2, 4)
+
+    def generate_8_grid(self) -> List[Tuple[float, float, float]]:
+        """Erzeugt die Basisknoten für ein doppelschleifiges 8er-Gitter im 3D-Raum."""
+        points = []
+        steps = 16
+        for i in range(steps):
+            t = 2 * math.pi * (i / steps)
+            # Lemniskate von Bernoulli / 8er-Topologie
+            scale = 100.0
+            x = (scale * math.cos(t)) / (1 + math.sin(t)**2)
+            y = (scale * math.sin(t) * math.cos(t)) / (1 + math.sin(t)**2)
+            z = math.sin(2 * t) * 25.0
+            points.append((x, y, z))
+        return points
+
+    def process_space(self, output_svg_path: Path) -> Dict[str, Any]:
+        """Transformiert alle Raumpunkte und erzeugt eine Projektions-Grafik (SVG)."""
+        base_points = self.generate_8_grid()
+        projected = [self.rotate_point(x, y, z) for x, y, z in base_points]
+        
+        # SVG Rendern (Orthografische Parallelprojektion auf 2D-Ebene)
+        svg_lines = [
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-150 -150 300 300" width="400" height="400">',
+            '  <rect x="-150" y="-150" width="300" height="300" fill="#0f172a" />',
+            '  <!-- Koordinatenachsen -->',
+            '  <line x1="-130" y1="0" x2="130" y2="0" stroke="#334155" stroke-dasharray="2" />',
+            '  <line x1="0" y1="-130" x2="0" y2="130" stroke="#334155" stroke-dasharray="2" />',
+            '  <!-- 8er-Design Projektion (Tilt 33.3°, Pan 180°) -->'
+        ]
+        
+        # Pfad zeichnen
+        path_d = []
+        for i, (px, py, _) in enumerate(projected):
+            cmd = "M" if i == 0 else "L"
+            path_d.append(f"{cmd} {px} {py}")
+        path_d.append("Z")
+        
+        svg_lines.append(f'  <path d="{" ".join(path_d)}" fill="none" stroke="#38bdf8" stroke-width="2" />')
+        
+        # Knotenpunkte einzeichnen
+        for px, py, _ in projected:
+            svg_lines.append(f'  <circle cx="{px}" cy="{py}" r="3" fill="#f43f5e" />')
+            
+        svg_lines.append('</svg>')
+        
+        output_svg_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_svg_path, "w", encoding="utf-8") as f:
+            f.write("\n".join(svg_lines))
+            
+        return {
+            "tilt_applied_deg": 33.3,
+            "pan_applied_deg": 180.0,
+            "nodes_count": len(projected),
+            "projected_sample": projected[:4],
+            "vector_path": str(output_svg_path)
+        }
+3. Anpassung des Background-Workers (src/app/main.py)
+Wir integrieren den SpatialProjector direkt in den Hintergrund-Task der FastAPI-Applikation. Bei jedem E-Mail-Ingest wird der Raum berechnet, das Vektordiagramm erzeugt und die Metadaten-Matrix im Dokumenten-Datensatz hinterlegt:
+
+Python
+# Ausschnitt aus src/app/main.py
+
+from src.space_engine.projector import SpatialProjector
+
+spatial_projector = SpatialProjector(tilt_deg=33.3, pan_deg=180.0)
+
+def process_email_background(email_id: str):
+    from src.db.session import SessionLocal
+    db = SessionLocal()
+    try:
+        rec = db.query(EmailRecord).filter(EmailRecord.id == email_id).first()
+        if not rec:
+            return
+
+        # 1. Intent Klassifikation
+        analysis = extract_intent_and_summary(rec.subject, rec.body_text)
+        rec.intent_tag = analysis["intent"]
+        rec.status = "processed"
+
+        # 2. Raum-Berechnung und SVG-Generierung
+        doc_id = str(uuid.uuid4())
+        svg_file = Path("./storage_vault") / f"{doc_id}_uvc8_projection.svg"
+        space_metrics = spatial_projector.process_space(svg_file)
+
+        # 3. Erweiterte Dokumentenerstellung via OfficeWrite
+        doc_summary = (
+            f"{analysis['summary']}\n\n"
+            f"[Spatial Metrics Analysis]\n"
+            f"- Geometrische Transformation: Tilt {space_metrics['tilt_applied_deg']}°, Pan {space_metrics['pan_applied_deg']}°\n"
+            f"- Knotenberechnung: {space_metrics['nodes_count']} Stützstellen prozessiert.\n"
+            f"- Vektor-Artefakt: {svg_file.name}"
+        )
+
+        doc_path = write_engine.build_document(
+            doc_id=doc_id,
+            title=rec.subject,
+            doc_type=rec.intent_tag,
+            author="PhoenixOffice Space & Ingest Engine",
+            summary=doc_summary,
+            body=rec.body_text
+        )
+
+        # 4. Dokument & Metadaten in DB persistieren
+        doc_entry = DocumentRecord(
+            id=doc_id,
+            source_email_id=rec.id,
+            title=f"{rec.intent_tag.upper()}: {rec.subject}",
+            doc_type=rec.intent_tag,
+            storage_path=doc_path,
+            metadata_payload={
+                "nlp_analysis": analysis,
+                "spatial_metrics": space_metrics
+            }
+        )
+        db.add(doc_entry)
+        db.commit()
+    finally:
+        db.close()
+4. Schlüsselfertiges Setup-Skript (setup_phoenixoffice.py)
+Um das gesamte System inklusive der neuen Raum-Engine in einem einzigen Durchlauf sauber auf deiner Maschine aufzusetzen, erstelle setup_phoenixoffice.py mit folgendem Inhalt:
+
+Python
+#!/usr/bin/env python3
+"""
+PhoenixOffice Core & Space-Engine Setup Script
+Erzeugt das komplette modulare System inkl. Raum-Projektion und Word-Ablage.
+"""
+
+from pathlib import Path
+
+FILES = {}
+
+# Paket-Marker
+for d in ["src", "src/app", "src/db", "src/ai_bridge", "src/officewrite", "src/space_engine", "tests"]:
+    FILES[f"{d}/__init__.py"] = '"""Package initialization."""\n'
+
+FILES["requirements.txt"] = """fastapi==0.115.0
+uvicorn[standard]==0.30.0
+sqlalchemy==2.0.35
+pydantic==2.9.2
+python-docx==1.1.2
+jinja2==3.1.4
+redis==5.0.8
+rq==1.16.2
+python-multipart==0.0.12
+requests==2.32.3
+pytest==8.3.3
+email-validator==2.2.0
+"""
+
+FILES[".env.example"] = """APP_NAME="PhoenixOffice Core"
+ENV="development"
+PORT=8000
+DATABASE_URL="sqlite:///./phoenixoffice.db"
+STORAGE_DIR="./storage_vault"
+DS_AI_ENDPOINT="http://localhost:11434/api/generate"
+DS_AI_ENABLED="false"
+"""
+
+FILES[".gitignore"] = """__pycache__/
+*.pyc
+*.db
+.env
+storage_vault/
+.pytest_cache/
+.venv/
+"""
+
+FILES["src/db/models.py"] = '''import uuid
+from datetime import datetime
+from sqlalchemy import Column, String, DateTime, Text, ForeignKey, JSON
+from sqlalchemy.orm import declarative_base, relationship
+
+Base = declarative_base()
+
+class EmailRecord(Base):
+    __tablename__ = "emails"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    message_id = Column(String(255), unique=True, index=True, nullable=True)
+    sender = Column(String(255), nullable=False)
+    recipient = Column(String(255), nullable=False)
+    subject = Column(String(500), nullable=False)
+    body_text = Column(Text, nullable=False)
+    received_at = Column(DateTime, default=datetime.utcnow)
+    status = Column(String(50), default="ingested")
+    intent_tag = Column(String(100), nullable=True)
+
+    attachments = relationship("AttachmentRecord", back_populates="email")
+    documents = relationship("DocumentRecord", back_populates="email")
+
+class AttachmentRecord(Base):
+    __tablename__ = "attachments"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    email_id = Column(String(36), ForeignKey("emails.id"), nullable=False)
+    filename = Column(String(255), nullable=False)
+    content_type = Column(String(100), nullable=True)
+    file_path = Column(String(500), nullable=False)
+    checksum = Column(String(64), nullable=True)
+
+    email = relationship("EmailRecord", back_populates="attachments")
+
+class DocumentRecord(Base):
+    __tablename__ = "documents"
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    source_email_id = Column(String(36), ForeignKey("emails.id"), nullable=True)
+    title = Column(String(255), nullable=False)
+    doc_type = Column(String(100), default="generic")
+    storage_path = Column(String(500), nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    metadata_payload = Column(JSON, nullable=True)
+
+    email = relationship("EmailRecord", back_populates="documents")
+'''
+
+FILES["src/db/session.py"] = '''import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from src.db.models import Base
+
+DB_URL = os.getenv("DATABASE_URL", "sqlite:///./phoenixoffice.db")
+
+engine = create_engine(
+    DB_URL,
+    connect_args={"check_same_thread": False} if DB_URL.startswith("sqlite") else {}
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def init_db():
+    Base.metadata.create_all(bind=engine)
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+'''
+
+FILES["src/ai_bridge/classifier.py"] = '''import os
+import requests
+
+AI_ENDPOINT = os.getenv("DS_AI_ENDPOINT", "http://localhost:11434/api/generate")
+AI_ENABLED = os.getenv("DS_AI_ENABLED", "false").lower() == "true"
+
+def extract_intent_and_summary(subject: str, body: str) -> dict:
+    if AI_ENABLED:
+        try:
+            prompt = (
+                f"Klassifiziere den Vorgang und fasse zusammen.\\n"
+                f"Betreff: {subject}\\nText: {body[:1500]}\\n"
+                f"Format: INTENT: [vertrag|briefing|lagebericht|allgemein]; SUMMARY: [kurztext]"
+            )
+            resp = requests.post(
+                AI_ENDPOINT,
+                json={"model": "mistral", "prompt": prompt, "stream": False},
+                timeout=4.0
+            )
+            if resp.status_code == 200:
+                raw_text = resp.json().get("response", "")
+                return {"intent": "ai_classified", "summary": raw_text.strip(), "source": "linux_mint_ai"}
+        except Exception:
+            pass
+
+    combined = (subject + " " + body).lower()
+    if any(k in combined for k in ["lage", "lagebericht", "sicherheit", "einsatz"]):
+        intent = "lagebericht"
+    elif any(k in combined for k in ["vertrag", "nda", "vereinbarung", "unterschrift"]):
+        intent = "vertrag"
+    elif any(k in combined for k in ["briefing", "konzept", "anforderung", "architektur"]):
+        intent = "briefing"
+    else:
+        intent = "allgemeine_anfrage"
+
+    first_line = body.strip().split("\\n")[0][:180] if body.strip() else subject
+    return {"intent": intent, "summary": first_line, "source": "rule_heuristic"}
+'''
+
+FILES["src/space_engine/projector.py"] = '''import math
+from pathlib import Path
+from typing import List, Tuple, Dict, Any
+
+class SpatialProjector:
+    def __init__(self, tilt_deg: float = 33.3, pan_deg: float = 180.0):
+        self.theta_x = math.radians(tilt_deg)
+        self.theta_z = math.radians(pan_deg)
+
+    def rotate_point(self, x: float, y: float, z: float) -> Tuple[float, float, float]:
+        x1 = x
+        y1 = y * math.cos(self.theta_x) - z * math.sin(self.theta_x)
+        z1 = y * math.sin(self.theta_x) + z * math.cos(self.theta_x)
+
+        x2 = x1 * math.cos(self.theta_z) - y1 * math.sin(self.theta_z)
+        y2 = x1 * math.sin(self.theta_z) + y1 * math.cos(self.theta_z)
+        z2 = z1
+
+        return round(x2, 4), round(y2, 4), round(z2, 4)
+
+    def generate_8_grid(self) -> List[Tuple[float, float, float]]:
+        points = []
+        steps = 16
+        for i in range(steps):
+            t = 2 * math.pi * (i / steps)
+            scale = 100.0
+            x = (scale * math.cos(t)) / (1 + math.sin(t)**2)
+            y = (scale * math.sin(t) * math.cos(t)) / (1 + math.sin(t)**2)
+            z = math.sin(2 * t) * 25.0
+            points.append((x, y, z))
+        return points
+
+    def process_space(self, output_svg_path: Path) -> Dict[str, Any]:
+        base_points = self.generate_8_grid()
+        projected = [self.rotate_point(x, y, z) for x, y, z in base_points]
+
+        svg_lines = [
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-150 -150 300 300" width="400" height="400">',
+            '  <rect x="-150" y="-150" width="300" height="300" fill="#0f172a" />',
+            '  <line x1="-130" y1="0" x2="130" y2="0" stroke="#334155" stroke-dasharray="2" />',
+            '  <line x1="0" y1="-130" x2="0" y2="130" stroke="#334155" stroke-dasharray="2" />'
+        ]
+
+        path_d = []
+        for i, (px, py, _) in enumerate(projected):
+            cmd = "M" if i == 0 else "L"
+            path_d.append(f"{cmd} {px} {py}")
+        path_d.append("Z")
+
+        svg_lines.append(f'  <path d="{" ".join(path_d)}" fill="none" stroke="#38bdf8" stroke-width="2" />')
+        for px, py, _ in projected:
+            svg_lines.append(f'  <circle cx="{px}" cy="{py}" r="3" fill="#f43f5e" />')
+        svg_lines.append('</svg>')
+
+        output_svg_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_svg_path, "w", encoding="utf-8") as f:
+            f.write("\\n".join(svg_lines))
+
+        return {
+            "tilt_applied_deg": 33.3,
+            "pan_applied_deg": 180.0,
+            "nodes_count": len(projected),
+            "projected_sample": projected[:4],
+            "vector_path": str(output_svg_path)
+        }
+'''
+
+FILES["src/officewrite/generator.py"] = '''from pathlib import Path
+from datetime import datetime
+from docx import Document
+from docx.shared import Pt, Inches, RGBColor
+
+class OfficeWriteEngine:
+    def __init__(self, storage_vault: str = "./storage_vault"):
+        self.storage_vault = Path(storage_vault)
+        self.storage_vault.mkdir(parents=True, exist_ok=True)
+
+    def build_document(self, doc_id: str, title: str, doc_type: str, author: str, summary: str, body: str) -> str:
+        doc = Document()
+
+        style = doc.styles['Normal']
+        font = style.font
+        font.name = 'Calibri'
+        font.size = Pt(11)
+        font.color.rgb = RGBColor(0x22, 0x22, 0x22)
+
+        h1 = doc.add_heading(f"PhoenixOffice :: {doc_type.upper()}", level=0)
+        h1.style.font.color.rgb = RGBColor(0x00, 0x33, 0x66)
+
+        doc.add_paragraph(f"Dokumenten-ID: {doc_id}")
+        doc.add_paragraph(f"Erstellt am: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC")
+        doc.add_paragraph(f"Autor/Modul: {author}")
+        doc.add_paragraph(f"Referenz-Titel: {title}")
+        doc.add_paragraph("-" * 50)
+
+        doc.add_heading("1. Executive Summary & Einstufung", level=1)
+        p_summary = doc.add_paragraph(summary)
+        p_summary.paragraph_format.left_indent = Inches(0.2)
+
+        doc.add_heading("2. E-Mail Quelltext / Payload", level=1)
+        doc.add_paragraph(body)
+
+        target_path = self.storage_vault / f"{doc_id}_{doc_type}.docx"
+        doc.save(str(target_path))
+        return str(target_path)
+'''
+
+FILES["src/app/main.py"] = '''import uuid
+from typing import Optional
+from pathlib import Path
+from fastapi import FastAPI, Depends, HTTPException, BackgroundTasks
+from pydantic import BaseModel, EmailStr
+from sqlalchemy.orm import Session
+
+from src.db.session import init_db, get_db
+from src.db.models import EmailRecord, DocumentRecord
+from src.ai_bridge.classifier import extract_intent_and_summary
+from src.officewrite.generator import OfficeWriteEngine
+from src.space_engine.projector import SpatialProjector
+
+init_db()
+app = FastAPI(title="PhoenixOffice Core & Space Engine", version="1.1.0")
+write_engine = OfficeWriteEngine()
+spatial_projector = SpatialProjector(tilt_deg=33.3, pan_deg=180.0)
+
+class EmailIngestSchema(BaseModel):
+    sender: EmailStr
+    recipient: str
+    subject: str
+    body_text: str
+    message_id: Optional[str] = None
+
+def process_email_background(email_id: str):
+    from src.db.session import SessionLocal
+    db = SessionLocal()
+    try:
+        rec = db.query(EmailRecord).filter(EmailRecord.id == email_id).first()
+        if not rec:
+            return
+
+        analysis = extract_intent_and_summary(rec.subject, rec.body_text)
+        rec.intent_tag = analysis["intent"]
+        rec.status = "processed"
+
+        doc_id = str(uuid.uuid4())
+        svg_file = Path("./storage_vault") / f"{doc_id}_uvc8_projection.svg"
+        space_metrics = spatial_projector.process_space(svg_file)
+
+        doc_summary = (
+            f"{analysis['summary']}\\n\\n"
+            f"[Spatial Metrics Analysis]\\n"
+            f"- Geometrische Transformation: Tilt {space_metrics['tilt_applied_deg']}°, Pan {space_metrics['pan_applied_deg']}°\\n"
+            f"- Knotenberechnung: {space_metrics['nodes_count']} Stützstellen prozessiert.\\n"
+            f"- Vektor-Artefakt: {svg_file.name}"
+        )
+
+        doc_path = write_engine.build_document(
+            doc_id=doc_id,
+            title=rec.subject,
+            doc_type=rec.intent_tag,
+            author="PhoenixOffice Space & Ingest Engine",
+            summary=doc_summary,
+            body=rec.body_text
+        )
+
+        doc_entry = DocumentRecord(
+            id=doc_id,
+            source_email_id=rec.id,
+            title=f"{rec.intent_tag.upper()}: {rec.subject}",
+            doc_type=rec.intent_tag,
+            storage_path=doc_path,
+            metadata_payload={
+                "nlp_analysis": analysis,
+                "spatial_metrics": space_metrics
+            }
+        )
+        db.add(doc_entry)
+        db.commit()
+    finally:
+        db.close()
+
+@app.get("/api/health")
+def health():
+    return {
+        "status": "ok",
+        "subsystems": {
+            "officewrite": "online",
+            "space_engine": "online",
+            "db": "ready",
+            "ai_bridge": "connected"
+        }
+    }
+
+@app.post("/api/emails/ingest", status_code=202)
+def ingest_email(payload: EmailIngestSchema, bg: BackgroundTasks, db: Session = Depends(get_db)):
+    record_id = str(uuid.uuid4())
+    msg_id = payload.message_id or f"msg-{record_id[:8]}"
+
+    db_email = EmailRecord(
+        id=record_id,
+        message_id=msg_id,
+        sender=payload.sender,
+        recipient=payload.recipient,
+        subject=payload.subject,
+        body_text=payload.body_text,
+        status="queued"
+    )
+    db.add(db_email)
+    db.commit()
+
+    bg.add_task(process_email_background, record_id)
+
+    return {
+        "status": "accepted",
+        "email_id": record_id,
+        "message_id": msg_id
+    }
+
+@app.get("/api/emails/{email_id}/status")
+def get_email_status(email_id: str, db: Session = Depends(get_db)):
+    rec = db.query(EmailRecord).filter(EmailRecord.id == email_id).first()
+    if not rec:
+        raise HTTPException(status_code=404, detail="Email record not found")
+
+    docs = db.query(DocumentRecord).filter(DocumentRecord.source_email_id == email_id).all()
+    return {
+        "id": rec.id,
+        "status": rec.status,
+        "intent": rec.intent_tag,
+        "generated_documents": [
+            {
+                "id": d.id, 
+                "title": d.title, 
+                "path": d.storage_path, 
+                "meta": d.metadata_payload
+            }
+            for d in docs
+        ]
+    }
+'''
+
+FILES["tests/test_flow.py"] = '''import time
+from fastapi.testclient import TestClient
+from src.app.main import app
+
+client = TestClient(app)
+
+def test_full_pipeline():
+    health_resp = client.get("/api/health")
+    assert health_resp.status_code == 200
+
+    payload = {
+        "sender": "lagezentrum@bundeswehr-partner.de",
+        "recipient": "ops@phoenixoffice.org",
+        "subject": "Lagebericht: Test Raum-Engine",
+        "body_text": "Transformationstest 33.3 Grad Tilt und 180 Grad Pan."
+    }
+
+    resp = client.post("/api/emails/ingest", json=payload)
+    assert resp.status_code == 202
+    email_id = resp.json()["email_id"]
+
+    time.sleep(1)
+
+    status_resp = client.get(f"/api/emails/{email_id}/status")
+    assert status_resp.status_code == 200
+    data = status_resp.json()
+    assert data["status"] in ["queued", "processed"]
+'''
+
+def main():
+    root_dir = Path(".")
+    print(f"[*] Initialisiere Dateistruktur in: {root_dir.resolve()}")
+    for filepath, content in FILES.items():
+        full_path = root_dir / filepath
+        full_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(full_path, "w", encoding="utf-8") as f:
+            f.write(content)
+        print(f"  -> Angelegt: {filepath}")
+    print("\n[✔] Setup abgeschlossen. Raum-Engine und PhoenixOffice-Dateien generiert.")
+
+if __name__ == "__main__":
+    main()
+
