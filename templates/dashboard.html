@@ -1,32 +1,50 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>PhoenixOffice – Dashboard</title>
-    <style>
-        body { font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 25px; }
-        .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; max-width: 850px; margin: 0 auto; }
-        .nav { margin-bottom: 20px; display: flex; gap: 15px; }
-        .nav a { color: #58a6ff; text-decoration: none; font-weight: 500; }
-        .status-box { background: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid #30363d; margin-top: 15px; }
-        .badge { background: #238636; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; }
-    </style>
-</head>
-<body>
-    <div class="card">
-        <div class="nav">
-            <a href="/">Dashboard</a>
-            <a href="/console">Leitstand-Konsole</a>
-            <a href="/write">PhoenixWrite (Steuerzentrale)</a>
-            <a href="/ingest">E-Mail Ingest</a>
+@app.get("/officewrite", response_class=HTMLResponse)
+async def get_officewrite_vault():
+    vault_dir = os.path.expanduser("~/phoenix-office/storage_vault")
+    os.makedirs(vault_dir, exist_ok=True)
+    files = sorted(os.listdir(vault_dir))
+    
+    file_rows = "".join([
+        f"""<li style="padding: 10px 0; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between;">
+            <span>📄 <strong>{f}</strong></span> 
+            <span style="color: #8b949e; font-size: 0.85rem;">
+                {round(os.path.getsize(os.path.join(vault_dir, f)) / 1024, 1)} KB
+            </span>
+        </li>""" for f in files
+    ]) if files else "<li style='color: #8b949e; padding: 10px 0;'>Noch keine Dokumente oder Akten im Vault hinterlegt.</li>"
+
+    return HTMLResponse(f"""
+    <!DOCTYPE html>
+    <html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <title>OfficeWrite Engine – Dokumenten-Archiv</title>
+        <style>
+            body {{ font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 25px; margin: 0; }}
+            .card {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; max-width: 850px; margin: 0 auto; }}
+            .nav {{ margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; }}
+            .nav a {{ color: #58a6ff; text-decoration: none; font-weight: 500; }}
+            ul {{ list-style: none; padding-left: 0; margin-top: 15px; }}
+            .badge {{ background: #238636; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; }}
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="nav">
+                <a href="/">← Dashboard</a>
+                <a href="/console">Leitstand</a>
+                <a href="/write">PhoenixWrite</a>
+                <a href="/ingest">Ingest</a>
+            </div>
+            <h2>OfficeWrite Engine (v1.0)</h2>
+            <p>Status: <span class="badge">Bereit</span></p>
+            <p style="color: #8b949e;">Verzeichnis: <code>~/phoenix-office/storage_vault/</code></p>
+            
+            <h3 style="margin-top: 25px;">Archivierte Dokumente & Akten</h3>
+            <ul>
+                {file_rows}
+            </ul>
         </div>
-        <h2>PhoenixOffice Control Center</h2>
-        <p>Systemstatus:</p>
-        <div class="status-box">
-            {% for k, v in system_status.items() %}
-                <p><strong>{{ k }}:</strong> <span class="badge">{{ v }}</span></p>
-            {% endfor %}
-        </div>
-    </div>
-</body>
-</html>
+    </body>
+    </html>
+    """)
