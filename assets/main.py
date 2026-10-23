@@ -12,7 +12,7 @@ from fastapi.templating import Jinja2Templates
 from src.ai_bridge.controlling import ETOSControllingEngine, VibronicVector
 from src.officewrite.builder import DocumentBuilder
 
-# Optionaler Import des Hoshin-Kernels (fällt sauber zurück, falls noch nicht synchronisiert)
+# Optionaler Import des Hoshin-Kernels
 try:
     from src.ai_bridge.hoshin_kernel import HoshinFeedbackLoop
     hoshin_kernel = HoshinFeedbackLoop()
@@ -36,6 +36,7 @@ write_engine = DocumentBuilder()
 # In-Memory Datenspeicher für Vorgänge
 RECORDS = []
 
+# --- 1. Dashboard ---
 @app.get("/", response_class=HTMLResponse)
 def get_dashboard(request: Request):
     return templates.TemplateResponse("dashboard.html", {
@@ -49,6 +50,7 @@ def get_dashboard(request: Request):
         }
     })
 
+# --- 2. Ingest & Vorgangsbearbeitung ---
 @app.get("/ingest", response_class=HTMLResponse)
 def get_ingest(request: Request):
     return templates.TemplateResponse("ingest.html", {"request": request})
@@ -98,7 +100,7 @@ def get_record(request: Request, record_id: str):
     rec = next((r for r in RECORDS if r["id"] == record_id), None)
     return templates.TemplateResponse("record_detail.html", {"request": request, "record": rec})
 
-# --- Integrierte Leitstand-Konsole im Browser ---
+# --- 3. Leitstand-Konsole (ETOS-Nexus) ---
 @app.get("/console", response_class=HTMLResponse)
 def get_console(request: Request):
     html_content = """
@@ -124,6 +126,7 @@ def get_console(request: Request):
                 <a href="/">← Zum Dashboard</a>
                 <a href="/ingest">E-Mail Ingest</a>
                 <a href="/write">PhoenixWrite (Steuerzentrale)</a>
+                <a href="/officewrite">OfficeWrite</a>
             </div>
             <h2>Leitstand-Konsole (ETOS-Nexus Steuerung)</h2>
             <p>Hier kannst du Parameter direkt ohne Terminal prüfen und steuern:</p>
@@ -154,7 +157,6 @@ def post_console_eval(
     vec = VibronicVector(angle_deg=angle, torsion=torsion, impact=impact, urgency=urgency)
     score, tier, veto = ETOSControllingEngine.calculate_p_score(vec)
     
-    # Erweiterte Hoshin-Schrittfolgeberechnung (falls HoshinFeedbackLoop aktiv ist)
     hoshin_html = ""
     if hoshin_kernel:
         res = hoshin_kernel.derive_sequence([angle, torsion, impact, urgency], steps=3)
@@ -206,7 +208,7 @@ def post_console_eval(
     </body>
     """)
 
-# --- PhoenixWrite: Steuerzentrale für Dateierstellung & GitHub-Sync ---
+# --- 4. PhoenixWrite: Modul-Editor & GitHub-Synchronisation ---
 @app.get("/write", response_class=HTMLResponse)
 async def write_console_view():
     return HTMLResponse("""
@@ -219,7 +221,7 @@ async def write_console_view():
             body { background: #0d1117; color: #c9d1d9; font-family: sans-serif; padding: 25px; }
             .box { max-width: 850px; margin: auto; background: #161b22; padding: 25px; border-radius: 8px; border: 1px solid #30363d; }
             input, textarea, select { width: 100%; margin-bottom: 12px; background: #0d1117; border: 1px solid #30363d; color: #f8fafc; padding: 10px; border-radius: 6px; box-sizing: border-box; }
-            .btn { background: #238636; color: #fff; padding: 10px 18px; border: none; font-weight: bold; cursor: pointer; border-radius: 6px; }
+            .btn { background: #238636; color: #fff; padding: 12px 18px; border: none; font-weight: bold; cursor: pointer; border-radius: 6px; width: 100%; }
             .btn:hover { background: #2ea043; }
             .btn-sync { background: #1f6feb; margin-bottom: 15px; }
             .btn-sync:hover { background: #388bfd; }
@@ -231,8 +233,10 @@ async def write_console_view():
     <body>
         <div class="box">
             <div class="nav">
-                <a href="/console">← Zum Leitstand (ETOS-Nexus)</a>
-                <a href="/">Dashboard</a>
+                <a href="/">← Dashboard</a>
+                <a href="/console">Leitstand</a>
+                <a href="/officewrite">OfficeWrite</a>
+                <a href="/ingest">Ingest</a>
             </div>
             
             <h2>PhoenixWrite – Steuerzentrale</h2>
@@ -307,53 +311,60 @@ async def write_console_save(
 @app.post("/write/sync", response_class=HTMLResponse)
 async def write_console_sync():
     repo_dir = os.path.expanduser("~/edition-bildungsmedien")
-    bridge_dir = os.path.expanduser("~/phoenix-office/src/ai_bridge")
-    os.makedirs(bridge_dir, exist_ok=True)
-    open(os.path.join(bridge_dir, "__init__.py"), "a").close()
-
-    # Git Pull im geklonten Verzeichnis ausführen
+    target_app = os.path.expanduser("~/phoenix-office")
+    
+    # 1. GitHub Pull ausführen
     git_res = subprocess.run(["git", "-C", repo_dir, "pull"], capture_output=True, text=True)
     
-    # hoshin_kernel.py nach src/ai_bridge/ übertragen
-    src_kernel = os.path.join(repo_dir, "assets", "hoshin_kernel.py")
-    msg = ""
-    if os.path.exists(src_kernel):
-        shutil.copy(src_kernel, os.path.join(bridge_dir, "hoshin_kernel.py"))
-        msg = "hoshin_kernel.py wurde erfolgreich nach src/ai_bridge/ synchronisiert!"
-    else:
-        msg = "Hinweis: assets/hoshin_kernel.py wurde im GitHub-Repo noch nicht gefunden."
+    # 2. Skripte & Templates synchronisieren
+    sync_cmd = (
+        f"cp {repo_dir}/assets/main.py {target_app}/src/app/main.py 2>/dev/null; "
+        f"cp -r {repo_dir}/templates/* {target_app}/src/app/templates/ 2>/dev/null; "
+        f"cp {repo_dir}/assets/hoshin_kernel.py {target_app}/src/ai_bridge/hoshin_kernel.py 2>/dev/null || true"
+    )
+    subprocess.run(sync_cmd, shell=True, executable="/bin/bash")
 
     return HTMLResponse(f"""
     <!DOCTYPE html>
-    <html lang="de"><head><meta charset="UTF-8"><style>body{{background:#0d1117;color:#c9d1d9;font-family:sans-serif;padding:40px;text-align:center;}}a{{color:#58a6ff;text-decoration:none;}}</style></head>
+    <html lang="de"><head><meta charset="UTF-8"><meta http-equiv="refresh" content="2;url=/write"><style>body{{background:#0d1117;color:#c9d1d9;font-family:sans-serif;padding:40px;text-align:center;}}pre{{text-align:left;background:#0d1117;color:#8b949e;padding:12px;border-radius:6px;}}</style></head>
     <body>
         <div style="background:#161b22; border:1px solid #30363d; border-radius:8px; padding:25px; max-width:650px; margin:0 auto;">
-            <h2 style="color:#58a6ff;">Synchronisation abgeschlossen</h2>
-            <pre style="text-align:left; background:#0d1117; color:#8b949e; padding:12px; border-radius:6px; overflow-x:auto;">{git_res.stdout}\n{git_res.stderr}</pre>
-            <p><strong>{msg}</strong></p>
-            <br>
-            <a href="/write">← Zurück zur Steuerzentrale</a> | <a href="/console">Zum Leitstand</a>
+            <h2 style="color:#58a6ff;">Synchronisation erfolgreich!</h2>
+            <pre>{git_res.stdout}\n{git_res.stderr}</pre>
+            <p style="color:#7ee787;">Module und Templates wurden aktualisiert. Weiterleitung in 2 Sekunden...</p>
         </div>
     </body></html>
-    import subprocess
-from fastapi.responses import HTMLResponse
+    """)
 
-@app.get("/write", response_class=HTMLResponse)
-async def write_console_view():
-    return HTMLResponse("""
+# --- 5. OfficeWrite: Archivierte Dokumente & Akten ---
+@app.get("/officewrite", response_class=HTMLResponse)
+async def get_officewrite_vault():
+    vault_dir = os.path.expanduser("~/phoenix-office/storage_vault")
+    os.makedirs(vault_dir, exist_ok=True)
+    files = sorted(os.listdir(vault_dir))
+    
+    file_rows = "".join([
+        f"""<li style="padding: 10px 0; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between;">
+            <span>📄 <strong>{f}</strong></span> 
+            <span style="color: #8b949e; font-size: 0.85rem;">
+                {round(os.path.getsize(os.path.join(vault_dir, f)) / 1024, 1)} KB
+            </span>
+        </li>""" for f in files
+    ]) if files else "<li style='color: #8b949e; padding: 10px 0;'>Noch keine Dokumente oder Akten im Vault hinterlegt.</li>"
+
+    return HTMLResponse(f"""
     <!DOCTYPE html>
     <html lang="de">
     <head>
         <meta charset="UTF-8">
-        <title>PhoenixWrite – Steuerzentrale</title>
+        <title>OfficeWrite Engine – Dokumenten-Archiv</title>
         <style>
-            body { font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 25px; margin: 0; }
-            .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 25px; max-width: 800px; margin: 0 auto; }
-            .nav { margin-bottom: 20px; display: flex; gap: 15px; }
-            .nav a { color: #58a6ff; text-decoration: none; font-weight: 500; }
-            button { background: #238636; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; width: 100%; }
-            button:hover { background: #2ea043; }
-            .box { background: #0d1117; border: 1px solid #30363d; padding: 15px; border-radius: 6px; margin-top: 15px; }
+            body {{ font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 25px; margin: 0; }}
+            .card {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; max-width: 850px; margin: 0 auto; }}
+            .nav {{ margin-bottom: 20px; display: flex; gap: 15px; }}
+            .nav a {{ color: #58a6ff; text-decoration: none; font-weight: 500; }}
+            ul {{ list-style: none; padding-left: 0; margin-top: 15px; }}
+            .badge {{ background: #238636; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; }}
         </style>
     </head>
     <body>
@@ -361,33 +372,18 @@ async def write_console_view():
             <div class="nav">
                 <a href="/">← Dashboard</a>
                 <a href="/console">Leitstand</a>
-                <a href="/officewrite">OfficeWrite</a>
+                <a href="/write">PhoenixWrite</a>
                 <a href="/ingest">Ingest</a>
             </div>
-            <h2>PhoenixWrite Hub</h2>
-            <p>Zentrale Verwaltung & automatische GitHub-Synchronisation.</p>
+            <h2>OfficeWrite Engine (v1.0)</h2>
+            <p>Status: <span class="badge">Bereit</span></p>
+            <p style="color: #8b949e;">Verzeichnis: <code>~/phoenix-office/storage_vault/</code></p>
             
-            <form action="/sync" method="post">
-                <button type="submit">⚡ Aus GitHub synchronisieren & Module verteilen</button>
-            </form>
-
-            <div class="box">
-                <h4>Systemstatus</h4>
-                <p>Aktiv: <strong>PhoenixOffice Backend</strong></p>
-                <p>Sync-Quelle: <code>~/edition-bildungsmedien/</code></p>
-            </div>
+            <h3 style="margin-top: 25px;">Archivierte Dokumente & Akten</h3>
+            <ul>
+                {file_rows}
+            </ul>
         </div>
     </body>
     </html>
-    """)
-
-@app.post("/sync")
-async def trigger_sync():
-    cmd = (
-        "cd ~/edition-bildungsmedien && git pull && "
-        "cp ~/edition-bildungsmedien/assets/main.py ~/phoenix-office/src/app/main.py && "
-        "cp -r ~/edition-bildungsmedien/templates/* ~/phoenix-office/src/app/templates/ 2>/dev/null || true"
-    )
-    subprocess.run(cmd, shell=True, executable="/bin/bash")
-    return HTMLResponse("<meta http-equiv='refresh' content='1;url=/write'><body style='background:#0d1117;color:#58a6ff;font-family:sans-serif;padding:30px;'><h3>Synchronisation abgeschlossen! Weiterleitung...</h3></body>")
     """)
