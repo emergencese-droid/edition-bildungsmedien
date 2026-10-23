@@ -335,4 +335,59 @@ async def write_console_sync():
             <a href="/write">← Zurück zur Steuerzentrale</a> | <a href="/console">Zum Leitstand</a>
         </div>
     </body></html>
+    import subprocess
+from fastapi.responses import HTMLResponse
+
+@app.get("/write", response_class=HTMLResponse)
+async def write_console_view():
+    return HTMLResponse("""
+    <!DOCTYPE html>
+    <html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <title>PhoenixWrite – Steuerzentrale</title>
+        <style>
+            body { font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 25px; margin: 0; }
+            .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 25px; max-width: 800px; margin: 0 auto; }
+            .nav { margin-bottom: 20px; display: flex; gap: 15px; }
+            .nav a { color: #58a6ff; text-decoration: none; font-weight: 500; }
+            button { background: #238636; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 1rem; width: 100%; }
+            button:hover { background: #2ea043; }
+            .box { background: #0d1117; border: 1px solid #30363d; padding: 15px; border-radius: 6px; margin-top: 15px; }
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="nav">
+                <a href="/">← Dashboard</a>
+                <a href="/console">Leitstand</a>
+                <a href="/officewrite">OfficeWrite</a>
+                <a href="/ingest">Ingest</a>
+            </div>
+            <h2>PhoenixWrite Hub</h2>
+            <p>Zentrale Verwaltung & automatische GitHub-Synchronisation.</p>
+            
+            <form action="/sync" method="post">
+                <button type="submit">⚡ Aus GitHub synchronisieren & Module verteilen</button>
+            </form>
+
+            <div class="box">
+                <h4>Systemstatus</h4>
+                <p>Aktiv: <strong>PhoenixOffice Backend</strong></p>
+                <p>Sync-Quelle: <code>~/edition-bildungsmedien/</code></p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """)
+
+@app.post("/sync")
+async def trigger_sync():
+    cmd = (
+        "cd ~/edition-bildungsmedien && git pull && "
+        "cp ~/edition-bildungsmedien/assets/main.py ~/phoenix-office/src/app/main.py && "
+        "cp -r ~/edition-bildungsmedien/templates/* ~/phoenix-office/src/app/templates/ 2>/dev/null || true"
+    )
+    subprocess.run(cmd, shell=True, executable="/bin/bash")
+    return HTMLResponse("<meta http-equiv='refresh' content='1;url=/write'><body style='background:#0d1117;color:#58a6ff;font-family:sans-serif;padding:30px;'><h3>Synchronisation abgeschlossen! Weiterleitung...</h3></body>")
     """)
