@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>PhoenixOffice – Dashboard</title>
+    <style>
+        body { font-family: sans-serif; background: #0d1117; color: #c9d1d9; padding: 25px; }
+        .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; max-width: 850px; margin: 0 auto; }
+        .nav { margin-bottom: 20px; display: flex; gap: 15px; }
+        .nav a { color: #58a6ff; text-decoration: none; font-weight: 500; }
+        .status-box { background: #0d1117; padding: 15px; border-radius: 6px; border: 1px solid #30363d; margin-top: 15px; }
+        .badge { background: #238636; color: white; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="nav">
+            <a href="/">Dashboard</a>
+            <a href="/console">Leitstand-Konsole</a>
+            <a href="/write">PhoenixWrite (Steuerzentrale)</a>
+            <a href="/ingest">E-Mail Ingest</a>
+        </div>
+        <h2>PhoenixOffice Control Center</h2>
+        <p>Systemstatus:</p>
+        <div class="status-box">
+            {% for k, v in system_status.items() %}
+                <p><strong>{{ k }}:</strong> <span class="badge">{{ v }}</span></p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
